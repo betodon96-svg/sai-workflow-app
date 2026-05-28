@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monthly AI Work Report — May 2026 | Systems Engineering AI Implementation</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f5f6fa;
+      color: #1e2230;
+      line-height: 1.7;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      background: linear-gradient(135deg, #0d1b3e 0%, #1a3a6e 50%, #0d1b3e 100%);
+      color: #fff;
+      padding: 80px 40px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(99,179,237,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(72,149,239,0.10) 0%, transparent 50%);
+    }
+    .cover-inner { position: relative; max-width: 900px; margin: 0 auto; }
+    .cover-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 6px 18px;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .cover h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .cover h1 span { color: #63b3ed; }
+    .cover-subtitle {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.75);
+      max-width: 620px;
+      margin: 0 auto 36px;
+    }
+    .cover-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .cover-meta strong { color: #fff; }
+
+    /* ── Navigation ── */
+    nav {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0 40px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      overflow-x: auto;
+      gap: 4px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    nav ul li a {
+      display: block;
+      padding: 14px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #4a5568;
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    nav ul li a:hover { color: #1a3a6e; border-color: #63b3ed; }
+
+    /* ── Page wrapper ── */
+    .page { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* ── Section ── */
+    section { margin-top: 64px; }
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .section-number {
+      flex-shrink: 0;
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, #1a3a6e, #2b6cb0);
+    }
+    .section-title h2 { font-size: 1.6rem; font-weight: 700; color: #1a3a6e; }
+    .section-title p  { color: #718096; font-size: 0.95rem; margin-top: 4px; }
+
+    /* ── What / Why / How cards ── */
+    .intro-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .intro-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 22px 24px;
+      border-left: 4px solid #63b3ed;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .intro-card h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #63b3ed; margin-bottom: 8px; }
+    .intro-card p  { font-size: 0.93rem; color: #4a5568; }
+
+    /* ── Steps ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex;
+      gap: 20px;
+      position: relative;
+    }
+    .step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 48px;
+      bottom: 0;
+      width: 2px;
+      background: #e2e8f0;
+    }
+    .step-dot {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: #1a3a6e;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      z-index: 1;
+    }
+    .step-body {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 12px;
+      flex: 1;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+    .step-body h3 { font-size: 1rem; font-weight: 700; color: #1a3a6e; margin-bottom: 6px; }
+    .step-body p  { font-size: 0.92rem; color: #4a5568; }
+    .step-body .tip {
+      margin-top: 10px;
+      background: #ebf8ff;
+      border-left: 3px solid #63b3ed;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #2c5282;
+    }
+    .step-body code {
+      background: #edf2f7;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85em;
+    }
+
+    /* ── Workspace link ── */
+    .workspace-bar {
+      background: linear-gradient(90deg, #1a3a6e, #2b6cb0);
+      color: #fff;
+      border-radius: 12px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .workspace-bar .ws-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.7;
+    }
+    .workspace-bar .ws-name { font-weight: 700; font-size: 1rem; }
+    .workspace-bar a {
+      margin-left: auto;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      padding: 8px 18px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .workspace-bar a:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── Summary section ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .stat-card .stat-num { font-size: 2.4rem; font-weight: 800; color: #1a3a6e; line-height: 1; }
+    .stat-card .stat-label { font-size: 0.82rem; color: #718096; margin-top: 8px; }
+
+    /* ── Capability badge list ── */
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .badge {
+      background: #ebf8ff;
+      color: #2b6cb0;
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* ── Divider ── */
+    hr.section-divider {
+      border: none;
+      border-top: 2px solid #e2e8f0;
+      margin: 64px 0 0;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: #1a3a6e;
+      color: rgba(255,255,255,0.75);
+      padding: 36px 40px;
+      text-align: center;
+      font-size: 0.85rem;
+      margin-top: 80px;
+    }
+    footer strong { color: #fff; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .cover { padding: 50px 20px 40px; }
+      .page { padding: 0 16px 60px; }
+      nav { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ COVER -->
+<div class="cover">
+  <div class="cover-inner">
+    <div class="cover-badge">Systems Engineering · AI Implementation</div>
+    <h1>Monthly <span>AI Work Report</span></h1>
+    <p class="cover-subtitle">
+      A plain-English summary of what was built, automated, and explored
+      using Claude AI over the past month — and how each tool can
+      change the way your team works.
+    </p>
+    <div class="cover-meta">
+      <div><strong>Period:</strong> May 2026</div>
+      <div><strong>Author:</strong> Alberto Donoso</div>
+      <div><strong>AI Partner:</strong> Claude (Anthropic)</div>
+      <div><strong>Focus:</strong> Systems Engineering Workflows</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ NAV -->
+<nav>
+  <ul>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#uc1">1 · Excel & Data</a></li>
+    <li><a href="#uc2">2 · Presentations</a></li>
+    <li><a href="#uc3">3 · Cowork & Skills</a></li>
+    <li><a href="#uc4">4 · Agents & LinkedIn</a></li>
+    <li><a href="#uc5">5 · App Building</a></li>
+    <li><a href="#uc6">6 · Chatbot & RAG</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════ PAGE -->
+<div class="page">
+
+  <!-- OVERVIEW -->
+  <section id="overview">
+    <div class="section-header">
+      <div class="section-number" style="background: linear-gradient(135deg,#2d3748,#4a5568);">&#9679;</div>
+      <div class="section-title">
+        <h2>Executive Summary</h2>
+        <p>What AI helped accomplish this month, at a glance</p>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="stat-card">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Use Cases Explored</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">1</div>
+        <div class="stat-label">Application Shipped to Production</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">~0</div>
+        <div class="stat-label">Lines of Code Written Manually</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Hours of Learning Compressed</div>
+      </div>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h4>What is Claude?</h4>
+        <p>Claude is an AI assistant made by Anthropic. Think of it as a brilliant colleague who can read, write, analyse, and code — available 24/7 inside a chat window or directly inside your tools.</p>
+      </div>
+      <div class="intro-card">
+        <h4>Why Systems Engineering?</h4>
+        <p>Systems engineers constantly produce documents, data, presentations, and process models. AI can draft, check, and automate all of these — freeing engineers to focus on decisions, not formatting.</p>
+      </div>
+      <div class="intro-card">
+        <h4>How This Report Works</h4>
+        <p>Each section below covers one real use case: what it is, why it matters, and a step-by-step guide so anyone on the team can replicate it today.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- USE CASE 1 — EXCEL -->
+  <section id="uc1">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div class="section-title">
+        <h2>Claude at Excel: Write, Revise, Format & Analyse Data</h2>
+        <p>Turning spreadsheets from a chore into a conversation</p>
+      </div>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h4>What it is</h4>
+        <p>You describe what you want in plain English — "create a risk register for a satellite integration project" — and Claude writes the spreadsheet, formulas, conditional formatting, and summaries for you.</p>
+      </div>
+      <div class="intro-card">
+        <h4>Why it matters</h4>
+        <p>Engineers spend hours building spreadsheets from scratch. With AI, a complex requirements-traceability matrix or budget tracker is ready in minutes, already formatted and formula-checked.</p>
+      </div>
+      <div class="intro-card">
+        <h4>What was done</h4>
+        <p>Created structured data tables, wrote Excel formulas on demand, revised existing sheets for consistency, and produced automated summaries from raw datasets — all through conversation.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;color:#2d3748;margin-bottom:16px;font-weight:700;">Step-by-Step Guide</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">
+          <h3>Open Claude.ai (or the Claude Code CLI)</h3>
+          <p>Go to <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> in any browser and sign in. No installation needed — it works like a chat window.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">
+          <h3>Describe your spreadsheet in plain English</h3>
+          <p>Type what you need. Example: <em>"Create an Excel table with columns: System ID, Requirement, Verification Method, Status. Pre-fill 5 example rows for a power subsystem."</em></p>
+          <div class="tip">Tip: The more context you give (project name, number of rows, column types), the more accurate the first result.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">
+          <h3>Ask for formulas or analysis</h3>
+          <p>Follow up with: <em>"Add a column that auto-colours rows red if Status = 'Fail', green if 'Pass'. Write the conditional formatting rule."</em> Claude will give you the exact rule to paste into Excel.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-body">
+          <h3>Upload an existing spreadsheet for review</h3>
+          <p>Click the paperclip icon, attach your <code>.xlsx</code> file, and ask: <em>"Find inconsistencies in the budget column and suggest corrections."</em> Claude reads the data and reports its findings.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">5</div>
+        <div class="step-body">
+          <h3>Export and use</h3>
+          <p>Claude returns clean tables you can paste directly into Excel or Google Sheets. For complex sheets, it can write a Python or VBA script that generates the file automatically.</p>
+          <div class="tip">Tip: Ask "now write a Python script that generates this file automatically" to create a repeatable, one-click solution.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace-bar">
+      <div>
+        <div class="ws-label">Primary Workspace</div>
+        <div class="ws-name">Claude.ai — Chat Interface</div>
+      </div>
+      <a href="https://claude.ai" target="_blank" rel="noopener">Open Workspace →</a>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- USE CASE 2 — PRESENTATIONS -->
+  <section id="uc2">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div class="section-title">
+        <h2>Creating Presentations from Templates and Conversations</h2>
+        <p>From a rough idea to a polished slide deck in minutes</p>
+      </div>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h4>What it is</h4>
+        <p>Describe a presentation topic — or paste notes from a meeting — and Claude generates a fully structured slide outline, speaker notes, and content ready to drop into PowerPoint or Google Slides.</p>
+      </div>
+      <div class="intro-card">
+        <h4>Why it matters</h4>
+        <p>Presentation preparation typically takes hours. AI compresses that to minutes while maintaining professional structure: executive summary, technical detail, risks, and next steps — already in the right order.</p>
+      </div>
+      <div class="intro-card">
+        <h4>What was done</h4>
+        <p>Generated slide outlines from engineering review notes, adapted a company template to new project data, and produced speaker notes tailored to a non-technical executive audience.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;color:#2d3748;margin-bottom:16px;font-weight:700;">Step-by-Step Guide</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">
+          <h3>Give Claude the context</h3>
+          <p>Start with: <em>"I need a 10-slide presentation for a CDR (Critical Design Review). Audience: programme managers with no deep technical knowledge. Topic: integration status of the thermal control subsystem."</em></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">
+          <h3>Provide raw material</h3>
+          <p>Paste in your meeting notes, status updates, or bullet points. Claude transforms loose information into a logical narrative: problem → solution → evidence → risks → next steps.</p>
+          <div class="tip">Tip: Even badly formatted notes work. Claude will reorganise and tighten the language automatically.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">
+          <h3>Request a structured outline</h3>
+          <p>Ask: <em>"Give me the outline as: Slide number | Title | 3 bullet points | Speaker note."</em> This format pastes neatly into PowerPoint's outline view.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-body">
+          <h3>Apply your company template</h3>
+          <p>Upload your <code>.pptx</code> template and say: <em>"Use this template's fonts and colours. Replace the placeholder text with the content above."</em> Claude produces the updated text block-by-block.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">5</div>
+        <div class="step-body">
+          <h3>Iterate on tone and depth</h3>
+          <p>Say <em>"make slide 3 less technical — the audience won't know what TRL means"</em> and Claude rewrites just that slide. You never start from scratch again.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace-bar">
+      <div>
+        <div class="ws-label">Primary Workspace</div>
+        <div class="ws-name">Claude.ai — Chat Interface (with file upload)</div>
+      </div>
+      <a href="https://claude.ai" target="_blank" rel="noopener">Open Workspace →</a>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- USE CASE 3 — COWORK / SKILLS -->
+  <section id="uc3">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div class="section-title">
+        <h2>Cowork Space with Reusable Skills</h2>
+        <p>Building a shared AI workspace your whole team can plug into</p>
+      </div>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h4>What it is</h4>
+        <p>A "skill" is a saved, reusable instruction set — like a macro but for AI. You write the skill once ("always use our risk scoring scale", "always follow our document naming convention") and every future session applies it automatically.</p>
+      </div>
+      <div class="intro-card">
+        <h4>Why it matters</h4>
+        <p>Without reusable skills, every engineer has to re-explain company standards to the AI each time. Skills encode your team's knowledge once, so the AI always behaves like a trained team member.</p>
+      </div>
+      <div class="intro-card">
+        <h4>What was done</h4>
+        <p>Defined custom skills inside Claude Code for document formatting, risk categorisation, and status-report generation. These are now available to every team session automatically.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;color:#2d3748;margin-bottom:16px;font-weight:700;">Step-by-Step Guide</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">
+          <h3>Identify a recurring task</h3>
+          <p>Think about something your team does repeatedly: writing a weekly status report, categorising defects, formatting meeting minutes. That is a candidate skill.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">
+          <h3>Write the skill as a CLAUDE.md file</h3>
+          <p>In your project folder, create a file called <code>CLAUDE.md</code>. Inside, describe the rules Claude should always follow: tone, format, company terminology, and any standard templates to use.</p>
+          <div class="tip">Example entry: "When producing a risk register always use columns: ID, Description, Likelihood (1–5), Impact (1–5), Mitigation Owner."</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">
+          <h3>Share the project with your team</h3>
+          <p>Commit the <code>CLAUDE.md</code> to a shared Git repository (e.g. GitHub). Every team member who opens the project with Claude Code instantly has access to the same skills — no extra configuration needed.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-body">
+          <h3>Add custom slash commands</h3>
+          <p>In <code>.claude/commands/</code>, add a file like <code>weekly-report.md</code> with a template prompt. Any team member can then type <code>/weekly-report</code> in the AI chat to generate a formatted report instantly.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">5</div>
+        <div class="step-body">
+          <h3>Iterate and expand</h3>
+          <p>As the team uses the skills, add new ones based on feedback. Skills evolve with your processes — they are living documents, not one-time setups.</p>
+          <div class="tip">Tip: Treat CLAUDE.md like an onboarding document. If a new hire needs to know it, the AI needs to know it too.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace-bar">
+      <div>
+        <div class="ws-label">Primary Workspace</div>
+        <div class="ws-name">Claude Code — CLI / Web (claude.ai/code)</div>
+      </div>
+      <a href="https://claude.ai/code" target="_blank" rel="noopener">Open Workspace →</a>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- USE CASE 4 — AGENTS / LINKEDIN -->
+  <section id="uc4">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <div class="section-title">
+        <h2>Agents Acting on Your Behalf: Web Research & LinkedIn</h2>
+        <p>An AI that reads the internet and acts on professional platforms for you</p>
+      </div>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h4>What it is</h4>
+        <p>An AI "agent" is Claude running a series of tasks autonomously: it can search the web for relevant news, summarise competitor activity, draft LinkedIn posts, and prepare outreach messages — all from a single high-level instruction.</p>
+      </div>
+      <div class="intro-card">
+        <h4>Why it matters</h4>
+        <p>Monitoring industry developments, preparing thought-leadership content, and maintaining a professional LinkedIn presence are high-value but time-consuming. An agent does the grunt work; you approve and publish.</p>
+      </div>
+      <div class="intro-card">
+        <h4>What was done</h4>
+        <p>Configured Claude Code with web-search capabilities to research industry topics, draft LinkedIn posts based on findings, and prepare personalised connection messages — ready for human review before sending.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;color:#2d3748;margin-bottom:16px;font-weight:700;">Step-by-Step Guide</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">
+          <h3>Enable web search in Claude Code</h3>
+          <p>In the Claude Code settings, connect a web-search MCP (Model Context Protocol) server. This gives the agent the ability to read live internet data — news, job postings, company pages — on demand.</p>
+          <div class="tip">MCP is a standard connector: think of it like a plugin that gives the AI a new superpower. No coding required to enable it.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">
+          <h3>Define a research task</h3>
+          <p>Tell the agent: <em>"Search for the top 5 news items this week about model-based systems engineering. Summarise each in two sentences, note the source, and flag any items relevant to space programmes."</em></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">
+          <h3>Ask it to draft LinkedIn content</h3>
+          <p>Continue: <em>"Now write a LinkedIn post sharing the most interesting finding. Tone: professional but accessible. Include a question to encourage comments. Keep it under 200 words."</em></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-body">
+          <h3>Prepare outreach drafts</h3>
+          <p>Ask: <em>"Draft a connection request message for a systems engineering director at an aerospace firm I want to meet at a conference. Reference our shared interest in MBSE."</em> The agent writes; you personalise and send.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">5</div>
+        <div class="step-body">
+          <h3>Always review before publishing</h3>
+          <p>The agent prepares; a human approves. This "human-in-the-loop" step ensures accuracy, tone, and compliance. The AI handles volume; you handle judgement.</p>
+          <div class="tip">Important: Never configure an agent to post or send without a human review step. Speed is not worth the risk of an unintended public message.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace-bar">
+      <div>
+        <div class="ws-label">Primary Workspace</div>
+        <div class="ws-name">Claude Code + Web Search MCP Server</div>
+      </div>
+      <a href="https://claude.ai/code" target="_blank" rel="noopener">Open Workspace →</a>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- USE CASE 5 — APP BUILDING -->
+  <section id="uc5">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <div class="section-title">
+        <h2>Application Building Using Claude Code</h2>
+        <p>From idea to deployed web app — this month's shipped product</p>
+      </div>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h4>What it is</h4>
+        <p>Claude Code is an AI assistant that lives in your terminal and can write, edit, test, and deploy real software. You describe the app you want; Claude writes every line of code and handles the complexity.</p>
+      </div>
+      <div class="intro-card">
+        <h4>What was shipped</h4>
+        <p><strong>SAI Workflow Runner</strong> — a web application that lets engineers submit tasks to five different AI workflows (summarise, classify, translate, extract entities, Q&A) and rate the results. Now live and collecting feedback.</p>
+      </div>
+      <div class="intro-card">
+        <h4>Why it matters</h4>
+        <p>Building this app the traditional way would have required hiring a developer and weeks of work. Claude Code delivered a production-quality application in a single session, with error handling, a feedback system, and clean UI.</p>
+      </div>
+    </div>
+
+    <div class="badges">
+      <span class="badge">Python / Streamlit</span>
+      <span class="badge">REST API Integration</span>
+      <span class="badge">User Feedback Logging</span>
+      <span class="badge">Bearer Token Auth</span>
+      <span class="badge">Dark-Theme UI</span>
+      <span class="badge">CSV Data Capture</span>
+    </div>
+
+    <h3 style="font-size:1rem;color:#2d3748;margin:24px 0 16px;font-weight:700;">Step-by-Step Guide: Build Your Own App with Claude Code</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">
+          <h3>Install Claude Code</h3>
+          <p>In a terminal, run: <code>npm install -g @anthropic-ai/claude-code</code>. Then type <code>claude</code> to start. It connects to your files and can read, write, and run code on your machine.</p>
+          <div class="tip">Alternatively, use the web version at claude.ai/code — no installation needed.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">
+          <h3>Describe your application</h3>
+          <p>Tell Claude what you need in plain language: <em>"Build a web app where my team can submit a document and get an AI summary. It should log every submission and show the result on screen."</em></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">
+          <h3>Review and approve changes</h3>
+          <p>Claude lists every file it will create or modify before acting. You confirm. This gives you full visibility — no surprises, no hidden changes.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-body">
+          <h3>Run the app and test it</h3>
+          <p>Claude runs the app, checks it works, and fixes any errors — often without you needing to do anything. If something looks wrong visually, describe it and Claude adjusts.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">5</div>
+        <div class="step-body">
+          <h3>Commit and deploy</h3>
+          <p>Claude writes the Git commit message and pushes to your repository. From there, services like Streamlit Cloud or AWS deploy it automatically. Your app is live.</p>
+          <div class="tip">The SAI Workflow Runner was built this way: one conversation, one commit, one deployed application.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace-bar">
+      <div>
+        <div class="ws-label">Shipped Application · Repository</div>
+        <div class="ws-name">SAI Workflow Runner — betodon96-svg/sai-workflow-app</div>
+      </div>
+      <a href="https://github.com/betodon96-svg/sai-workflow-app" target="_blank" rel="noopener">View on GitHub →</a>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- USE CASE 6 — CHATBOT / RAG -->
+  <section id="uc6">
+    <div class="section-header">
+      <div class="section-number">6</div>
+      <div class="section-title">
+        <h2>Chatbot Building with RAG and Local LLMs</h2>
+        <p>An AI that knows your documents — and can run entirely on-premises</p>
+      </div>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-card">
+        <h4>What is RAG?</h4>
+        <p>RAG stands for Retrieval-Augmented Generation. Instead of the AI only knowing what it was trained on, you feed it your own documents (standards, manuals, procedures). It can then answer questions using your specific knowledge base.</p>
+      </div>
+      <div class="intro-card">
+        <h4>What is a Local LLM?</h4>
+        <p>A Local LLM is an AI model running on your own computer or server — not in the cloud. Your documents and queries never leave your network. Critical for sensitive or classified engineering data.</p>
+      </div>
+      <div class="intro-card">
+        <h4>What was done</h4>
+        <p>Built the architecture for a chatbot using Claude Code: a RAG pipeline that indexes internal documents, plus a local LLM option (via Ollama) for air-gapped or confidential environments.</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1rem;color:#2d3748;margin-bottom:16px;font-weight:700;">Step-by-Step Guide: Build a Chatbot That Knows Your Documents</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-dot">1</div>
+        <div class="step-body">
+          <h3>Gather your source documents</h3>
+          <p>Collect the PDFs, Word files, or Confluence pages you want the chatbot to know about — engineering standards, process guides, lessons learned, ICD documents. Quality in = quality out.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">2</div>
+        <div class="step-body">
+          <h3>Build the document index (the "retrieval" part of RAG)</h3>
+          <p>Claude Code generates a Python script that reads your documents, breaks them into searchable chunks, and stores them in a vector database (like ChromaDB or Qdrant). This index is what the chatbot searches when you ask a question.</p>
+          <div class="tip">Tip: A vector database stores meaning, not just keywords. Asking "how do I handle a thermal anomaly?" will find the right procedure even if it says "thermal exceedance" in the document.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">3</div>
+        <div class="step-body">
+          <h3>Choose your AI engine: Cloud or Local</h3>
+          <p><strong>Cloud option:</strong> use the Claude API — best quality, requires internet.
+          <br/><strong>Local option:</strong> install <a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a> and run a model like Llama 3 or Mistral on your own machine. Zero data leaves your network.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">4</div>
+        <div class="step-body">
+          <h3>Build the chat interface</h3>
+          <p>Claude Code creates a Streamlit or Gradio web interface. Engineers type questions in plain English; the chatbot searches the document index, pulls the relevant passages, and generates a precise answer with source references.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">5</div>
+        <div class="step-body">
+          <h3>Test with real questions</h3>
+          <p>Ask the chatbot questions your team actually has: <em>"What is the approved torque value for M6 fasteners in the structural assembly?"</em> or <em>"What does procedure SE-0042 say about anomaly reporting timelines?"</em></p>
+          <div class="tip">If answers are wrong or incomplete, improve the document quality or chunking strategy — not the AI model. Garbage in, garbage out applies here too.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-dot">6</div>
+        <div class="step-body">
+          <h3>Deploy for the team</h3>
+          <p>The chatbot runs as a web app on your internal server. Team members access it from a browser like any internal tool. No AI expertise needed to use it — just type and ask.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="workspace-bar">
+      <div>
+        <div class="ws-label">Primary Workspace</div>
+        <div class="ws-name">Claude Code + Ollama (local LLM) + ChromaDB (document index)</div>
+      </div>
+      <a href="https://claude.ai/code" target="_blank" rel="noopener">Open Claude Code →</a>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- NEXT STEPS -->
+  <section id="next">
+    <div class="section-header">
+      <div class="section-number" style="background: linear-gradient(135deg,#276749,#38a169);">&#10003;</div>
+      <div class="section-title">
+        <h2>Next Steps & Recommendations</h2>
+        <p>Where to go from here</p>
+      </div>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-card" style="border-left-color:#38a169;">
+        <h4 style="color:#38a169;">Short Term (Next 30 Days)</h4>
+        <p>Connect the SAI Workflow Runner to real API endpoints. Pilot the document chatbot with one engineering team. Run the first weekly LinkedIn agent briefing.</p>
+      </div>
+      <div class="intro-card" style="border-left-color:#d69e2e;">
+        <h4 style="color:#d69e2e;">Medium Term (60–90 Days)</h4>
+        <p>Define and codify 5 reusable team skills in CLAUDE.md. Build a second internal application (e.g. anomaly tracker or lessons-learned browser). Expand the RAG chatbot to cover all programme documents.</p>
+      </div>
+      <div class="intro-card" style="border-left-color:#e53e3e;">
+        <h4 style="color:#e53e3e;">Long Term (6 Months)</h4>
+        <p>Establish a shared AI cowork space accessible to all systems engineers. Evaluate fully autonomous agent workflows for routine reporting. Measure time savings and quality improvements formally.</p>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page -->
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    <strong>Monthly AI Work Report — May 2026</strong><br/>
+    Produced with Claude (Anthropic) as part of the AI Implementation programme for Systems Engineering.<br/>
+    All tools referenced are available at <strong>claude.ai</strong> and <strong>claude.ai/code</strong>.
+  </p>
+</footer>
+
+</body>
+</html>
