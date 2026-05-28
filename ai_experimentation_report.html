@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Experimentation · Capgemini Engineering SE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:    #002060;
+  --blue:    #0070C0;
+  --teal:    #006B6B;
+  --amber:   #7B4F00;
+  --green:   #1A5E38;
+  --coral:   #8B1A1A;
+  --offwhite:#F7F8FA;
+  --ink:     #1A1C22;
+  --mid:     #52586A;
+  --light:   #E4E8F0;
+  --bg-alt:  #FAFBFC;
+  --ln:      #E0E4EC;
+  --lb:      #E6EEF7;
+  --lg:      #E6F4EC;
+  --la:      #FFF4E0;
+  --lt:      #E0F4F4;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Instrument Sans', sans-serif; background: var(--ink); }
+
+.shell { display: flex; height: 100vh; overflow: hidden; }
+
+.sidebar {
+  width: 230px; min-width: 230px;
+  background: #090D18;
+  border-right: 1px solid #1E2438;
+  display: flex; flex-direction: column;
+  overflow-y: auto; z-index: 10;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: #2A3050; }
+
+.sb-logo { padding: 22px 20px 16px; border-bottom: 1px solid #1E2438; }
+.sb-logo .org { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--blue); letter-spacing: 0.18em; text-transform: uppercase; }
+.sb-logo .title { font-family: 'DM Serif Display', serif; font-size: 15px; color: #EEF2FA; margin-top: 5px; line-height: 1.3; }
+.sb-logo .sub { font-size: 11px; color: #4A5270; margin-top: 3px; }
+
+.sb-section { padding: 10px 0; border-bottom: 1px solid #151928; }
+.sb-section-label { font-size: 8.5px; font-weight: 600; color: #363C54; text-transform: uppercase; letter-spacing: 0.16em; padding: 0 20px 7px; }
+.sb-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 20px; cursor: pointer; border: none; background: none; width: 100%; text-align: left; transition: background 0.15s; border-right: 2px solid transparent; }
+.sb-item:hover { background: #131828; }
+.sb-item.active { background: #141C32; border-right-color: var(--blue); }
+.sb-num { font-family: 'DM Mono', monospace; font-size: 9.5px; color: #363C54; padding-top: 1px; flex-shrink: 0; }
+.sb-item.active .sb-num { color: var(--blue); }
+.sb-label { font-size: 11px; color: #6A728A; line-height: 1.35; }
+.sb-item.active .sb-label { color: #EEF2FA; }
+
+.main { flex: 1; overflow: hidden; position: relative; background: var(--offwhite); }
+
+.page { display: none; height: 100vh; overflow-y: auto; padding: 44px 52px 80px; }
+.page.active { display: block; }
+.page::-webkit-scrollbar { width: 4px; }
+.page::-webkit-scrollbar-thumb { background: var(--light); border-radius: 2px; }
+
+.pg-tag { font-family: 'DM Mono', monospace; font-size: 9.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.16em; color: var(--blue); margin-bottom: 10px; }
+.pg-title { font-family: 'DM Serif Display', serif; font-size: 34px; color: var(--ink); line-height: 1.12; margin-bottom: 8px; }
+.pg-title em { color: var(--blue); font-style: italic; }
+.pg-sub { font-size: 13.5px; color: var(--mid); line-height: 1.65; margin-bottom: 28px; max-width: 700px; }
+.divider { height: 1px; background: var(--ln); margin: 24px 0; }
+
+.sec-label { font-size: 10px; font-weight: 600; color: var(--mid); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; margin-top: 24px; }
+
+.callout { border-left: 3px solid var(--blue); background: var(--lb); padding: 14px 18px; margin-bottom: 22px; }
+.callout p { font-size: 12.5px; color: #0D3060; line-height: 1.7; }
+.callout strong { font-weight: 600; }
+.callout.amber { border-color: var(--amber); background: var(--la); }
+.callout.amber p { color: #5A3800; }
+.callout.green { border-color: var(--green); background: var(--lg); }
+.callout.green p { color: #133D25; }
+.callout.teal  { border-color: var(--teal); background: var(--lt); }
+.callout.teal  p { color: #004040; }
+.callout.navy  { border-color: var(--navy); background: #EEF0F8; }
+.callout.navy  p { color: var(--navy); }
+
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+
+.card { background: #fff; border: 1px solid var(--ln); border-radius: 6px; padding: 18px 20px; }
+.card-lbl { font-family: 'DM Mono', monospace; font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 7px; }
+.card h3 { font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 7px; }
+.card p  { font-size: 12px; color: var(--mid); line-height: 1.65; }
+.card ul { padding-left: 16px; }
+.card li { font-size: 12px; color: var(--mid); line-height: 1.7; }
+.card.b-blue  { border-top: 3px solid var(--blue); }
+.card.b-navy  { border-top: 3px solid var(--navy); }
+.card.b-green { border-top: 3px solid var(--green); }
+.card.b-amber { border-top: 3px solid var(--amber); }
+.card.b-teal  { border-top: 3px solid var(--teal); }
+.card.b-coral { border-top: 3px solid var(--coral); }
+
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tbl th { background: var(--ink); color: #EEF2FA; font-size: 10.5px; font-weight: 500; padding: 9px 13px; text-align: left; }
+.tbl td { padding: 9px 13px; border-bottom: 1px solid var(--ln); color: var(--ink); vertical-align: top; line-height: 1.55; }
+.tbl tr:nth-child(even) td { background: var(--bg-alt); }
+
+.domain-row { background: #fff; border: 1px solid var(--ln); border-radius: 6px; padding: 16px 20px; display: flex; gap: 20px; margin-bottom: 10px; transition: border-color 0.15s; }
+.domain-row:hover { border-color: var(--blue); }
+.dr-num { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--light); line-height: 1; min-width: 32px; flex-shrink: 0; }
+.dr-body { flex: 1; }
+.dr-tag { font-family: 'DM Mono', monospace; font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; margin-bottom: 4px; }
+.dr-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+.dr-desc  { font-size: 12px; color: var(--mid); line-height: 1.65; }
+
+.cap-hdr { display: grid; grid-template-columns: 22% 1fr 18% 14%; background: var(--ink); border-radius: 6px 6px 0 0; padding: 0; }
+.cap-hdr span { padding: 9px 13px; font-size: 10.5px; font-weight: 500; color: rgba(238,242,250,0.7); letter-spacing: 0.05em; text-transform: uppercase; }
+.cap-row { display: grid; grid-template-columns: 22% 1fr 18% 14%; border-bottom: 1px solid var(--ln); background: #fff; transition: background 0.15s; }
+.cap-row:nth-child(even) { background: var(--bg-alt); }
+.cap-row:hover { background: var(--lb); }
+.cap-row > div { padding: 10px 13px; font-size: 12px; color: var(--mid); }
+.cap-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+.cap-cat  { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--mid); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.08em; }
+.cap-status { display: flex; align-items: center; gap: 6px; font-family: 'DM Mono', monospace; font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.cap-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+.controls { position: fixed; bottom: 20px; right: 24px; display: flex; gap: 6px; z-index: 100; }
+.ctrl { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #1E2438; background: var(--ink); color: #EEF2FA; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+.ctrl:hover { background: var(--blue); border-color: var(--blue); }
+.counter { background: var(--ink); border: 1px solid #1E2438; border-radius: 20px; padding: 0 14px; font-family: 'DM Mono', monospace; font-size: 10.5px; color: #4A5270; display: flex; align-items: center; }
+
+.hero-tag { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--blue); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 14px; }
+.hero-title { font-family: 'DM Serif Display', serif; font-size: 48px; color: var(--ink); line-height: 1.08; margin-bottom: 8px; }
+.hero-title em { color: var(--blue); font-style: italic; }
+.hero-sub { font-size: 14px; color: var(--mid); margin-bottom: 36px; }
+
+.fw-row { display: flex; gap: 0; margin-bottom: 14px; }
+.fw-box { flex: 1; padding: 18px 22px; border: 1px solid var(--ln); background: #fff; }
+.fw-box:first-child { border-radius: 6px 0 0 6px; }
+.fw-box:last-child  { border-radius: 0 6px 6px 0; }
+.fw-num { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--light); line-height: 1; margin-bottom: 7px; }
+.fw-title { font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+.fw-desc  { font-size: 11.5px; color: var(--mid); line-height: 1.6; }
+.fw-box.s1 { border-left: 3px solid var(--blue); }
+.fw-box.s2 { border-left: 3px solid var(--navy); }
+.fw-box.s3 { border-left: 3px solid var(--teal); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<nav class="sidebar">
+  <div class="sb-logo">
+    <div class="org">Capgemini Engineering · SE</div>
+    <div class="title">AI Experimentation</div>
+    <div class="sub">Systems Engineering · 2026</div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-label">Overview</div>
+    <button class="sb-item active" onclick="goTo(0)">
+      <span class="sb-num">00</span><span class="sb-label">Positioning &amp; Modes</span>
+    </button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-label" style="color:var(--blue);opacity:0.9;">Track 1 · Augment</div>
+    <button class="sb-item" onclick="goTo(1)">
+      <span class="sb-num">01</span><span class="sb-label">Excel &amp; Data Intelligence</span>
+    </button>
+    <button class="sb-item" onclick="goTo(2)">
+      <span class="sb-num">02</span><span class="sb-label">Presentation Building</span>
+    </button>
+    <button class="sb-item" onclick="goTo(3)">
+      <span class="sb-num">03</span><span class="sb-label">Cowork &amp; Reusable Skills</span>
+    </button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-label" style="color:var(--blue);opacity:0.9;">Track 2 · Automate</div>
+    <button class="sb-item" onclick="goTo(4)">
+      <span class="sb-num">04</span><span class="sb-label">Agents &amp; LinkedIn</span>
+    </button>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-label" style="color:var(--blue);opacity:0.9;">Track 3 · Build</div>
+    <button class="sb-item" onclick="goTo(5)">
+      <span class="sb-num">05</span><span class="sb-label">Application Building</span>
+    </button>
+    <button class="sb-item" onclick="goTo(6)">
+      <span class="sb-num">06</span><span class="sb-label">Chatbot &amp; RAG</span>
+    </button>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- PAGE 00 -->
+<div class="page active" id="p0">
+  <div class="hero-tag">AI Experimentation · Capgemini Engineering · Systems Engineering</div>
+  <div class="hero-title">AI at work: <em>six experiments</em><br>in systems engineering</div>
+  <div class="hero-sub">Hands-on exploration of Claude across productivity, automation, and application building — from first conversation to deployed product.</div>
+
+  <div class="callout navy">
+    <p><strong>Companion document.</strong> This report is the experimental record for the AI System Design playbook. That document establishes the theoretical framework — two tracks, six research domains, four competence pillars, a five-phase development cycle. This document records what was actually built and what each use case looks like in practice. The two are designed to be read together.</p>
+  </div>
+
+  <div class="sec-label">Three entry points — Chat, Cowork, Code</div>
+  <div class="fw-row">
+    <div class="fw-box s1">
+      <div class="fw-num">01</div>
+      <div class="fw-title">Claude Chat — claude.ai</div>
+      <div class="fw-desc">Conversational interface in any browser. Output only — text you review and use manually. Files can be attached for analysis. No direct connection to your systems or applications. Best for: one-off tasks, drafting documents, explanation, brainstorming.</div>
+    </div>
+    <div class="fw-box s2">
+      <div class="fw-num">02</div>
+      <div class="fw-title">Claude Cowork — Projects</div>
+      <div class="fw-desc">Chat with persistent memory. Skills, standards, and templates defined once, applied across every session automatically. The AI behaves like a trained team member from the first message. Best for: recurring team workflows, standards enforcement, shared institutional knowledge.</div>
+    </div>
+    <div class="fw-box s3">
+      <div class="fw-num">03</div>
+      <div class="fw-title">Claude Code — Terminal / Desktop App</div>
+      <div class="fw-desc">Claude connected directly to your files, applications, and systems. Reads and writes files, builds and deploys software, controls desktop applications — without copy-paste. Also available as a native Mac/Windows desktop app integrated with Excel and PowerPoint. Best for: automation, live document manipulation, application building.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="sec-label">Six experiments — mapped to tracks</div>
+  <div class="g3">
+    <div class="card b-blue">
+      <div class="card-lbl" style="color:var(--blue)">Track 1 · Augment · 01</div>
+      <h3>Excel &amp; Data Intelligence</h3>
+      <p>Logical checks, quality assessment, standardised model generation — RTM, risk registers, WBS. Live connection via Claude Desktop App. No copy-paste.</p>
+    </div>
+    <div class="card b-blue">
+      <div class="card-lbl" style="color:var(--blue)">Track 1 · Augment · 02</div>
+      <h3>Presentation Building</h3>
+      <p>Narrative generation from raw engineering notes. Audience calibration. Template application. Speaker notes. Direct PowerPoint integration via desktop app.</p>
+    </div>
+    <div class="card b-blue">
+      <div class="card-lbl" style="color:var(--blue)">Track 1 · Augment · 03</div>
+      <h3>Cowork &amp; Reusable Skills</h3>
+      <p>CLAUDE.md skill files and custom slash commands. Shared via Git. The AI retains company standards, terminology, and templates across every session and every team member.</p>
+    </div>
+    <div class="card b-navy">
+      <div class="card-lbl" style="color:var(--navy)">Track 2 · Automate · 04</div>
+      <h3>Agents &amp; LinkedIn</h3>
+      <p>Web-search agent for industry monitoring. LinkedIn post drafting from live research findings. Personalised outreach drafts. Human review before any action is taken.</p>
+    </div>
+    <div class="card b-teal">
+      <div class="card-lbl" style="color:var(--teal)">Track 3 · Build · 05</div>
+      <h3>Application Building</h3>
+      <p>Two web applications shipped with Claude Code: SAI Workflow Runner and Ollama Document Chatbot. One conversation per application — production quality on first pass.</p>
+    </div>
+    <div class="card b-teal">
+      <div class="card-lbl" style="color:var(--teal)">Track 3 · Build · 06</div>
+      <h3>Chatbot &amp; RAG</h3>
+      <p>On-premises document chatbot deployed. Ollama local LLM + ChromaDB vector index. Answers engineering questions with source references. Zero data egress.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 01: EXCEL -->
+<div class="page" id="p1">
+  <div class="pg-tag">Track 1 · Augment · Experiment 01</div>
+  <div class="pg-title">Claude in <em>Excel</em></div>
+  <div class="pg-sub">Intelligent data work — from standardised model generation to live quality assurance inside your spreadsheets. The Claude desktop app integrates directly with Excel on Mac and Windows; Claude Code provides the same capability from the terminal.</div>
+
+  <div class="callout">
+    <p><strong>The value is not speed — it is judgment.</strong> Claude's primary contribution to Excel work is applying engineering logic to data that already exists: catching inconsistencies, flagging impossible values, checking cross-sheet integrity, and verifying that data conforms to standards before a document reaches formal review. This catches the kind of errors that are embarrassing to have flagged by a customer.</p>
+  </div>
+
+  <div class="sec-label">Standardised engineering models supported</div>
+  <div class="g4">
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Requirements</div>
+      <div style="font-size:12px;color:var(--ink)">Traceability Matrix · Verification matrix · Compliance tracker</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Risk &amp; Quality</div>
+      <div style="font-size:12px;color:var(--ink)">Risk register · Anomaly log · Non-conformance tracker · Defect log</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Programme</div>
+      <div style="font-size:12px;color:var(--ink)">WBS · Schedule tracker · ICD log · Configuration register</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Finance</div>
+      <div style="font-size:12px;color:var(--ink)">Budget tracker · Cost-to-complete forecast · Earned value model</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Step-by-step guide</div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">01</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Setup · Choose your entry point</div>
+      <div class="dr-title">Desktop App or Claude Code — both live, no copy-paste</div>
+      <div class="dr-desc">Claude Desktop App (claude.ai/download): install once on Mac or Windows; Claude integrates with your open Excel file directly. Claude Code (claude.ai/code or terminal): point it at any .xlsx file; it reads the structure and makes changes programmatically. Both provide a live, direct connection to your spreadsheet — no switching windows, no copying output.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">02</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Generate · Create a standardised model from scratch</div>
+      <div class="dr-title">Describe the model — Claude builds it</div>
+      <div class="dr-desc">Plain English is sufficient: "Create a Requirements Traceability Matrix for a power subsystem. Columns: Requirement ID, Description, Source, Verification Method, Responsible Engineer, Status. Apply colour coding: green = verified, amber = in progress, red = not started." Claude generates the structure, applies the formatting, and pre-fills example rows. A task that previously took half a day takes five minutes.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">03</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Validate · Logical consistency check on existing data</div>
+      <div class="dr-title">Ask Claude to check the logic of a completed spreadsheet</div>
+      <div class="dr-desc">Point Claude at an existing file and ask: "Check this risk register for logical errors. Flag any row where the risk score doesn't equal Likelihood × Impact. Also flag any mitigation marked 'complete' where residual risk is still rated High." Claude reads every row, applies the logic, and returns a list of inconsistencies with exact row references. This replaces two hours of manual cross-referencing before a formal review.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">04</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Quality · Data quality assessment across the workbook</div>
+      <div class="dr-title">Structured quality report — issue, location, suggested fix</div>
+      <div class="dr-desc">Ask: "Assess the quality of this budget tracker. Flag: missing values, duplicate cost IDs, any line item where sub-item totals don't match the parent, and any forecast dates that have already passed." Claude produces a structured report. You review and accept the fixes. The same logic applies to any engineering spreadsheet — the prompts are the quality criteria, not hard-coded rules.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">05</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Revise · Reformat to a new standard</div>
+      <div class="dr-title">Apply a new template or standard to existing data without data loss</div>
+      <div class="dr-desc">When a standard changes or a customer requires a different format: "Reformat this requirements matrix to the AS9100 template. Add the missing columns, rename the existing ones, and preserve all existing data. Create a backup tab with the original before making changes." Claude restructures the entire workbook. No manual reformatting, no risk of data loss through cut-and-paste operations between files.</div>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <p><strong>The logical-check use case is underutilised.</strong> Most engineers use AI to create documents faster. The higher-value use is verifying documents that already exist — particularly before a formal review. Claude catches what a tired engineer misses on a 200-row register at 5pm the day before a CDR.</p>
+  </div>
+</div>
+
+<!-- PAGE 02: PRESENTATIONS -->
+<div class="page" id="p2">
+  <div class="pg-tag">Track 1 · Augment · Experiment 02</div>
+  <div class="pg-title">Claude in <em>PowerPoint</em></div>
+  <div class="pg-sub">From raw engineering notes to polished, audience-calibrated presentations — with no copy-paste. The Claude desktop app integrates directly with PowerPoint on Mac and Windows.</div>
+
+  <div class="callout">
+    <p><strong>Narrative intelligence, not template filling.</strong> Claude understands that a CDR deck tells a different story than an executive briefing. Given the same technical content, it rewrites the narrative, selects the appropriate level of detail, and reframes risks for each audience automatically. This is the capability that separates it from simple slide-generation tools.</p>
+  </div>
+
+  <div class="sec-label">Capabilities unlocked</div>
+  <div class="g4">
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Audience</div>
+      <div style="font-size:12px;color:var(--ink)">Calibration from technical depth to executive summary. Automatic jargon replacement per audience.</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Template</div>
+      <div style="font-size:12px;color:var(--ink)">Corporate template application. Brand compliance. Master slide mapping. Logo and colour preservation.</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Narrative</div>
+      <div style="font-size:12px;color:var(--ink)">Logical story from loose notes. Problem → evidence → risks → next actions. Coherence checking.</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Speaker notes</div>
+      <div style="font-size:12px;color:var(--ink)">Context-aware notes tailored to the specific presenter's knowledge level and background.</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Step-by-step guide</div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">01</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Setup · Choose your entry point</div>
+      <div class="dr-title">Desktop App or Claude Code — both act inside the file directly</div>
+      <div class="dr-desc">Claude Desktop App: integrates with your open PowerPoint file — describe the deck, ask it to revise a slide, or apply your template. Claude Code (terminal or claude.ai/code): point it at a .pptx file; it reads the template structure, applies new content, reshuffles slides, and saves. The Code path is better for batch operations across multiple presentation files.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">02</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Input · Dump raw material — Claude builds the narrative</div>
+      <div class="dr-title">Paste notes, emails, or bullets — specify audience and purpose</div>
+      <div class="dr-desc">Provide the raw material and the goal: "These are my integration test results for the thermal subsystem. I need a 10-slide CDR pack for programme managers who are not thermal engineers. Highlight the two anomalies and the mitigations." Claude produces: context → findings → risks → mitigations → schedule impact → next actions. Even badly formatted notes work — Claude reorganises and tightens language automatically.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">03</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Template · Apply corporate branding without manual formatting</div>
+      <div class="dr-title">Point Claude Code at your .pptx template</div>
+      <div class="dr-desc">With Claude Code: "Use the branding from this template file. Apply the correct master slide, replace all placeholder text with the new content, add the project logo to the title slide." Claude reads the template structure and populates it correctly — no manual text-box dragging, no accidental font changes from pasting between files. One command reformats the entire deck.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">04</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Adapt · Audience calibration — two versions, one source</div>
+      <div class="dr-title">Rewrite specific slides for a different audience without touching the others</div>
+      <div class="dr-desc">"Rewrite slide 3 for the executive steering committee. Remove all TRL references, replace 'delta-V budget' with 'propellant margin', and lead with the cost implication rather than the technical detail." Claude rewrites that slide only. One deck, two audiences, no duplication of effort. The same principle applies to any slide where the audience differs from the primary technical readership.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">05</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Finish · Speaker notes tailored to the specific presenter</div>
+      <div class="dr-title">Notes that give the presenter what they actually need</div>
+      <div class="dr-desc">"Write speaker notes for each slide. The presenter is the systems engineering lead — technically strong but new to this programme. Include background context for slides 4 and 7 where the history matters." Claude writes notes that prepare the presenter for likely questions, not just summaries of what is already on the slide. The notes have different value than the deck — they are for the presenter, not the audience.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 03: COWORK -->
+<div class="page" id="p3">
+  <div class="pg-tag">Track 1 · Augment · Experiment 03</div>
+  <div class="pg-title">Cowork &amp; <em>Reusable Skills</em></div>
+  <div class="pg-sub">Building a shared AI workspace that retains your team's standards, templates, and institutional knowledge across every session — automatically.</div>
+
+  <div class="callout">
+    <p><strong>Without skills, every session starts from zero.</strong> Every engineer re-explains company standards, document formats, risk scales, and naming conventions. Skills encode that knowledge once — in a file Claude reads automatically at the start of every session — so the AI behaves like a trained team member from the first message, for everyone, every time.</p>
+  </div>
+
+  <div class="sec-label">Two mechanisms</div>
+  <div class="g2">
+    <div class="card b-blue">
+      <div class="card-lbl" style="color:var(--blue)">CLAUDE.md — Always-on project memory</div>
+      <h3>The instruction file Claude reads automatically</h3>
+      <p>A plain-text file in your project folder. Contains: company terminology, document standards, risk scoring scales, naming conventions, output format rules. Shared via Git so the entire team uses the same knowledge base with no separate configuration.</p>
+    </div>
+    <div class="card b-navy">
+      <div class="card-lbl" style="color:var(--navy)">Slash commands — One-keystroke workflow triggers</div>
+      <h3>Repeatable tasks without rewriting prompts</h3>
+      <p>Files stored in .claude/commands/. Each contains a prompt template for a recurring task — weekly status report, risk register update, meeting summary. Any team member types /weekly-report to trigger the full workflow immediately.</p>
+    </div>
+  </div>
+
+  <div class="sec-label">Step-by-step guide</div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">01</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Identify · Find the recurring task</div>
+      <div class="dr-title">Any task done repeatedly with consistent rules is a skill candidate</div>
+      <div class="dr-desc">Weekly status reports, risk register updates, defect categorisation, meeting minutes formatting, requirement review checklists. The test: "If a new team member needed to produce this output correctly on their first day, what rules would they need to know?" Every answer is a candidate entry for CLAUDE.md.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">02</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Write · Create the CLAUDE.md file</div>
+      <div class="dr-title">Encode your team's standards in plain English</div>
+      <div class="dr-desc">In your project root, create a file called CLAUDE.md. Write the rules in plain text: "When producing a risk register always use columns: ID, Description, Likelihood (1–5), Impact (1–5), Mitigation Owner. Calculate Risk Score as Likelihood × Impact. Flag any score above 12 in red." Treat it as an onboarding document — if a new hire needs to know it, the AI needs to know it too.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">03</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Share · Commit to Git</div>
+      <div class="dr-title">Every team member instantly has the same skills</div>
+      <div class="dr-desc">Commit CLAUDE.md to the project's Git repository. Every team member who opens the project with Claude Code automatically has access to the same skills — no separate configuration step, no re-explanation of standards. The skill file is version-controlled like any other project document. Changes to standards propagate to the whole team on the next pull.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">04</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Automate · Add slash commands</div>
+      <div class="dr-title">One keystroke triggers a complete recurring workflow</div>
+      <div class="dr-desc">Create .claude/commands/ in your project. Add a file named weekly-report.md containing the full prompt template. Any team member types /weekly-report to trigger the complete workflow — project data gathered, report formatted to standard, ready for review. Commands are committed to Git and distributed automatically alongside CLAUDE.md.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--blue)">
+    <div class="dr-num">05</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--blue)">Evolve · Treat skills as a living document</div>
+      <div class="dr-title">Skills compound — a well-maintained CLAUDE.md is institutional IP</div>
+      <div class="dr-desc">Each time a team member re-explains a standard to the AI, that explanation belongs in CLAUDE.md. Each time a recurring task is identified, a slash command should be created. After six months, a well-maintained CLAUDE.md represents the accumulated knowledge of how this team produces good output on this specific project. It has value independent of the AI — as a reference, an onboarding resource, and a quality standard.</div>
+    </div>
+  </div>
+
+  <div class="callout teal">
+    <p><strong>Skills are institutional IP.</strong> A well-maintained CLAUDE.md is not just AI configuration — it is a structured record of how the team works, what standards it applies, and what good output looks like. Maintain it with the same rigour as any other controlled project document.</p>
+  </div>
+</div>
+
+<!-- PAGE 04: AGENTS -->
+<div class="page" id="p4">
+  <div class="pg-tag">Track 2 · Automate · Experiment 04</div>
+  <div class="pg-title">Agents &amp; <em>LinkedIn</em></div>
+  <div class="pg-sub">An AI that reads the internet and prepares professional content and outreach on your behalf — with human review at every action point before anything is published or sent.</div>
+
+  <div class="callout amber">
+    <p><strong>Human-in-loop is a hard design constraint, not a recommendation.</strong> An agent that prepares LinkedIn content does so at speed and volume. A single unreviewed post with an inaccurate claim or wrong tone can cause professional damage that far outweighs the time saved. Configure the workflow so the agent prepares and a separate intentional human action publishes. This boundary must not be automated away.</p>
+  </div>
+
+  <div class="sec-label">Three agent functions</div>
+  <div class="g3">
+    <div class="card b-navy">
+      <div class="card-lbl" style="color:var(--navy)">Research</div>
+      <h3>Industry monitoring</h3>
+      <p>Searches the web for relevant news, papers, announcements, and competitor activity. Returns a structured briefing with sources, summaries, and relevance flags — without opening a browser.</p>
+    </div>
+    <div class="card b-navy">
+      <div class="card-lbl" style="color:var(--navy)">Content</div>
+      <h3>LinkedIn post drafting</h3>
+      <p>Takes research findings and drafts a ready-to-review post: correct tone, call to action, appropriate length. You edit the final 10% — voice and personal judgement — and publish from your account.</p>
+    </div>
+    <div class="card b-navy">
+      <div class="card-lbl" style="color:var(--navy)">Outreach</div>
+      <h3>Connection message drafts</h3>
+      <p>Writes personalised connection requests and follow-up messages based on target profile context and stated purpose. You personalise the details and send from your own LinkedIn account.</p>
+    </div>
+  </div>
+
+  <div class="sec-label">Step-by-step guide</div>
+
+  <div class="domain-row" style="border-left:3px solid var(--navy)">
+    <div class="dr-num">01</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--navy)">Setup · Connect a web-search MCP server</div>
+      <div class="dr-title">MCP gives Claude a new capability — like a plugin</div>
+      <div class="dr-desc">MCP (Model Context Protocol) is a standard connector. In Claude Code settings, add a web-search MCP server. This gives Claude the ability to read live internet data — news, LinkedIn profiles, company pages, arXiv papers — on demand. No coding required; it is a one-time configuration in the settings file. The same MCP pattern is used to connect Claude to other tools: GitHub, Google Drive, Notion.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--navy)">
+    <div class="dr-num">02</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--navy)">Research · Brief the agent like a research analyst</div>
+      <div class="dr-title">Structured scope produces a structured briefing</div>
+      <div class="dr-desc">"Search for the top 5 news items this week about model-based systems engineering. Summarise each in two sentences, note the source, and flag any items relevant to space programmes." The agent browses, reads, and returns a structured briefing. This replaces 30–60 minutes of manual scanning per week. The agent maps directly to the Domain 4 (Agent Architecture) research agenda — a concrete experiment in applied orchestration.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--navy)">
+    <div class="dr-num">03</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--navy)">Draft · LinkedIn post from research findings</div>
+      <div class="dr-title">The agent handles volume; you handle identity</div>
+      <div class="dr-desc">"Now write a LinkedIn post sharing the most interesting finding. Tone: professional but accessible. Include a question to encourage comments. Keep it under 200 words." The agent produces a ready-to-review piece. You edit the voice, add personal observations, and decide whether to publish. What you bring is judgment and authenticity — which cannot be delegated.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--navy)">
+    <div class="dr-num">04</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--navy)">Outreach · Prepare personalised connection drafts</div>
+      <div class="dr-title">The blank-page problem, solved at scale</div>
+      <div class="dr-desc">"Draft a connection request for a systems engineering director at an aerospace firm I want to meet at the conference. Reference our shared interest in MBSE." The agent writes; you personalise the specific details that only you would know — a shared colleague, a talk you both attended — and send from your LinkedIn account. The personal touch remains human; the drafting does not.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--amber)">
+    <div class="dr-num">05</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--amber)">Gate · Human review before any action</div>
+      <div class="dr-title">Preparation is automated; publication is not</div>
+      <div class="dr-desc">No content produced by the agent reaches a public platform without human review. Configure the workflow so the agent produces a draft for review, and a separate intentional human action — clicking publish, pressing send — is required for anything to go live. This is not caution — it is correct system design. The agent's contribution is preparation speed, not publication autonomy.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 05: APP BUILDING -->
+<div class="page" id="p5">
+  <div class="pg-tag">Track 3 · Build · Experiment 05</div>
+  <div class="pg-title">Application Building with <em>Claude Code</em></div>
+  <div class="pg-sub">Two web applications built and deployed. No professional developer required — one conversation per application, production quality on first pass.</div>
+
+  <div class="callout navy">
+    <p><strong>What changes about software development.</strong> Previously: hire a developer, write a specification, run sprint cycles, wait weeks. With Claude Code: the engineer defines what is needed (domain expertise), Claude implements it (technical execution). The specification conversation is the development process. This maps directly to the Think → Write → Run → Evaluate cycle in the AI System Design playbook.</p>
+  </div>
+
+  <div class="sec-label">Shipped applications</div>
+  <div class="cap-hdr">
+    <span>Application</span><span>Description &amp; features</span><span>Stack</span><span>Status</span>
+  </div>
+  <div style="border:1px solid var(--ln);border-top:none;border-radius:0 0 6px 6px;overflow:hidden;margin-bottom:24px">
+    <div class="cap-row">
+      <div>
+        <div class="cap-name">SAI Workflow Runner</div>
+        <div class="cap-cat">Web Application</div>
+      </div>
+      <div style="font-size:12px;color:var(--mid);line-height:1.6">Browser interface for submitting tasks to five AI workflows: summarise, classify, translate, extract entities, Q&amp;A. User feedback system (thumbs up/down) logs ratings and timestamps to CSV. Bearer token authentication. Single-session build.</div>
+      <div style="font-size:12px;color:var(--mid)">Python · Streamlit · httpx · REST API</div>
+      <div><div class="cap-status" style="color:var(--green)"><div class="cap-dot" style="background:var(--green)"></div>Deployed</div></div>
+    </div>
+    <div class="cap-row">
+      <div>
+        <div class="cap-name">Ollama Document Chatbot</div>
+        <div class="cap-cat">On-premises Chatbot</div>
+      </div>
+      <div style="font-size:12px;color:var(--mid);line-height:1.6">Private document chatbot running on local hardware. Indexes internal documents into a vector database and answers questions with source references. Zero data egress. Maps directly to the Dataset Engineering and Memory Architecture research domains.</div>
+      <div style="font-size:12px;color:var(--mid)">Python · Ollama · ChromaDB · Streamlit</div>
+      <div><div class="cap-status" style="color:var(--green)"><div class="cap-dot" style="background:var(--green)"></div>Deployed</div></div>
+    </div>
+  </div>
+
+  <div class="sec-label">Development process — step by step</div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">01</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Setup · Open Claude Code</div>
+      <div class="dr-title">No installation required for the web version</div>
+      <div class="dr-desc">Go to claude.ai/code in any browser — no installation needed. Or install the CLI: npm install -g @anthropic-ai/claude-code, then type claude. Claude connects to your local files immediately. This is the entry point to the Write phase of the development cycle.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">02</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Think · Describe the application</div>
+      <div class="dr-title">Specification in plain English — precision determines efficiency</div>
+      <div class="dr-desc">"Build a web app where my team can submit a document and get an AI summary. It should log every submission with a timestamp, show the result on screen, and let users rate the quality." The precision of this description determines how closely the first implementation matches what is needed. A well-specified requirement from a domain expert produces a near-complete first pass. Vague requirements produce expensive iteration.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">03</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Write · Review and approve before Claude acts</div>
+      <div class="dr-title">Claude shows its plan — you confirm before any file is changed</div>
+      <div class="dr-desc">Claude lists every file it will create or modify before acting. You read the plan and confirm. No hidden changes, no surprises. This is the safety mechanism that makes agentic coding trustworthy in practice. The Write phase is not a single pass — it is a tight loop of implement → test locally → refine until the product is ready to deploy.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">04</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Run · Claude starts the app, checks it, and fixes errors</div>
+      <div class="dr-title">No need to read error logs or understand stack traces</div>
+      <div class="dr-desc">Claude runs the application, checks it works, and resolves any errors that surface — without requiring the engineer to understand the technical failure. If something is wrong visually or functionally, describe it in plain English. Claude reads the error, diagnoses the cause, and applies the fix. The Run phase ends when the application is stable and behaving as specified.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">05</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Evaluate · Commit, deploy, and test against criteria</div>
+      <div class="dr-title">One command from working code to live application</div>
+      <div class="dr-desc">Claude writes the Git commit message, stages files, and pushes to the repository. Deployment services (Streamlit Cloud, Railway, AWS) pick up the code automatically. The Evaluate phase follows: test the deployed application against the criteria defined in Think. If it passes, the cycle is complete. Both applications were built this way — one conversation, one commit, one deployed product.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 06: RAG -->
+<div class="page" id="p6">
+  <div class="pg-tag">Track 3 · Build · Experiment 06</div>
+  <div class="pg-title">On-premises <em>Document Chatbot</em></div>
+  <div class="pg-sub">An AI that answers questions about your internal documents — running entirely on your own network, with zero data egress. Built and deployed as a production application.</div>
+
+  <div class="callout teal">
+    <p><strong>What was shipped.</strong> A fully deployed document chatbot: a production web application that indexes internal documents and answers engineering questions with source citations. Stack: Claude Code (build) · Ollama (local inference) · ChromaDB (vector retrieval) · Streamlit (interface). Runs on local hardware. No data leaves the machine. Directly maps to Domain 1 (Dataset Engineering) and Domain 5 (Memory Architecture) in the research agenda.</p>
+  </div>
+
+  <div class="sec-label">Technical stack — four components</div>
+  <div class="g4">
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Build</div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">Claude Code</div>
+      <div style="font-size:11px;color:var(--mid)">Wrote the indexing pipeline, retrieval logic, and Streamlit interface. No manual coding.</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Inference</div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">Ollama</div>
+      <div style="font-size:11px;color:var(--mid)">Local LLM inference. Llama 3 / Mistral. Zero data egress — all inference on local hardware.</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Retrieval</div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">ChromaDB</div>
+      <div style="font-size:11px;color:var(--mid)">Local vector database. Stores document chunks by meaning. Enables semantic search across the corpus.</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--ln);border-radius:6px;padding:14px 16px">
+      <div style="font-size:9px;color:var(--mid);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px">Interface</div>
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px">Streamlit</div>
+      <div style="font-size:11px;color:var(--mid)">Web interface accessible from any browser on the local network. No installation for end users.</div>
+    </div>
+  </div>
+
+  <div class="sec-label">Step-by-step guide</div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">01</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Corpus · Gather source documents</div>
+      <div class="dr-title">The document set is the capability ceiling</div>
+      <div class="dr-desc">Collect the documents you want the chatbot to know: engineering standards, process procedures, lessons-learned logs, ICD documents, SOPs. Answer quality is bounded by source document quality. Well-written, clearly structured documents produce precise, reliable answers. Ambiguous or contradictory source material produces ambiguous answers — this is a data problem, not a model problem. Improving the AI will not fix poor documentation.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">02</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Inference · Install Ollama</div>
+      <div class="dr-title">The local AI engine — free, private, runs on your hardware</div>
+      <div class="dr-desc">Install Ollama from ollama.com — free, available for Mac, Linux, and Windows. Pull a model: ollama pull llama3 or ollama pull mistral. Claude Code handles all installation and configuration commands. Once installed, all AI inference runs locally — no API key required, no internet dependency, no data leaving the machine. Also the platform for fine-tuning experiments (Pillar 2 in the AI System Design playbook).</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">03</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Index · Build the vector database</div>
+      <div class="dr-title">Storing meaning, not keywords — semantic retrieval</div>
+      <div class="dr-desc">Claude Code generates a Python indexing script: reads documents, splits them into chunks, converts each chunk into a vector (a mathematical representation of meaning), and stores them in ChromaDB. This enables semantic search: "how do I handle a thermal anomaly?" finds the right procedure even if the document uses "thermal exceedance" — meaning matches, not just words. Rebuild the index whenever source documents are updated.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">04</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Interface · Build the chat UI</div>
+      <div class="dr-title">Browser-based — no installation for end users</div>
+      <div class="dr-desc">Claude Code builds a Streamlit interface: a chat window where engineers type questions in plain English. The pipeline: question → vector search (retrieve relevant chunks) → prompt construction (question + passages) → Ollama inference → answer with source citation. Users see the answer and exactly which document and section it came from. Accessible from any machine on the local network via browser.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">05</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Evaluate · Test with real questions</div>
+      <div class="dr-title">Build the eval set before testing — use actual team questions</div>
+      <div class="dr-desc">Test with questions your team actually asks: "What is the approved torque value for M6 fasteners in the structural assembly?" or "What does procedure SE-0042 say about anomaly reporting timelines?" Build an eval set of 15–20 representative questions before the first test run. This is the Evaluate phase from the development cycle. If answers are incomplete, improve source document quality or chunking strategy — not the model.</div>
+    </div>
+  </div>
+
+  <div class="domain-row" style="border-left:3px solid var(--teal)">
+    <div class="dr-num">06</div>
+    <div class="dr-body">
+      <div class="dr-tag" style="color:var(--teal)">Deploy · Run on the internal network</div>
+      <div class="dr-title">Accessible to the team as a standard internal web tool</div>
+      <div class="dr-desc">Deploy the Streamlit app on an internal server — a spare workstation or a cloud VM in your private network. Team members access it from any browser. No AI expertise required to use it: type a question, read the answer, check the source. The entire pipeline — documents, index, model, interface — stays inside the network. This is data sovereignty by design.</div>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <p><strong>Data sovereignty by design.</strong> This architecture was chosen because sensitive engineering data — specifications, procedures, anomaly reports — must not leave the organisation's network. Ollama (local inference) and ChromaDB (local index) together provide full AI capability with zero data egress. This maps to the Local LLMs row in the AI System Design playbook's capabilities table, status updated from Research to Deployed.</p>
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<div class="controls">
+  <button class="ctrl" onclick="prev()">←</button>
+  <div class="counter" id="ctr">1 / 7</div>
+  <button class="ctrl" onclick="next()">→</button>
+</div>
+
+<script>
+let cur = 0;
+const total = 7;
+const pages = document.querySelectorAll('.page');
+const items  = document.querySelectorAll('.sb-item');
+function goTo(n) {
+  pages.forEach((p,i) => p.classList.toggle('active', i===n));
+  items.forEach((b,i) => b.classList.toggle('active', i===n));
+  document.getElementById('ctr').textContent = (n+1) + ' / ' + total;
+  pages[n].scrollTop = 0;
+  cur = n;
+}
+function next() { goTo(Math.min(cur+1, total-1)); }
+function prev() { goTo(Math.max(cur-1, 0)); }
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key==='ArrowDown') next();
+  if (e.key==='ArrowLeft' ||e.key==='ArrowUp')   prev();
+});
+</script>
+</body>
+</html>
