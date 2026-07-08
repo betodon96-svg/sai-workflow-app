@@ -5,6 +5,45 @@ file locations, design conventions, and research context so they survive context
 
 ---
 
+## User Profile
+
+**Name:** betodon96 (email: betodon96@gmail.com)
+
+**Professional positioning:** Independent advisor and practitioner at the intersection of
+systems engineering, business strategy, and AI. Value proposition across engagements is the
+combination of: business operations vision + systems engineering depth + AI fluency.
+
+**Current focus areas:**
+- Delivering AI transformation workshops for SE organizations (hands-on, tool-forward)
+- Building a pitch for an MBSE AI transformation engagement (3 workstreams: implementation,
+  document-reading products, investment framing)
+- Developing a personal research agenda across 4 AI knowledge domains (see Research Framework)
+
+**Domain expertise:**
+- Model-Based Systems Engineering (MBSE): SysML v2, Arcadia/Capella, SE methodology
+- AI tooling in practice: Claude (primary), Gemini (multimodal/image), NotebookLM, Notion AI
+- Business strategy: consulting frameworks, SaaS defensibility, PE-grade due diligence logic
+  (sourced from Bain PE/Digital and Tech Due Diligence practice)
+- Python for automation and deck-building (python-pptx); web (HTML/CSS)
+
+**Working style:**
+- Prefers vision-forward outputs -- bold statement first, support underneath; not rigid
+  issue/methodology scaffolds
+- Treats non-MECE frameworks as acceptable when overlaps are the most productive research zones
+- Uses CLAUDE.md + slash commands as the operating model for AI workflow (Cowork pattern)
+- Pushes deliverables to GitHub as the durable store; /tmp is ephemeral
+
+**Shareable bio (for other chats):**
+> I work at the intersection of systems engineering, business strategy, and AI. My current
+> focus is on AI transformation of SE practice -- building workshops, pitching document-reading
+> products for large technical corpora, and framing AI investment decisions. My research agenda
+> spans four domains: Engineering AI Systems, Enterprise AI, Eval Sets, and Engineering Systems
+> through AI (where the artifact doesn't contain AI but the process is AI-augmented -- the most
+> undervalued framing in the SE community). I use Claude as my primary AI environment, with
+> MCP connectors to GitHub, Drive, and Notion.
+
+---
+
 ## What CLAUDE.md Is
 
 A persistent memory file checked into the repo. Claude reads it automatically on session start,
