@@ -1,0 +1,934 @@
+<title>Agentic Research Architecture — Deep-Research Workflow</title>
+<style>
+:root {
+  --bg:       #0B1120;
+  --bg-alt:   #0F182C;
+  --panel:    #141F35;
+  --border:   #1E2F4C;
+  --text-1:   #D0DCEF;
+  --text-2:   #7A94B5;
+  --text-3:   #3E5473;
+
+  --orch:     #F59E0B;
+  --orch-bg:  #1C1400;
+  --orch-b:   #3A2900;
+
+  --agent:    #3B82F6;
+  --agent-bg: #0A1830;
+  --agent-b:  #132440;
+
+  --tool:     #0D9488;
+  --tool-bg:  #041A18;
+  --tool-b:   #083028;
+
+  --data:     #64748B;
+  --data-bg:  #0F1520;
+  --data-b:   #1A2535;
+
+  --fail:     #EF4444;
+  --fail-bg:  #200808;
+  --fail-b:   #3A0E0E;
+
+  --ok:       #22C55E;
+  --ok-bg:    #041208;
+
+  --mono: 'Menlo','Consolas','Courier New',monospace;
+  --sans: -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:       #F7F9FC;
+    --bg-alt:   #EDF1F8;
+    --panel:    #E2EAF5;
+    --border:   #C5D4E8;
+    --text-1:   #0F172A;
+    --text-2:   #334155;
+    --text-3:   #64748B;
+    --orch:     #B45309;
+    --orch-bg:  #FEF3C7;
+    --orch-b:   #FDE68A;
+    --agent:    #1D4ED8;
+    --agent-bg: #DBEAFE;
+    --agent-b:  #BFDBFE;
+    --tool:     #0F766E;
+    --tool-bg:  #CCFBF1;
+    --tool-b:   #99F6E4;
+    --data:     #475569;
+    --data-bg:  #F1F5F9;
+    --data-b:   #CBD5E1;
+    --fail:     #DC2626;
+    --fail-bg:  #FEE2E2;
+    --fail-b:   #FECACA;
+    --ok:       #15803D;
+    --ok-bg:    #DCFCE7;
+  }
+}
+:root[data-theme="light"] {
+  --bg:       #F7F9FC;
+  --bg-alt:   #EDF1F8;
+  --panel:    #E2EAF5;
+  --border:   #C5D4E8;
+  --text-1:   #0F172A;
+  --text-2:   #334155;
+  --text-3:   #64748B;
+  --orch:     #B45309;
+  --orch-bg:  #FEF3C7;
+  --orch-b:   #FDE68A;
+  --agent:    #1D4ED8;
+  --agent-bg: #DBEAFE;
+  --agent-b:  #BFDBFE;
+  --tool:     #0F766E;
+  --tool-bg:  #CCFBF1;
+  --tool-b:   #99F6E4;
+  --data:     #475569;
+  --data-bg:  #F1F5F9;
+  --data-b:   #CBD5E1;
+  --fail:     #DC2626;
+  --fail-bg:  #FEE2E2;
+  --fail-b:   #FECACA;
+  --ok:       #15803D;
+  --ok-bg:    #DCFCE7;
+}
+:root[data-theme="dark"] {
+  --bg:       #0B1120;
+  --bg-alt:   #0F182C;
+  --panel:    #141F35;
+  --border:   #1E2F4C;
+  --text-1:   #D0DCEF;
+  --text-2:   #7A94B5;
+  --text-3:   #3E5473;
+  --orch:     #F59E0B;
+  --orch-bg:  #1C1400;
+  --orch-b:   #3A2900;
+  --agent:    #3B82F6;
+  --agent-bg: #0A1830;
+  --agent-b:  #132440;
+  --tool:     #0D9488;
+  --tool-bg:  #041A18;
+  --tool-b:   #083028;
+  --data:     #64748B;
+  --data-bg:  #0F1520;
+  --data-b:   #1A2535;
+  --fail:     #EF4444;
+  --fail-bg:  #200808;
+  --fail-b:   #3A0E0E;
+  --ok:       #22C55E;
+  --ok-bg:    #041208;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1020px; margin: 0 auto; padding: 0 28px; }
+
+/* HEADER */
+header {
+  padding: 48px 0 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+.doc-eye {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+h1 {
+  font-size: clamp(22px,3.5vw,36px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  text-wrap: balance;
+  color: var(--text-1);
+  margin-bottom: 10px;
+}
+.hdr-sub {
+  font-size: 14px;
+  color: var(--text-3);
+  max-width: 600px;
+  line-height: 1.55;
+}
+
+/* LEGEND */
+.legend {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin: 28px 0 0;
+}
+.leg {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.leg-dot {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+}
+
+/* ─── PIPELINE DIAGRAM ─── */
+.diagram-wrap {
+  margin: 36px 0 52px;
+  overflow-x: auto;
+}
+
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 600px;
+  position: relative;
+}
+
+/* Vertical spine */
+.spine-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0;
+  align-items: start;
+}
+
+.spine-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 18px;
+  position: relative;
+}
+
+.spine-connector {
+  width: 2px;
+  flex: 1;
+  min-height: 24px;
+  background: var(--border);
+}
+
+.spine-connector.fail-line { background: var(--fail); opacity: 0.4; }
+.spine-connector.none { background: transparent; }
+
+.phase-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.phase-badge.orch  { background: var(--orch-bg);  color: var(--orch);  border: 1px solid var(--orch-b);  }
+.phase-badge.agent { background: var(--agent-bg); color: var(--agent); border: 1px solid var(--agent-b); }
+.phase-badge.fail  { background: var(--fail-bg);  color: var(--fail);  border: 1px solid var(--fail-b);  }
+
+.spine-right {
+  padding: 14px 0 14px 20px;
+  border-left: 2px solid var(--border);
+}
+
+.spine-right.fail-border { border-left-color: var(--fail); }
+
+/* Phase block */
+.phase-block {
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  margin-bottom: 4px;
+  overflow: hidden;
+}
+
+.phase-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.phase-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+}
+
+.phase-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.phase-status {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-left: auto;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+
+.ps-ok   { background: var(--ok-bg);   color: var(--ok);   }
+.ps-fail { background: var(--fail-bg); color: var(--fail); }
+.ps-skip { background: var(--orch-bg); color: var(--orch); }
+
+.phase-body { padding: 12px 14px; }
+
+/* Agent boxes inside phases */
+.agent-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.agent-box {
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 100px;
+  flex: 1;
+}
+
+.ab-agent  { background: var(--agent-bg); border: 1px solid var(--agent-b); }
+.ab-tool   { background: var(--tool-bg);  border: 1px solid var(--tool-b);  }
+.ab-data   { background: var(--data-bg);  border: 1px solid var(--data-b);  }
+.ab-orch   { background: var(--orch-bg);  border: 1px solid var(--orch-b);  }
+.ab-fail   { background: var(--fail-bg);  border: 1px solid var(--fail-b);  }
+
+.ab-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ab-label.c-agent { color: var(--agent); }
+.ab-label.c-tool  { color: var(--tool);  }
+.ab-label.c-data  { color: var(--data);  }
+.ab-label.c-orch  { color: var(--orch);  }
+.ab-label.c-fail  { color: var(--fail);  }
+
+.ab-name { font-size: 12px; color: var(--text-1); font-weight: 600; }
+.ab-note { font-size: 11px; color: var(--text-2); }
+
+.arrow-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  padding: 3px 0 3px 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.arr { color: var(--border); }
+.arr-fail { color: var(--fail); opacity: 0.6; }
+
+.fail-overlay {
+  background: var(--fail-bg);
+  border: 1px solid var(--fail-b);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--fail);
+  font-family: var(--mono);
+  margin-top: 4px;
+}
+
+/* ─── SECTIONS ─── */
+.section { margin-bottom: 48px; }
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.sec-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.sec-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+
+p { color: var(--text-2); font-size: 14px; line-height: 1.65; margin-bottom: 12px; }
+p:last-child { margin-bottom: 0; }
+
+/* Component cards */
+.comp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.comp-card {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.comp-head {
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.comp-head-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.comp-head-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.comp-body {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+/* Decision table */
+.dtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.dtable th {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--border);
+}
+.dtable td {
+  padding: 10px 12px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.dtable tr:last-child td { border-bottom: none; }
+.dtable-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+
+/* Interface spec box */
+.iface {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+}
+.iface-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 6px;
+}
+.iface-schema {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--agent);
+  background: var(--agent-bg);
+  padding: 8px 10px;
+  border-radius: 5px;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+  margin-bottom: 6px;
+}
+.iface-note {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* Callout */
+.callout {
+  border-radius: 7px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+.c-agent-bg { background: var(--agent-bg); border-left: 3px solid var(--agent); }
+.c-orch-bg  { background: var(--orch-bg);  border-left: 3px solid var(--orch);  }
+.c-fail-bg  { background: var(--fail-bg);  border-left: 3px solid var(--fail);  }
+.c-tool-bg  { background: var(--tool-bg);  border-left: 3px solid var(--tool);  }
+.callout strong { color: var(--text-1); }
+
+.spacer { height: 72px; }
+
+@media (max-width: 640px) {
+  .legend { gap: 12px; }
+  .dtable th:nth-child(2), .dtable td:nth-child(2) { display: none; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="doc-eye">
+    <span>Architecture Document</span>
+    <span>/</span>
+    <span>deep-research workflow</span>
+    <span>/</span>
+    <span>Session 3a08027d</span>
+  </div>
+  <h1>Agentic Research System<br>Architecture &amp; Design Log</h1>
+  <p class="hdr-sub">A systems-level description of the multi-agent pipeline invoked to produce the AI taxonomy artifact — components, interfaces, data flows, design decisions, and failure analysis.</p>
+
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:var(--orch)"></div>Orchestrator (JS Engine)</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--agent)"></div>LLM Agent (Claude instance)</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--tool)"></div>Tool call (WebSearch / WebFetch)</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--data)"></div>Data artifact (structured output)</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--fail)"></div>Failed / did not run</div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════
+     PIPELINE DIAGRAM
+═══════════════════════════════ -->
+<div class="diagram-wrap">
+<div class="pipeline">
+
+  <!-- INPUT -->
+  <div style="margin-bottom:12px;">
+    <div class="agent-box ab-data" style="max-width:400px;">
+      <div class="ab-label c-data">System Input</div>
+      <div class="ab-name">Research brief (natural language)</div>
+      <div class="ab-note">Structured prompt: question + scope + source preferences + output format — passed as args to the workflow engine</div>
+    </div>
+    <div class="arrow-label"><span class="arr">▼</span> orchestrator receives brief, initializes run</div>
+  </div>
+
+  <!-- ORCHESTRATOR BOX -->
+  <div class="phase-block" style="margin-bottom:16px; border-color: var(--orch-b); background: var(--orch-bg);">
+    <div class="phase-head" style="border-bottom-color: var(--orch-b);">
+      <span class="phase-num">ENGINE</span>
+      <span class="phase-title" style="color:var(--orch);">Workflow Orchestrator</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text-3);margin-left:auto;">JavaScript — deterministic, not LLM</span>
+    </div>
+    <div class="phase-body">
+      <div class="agent-row">
+        <div class="agent-box ab-orch" style="flex:none;min-width:0;">
+          <div class="ab-label c-orch">Control</div>
+          <div class="ab-note">Spawns agents, passes inputs, collects outputs, routes data between phases, manages concurrency cap (~10 parallel agents), handles failures</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow-label"><span class="arr">▼</span> orchestrator spawns Phase 1</div>
+
+  <!-- PHASE 1: SCOPE -->
+  <div class="phase-block" style="margin-bottom:4px;">
+    <div class="phase-head">
+      <span class="phase-num">P1</span>
+      <span class="phase-title">Scope</span>
+      <span class="phase-status ps-ok">Completed</span>
+    </div>
+    <div class="phase-body">
+      <div class="agent-row">
+        <div class="agent-box ab-agent">
+          <div class="ab-label c-agent">LLM Agent × 1</div>
+          <div class="ab-name">Scope decomposer</div>
+          <div class="ab-note">Reads research brief → outputs 5 distinct search angles as structured JSON</div>
+        </div>
+      </div>
+      <div class="arrow-label"><span class="arr">→</span> Output: 5 search angle strings (JSON array)</div>
+    </div>
+  </div>
+
+  <div class="arrow-label"><span class="arr">▼</span> orchestrator fans out to 5 parallel search agents</div>
+
+  <!-- PHASE 2: SEARCH -->
+  <div class="phase-block" style="margin-bottom:4px;">
+    <div class="phase-head">
+      <span class="phase-num">P2</span>
+      <span class="phase-title">Search — parallel fan-out</span>
+      <span class="phase-status ps-ok">Completed</span>
+    </div>
+    <div class="phase-body">
+      <div class="agent-row">
+        <div class="agent-box ab-agent">
+          <div class="ab-label c-agent">LLM Agent A1</div>
+          <div class="ab-name">Foundational subfields</div>
+        </div>
+        <div class="agent-box ab-agent">
+          <div class="ab-label c-agent">LLM Agent A2</div>
+          <div class="ab-name">Applied domains</div>
+        </div>
+        <div class="agent-box ab-agent">
+          <div class="ab-label c-agent">LLM Agent A3</div>
+          <div class="ab-name">Emerging branches</div>
+        </div>
+        <div class="agent-box ab-agent">
+          <div class="ab-label c-agent">LLM Agent A4</div>
+          <div class="ab-name">Business / governance</div>
+        </div>
+        <div class="agent-box ab-agent">
+          <div class="ab-label c-agent">LLM Agent A5</div>
+          <div class="ab-name">Maturity / investment</div>
+        </div>
+      </div>
+      <div class="agent-row">
+        <div class="agent-box ab-tool">
+          <div class="ab-label c-tool">Tool: WebSearch</div>
+          <div class="ab-note">Each agent calls WebSearch 1–3 times. Returns: URL + title + snippet (150–400 chars). Does NOT return full page content.</div>
+        </div>
+      </div>
+      <div class="arrow-label"><span class="arr">→</span> Output per agent: [{url, title, snippet, relevance}] — 29 URLs total across 5 agents</div>
+      <div class="arrow-label"><span class="arr">→</span> Orchestrator deduplicates (1 dupe removed) + drops 5 over token budget → 24 URLs to fetch</div>
+    </div>
+  </div>
+
+  <div class="arrow-label"><span class="arr">▼</span> orchestrator fans out to 24 parallel fetch agents</div>
+
+  <!-- PHASE 3: FETCH — FAILED -->
+  <div class="phase-block" style="border-color:var(--fail-b); margin-bottom:4px;">
+    <div class="phase-head" style="border-bottom-color:var(--fail-b);">
+      <span class="phase-num">P3</span>
+      <span class="phase-title">Fetch — full page content</span>
+      <span class="phase-status ps-fail">All 24 failed</span>
+    </div>
+    <div class="phase-body">
+      <div class="agent-row">
+        <div class="agent-box ab-fail">
+          <div class="ab-label c-fail">LLM Agent × 24</div>
+          <div class="ab-name">One per URL</div>
+          <div class="ab-note">Each agent calls WebFetch on one URL → should return full article text. Returned empty / "unreliable" for all 24.</div>
+        </div>
+        <div class="agent-box ab-fail" style="flex:none; max-width: 220px;">
+          <div class="ab-label c-fail">Tool: WebFetch</div>
+          <div class="ab-note">HTTPS proxy (HTTPS_PROXY env) blocked all outbound fetch requests. Deterministic failure — not random. All attempts returned the same empty result.</div>
+        </div>
+      </div>
+      <div class="fail-overlay">SYSTEM FAILURE — 0 pages retrieved. Root cause: outbound WebFetch blocked by environment proxy configuration. WebSearch works through same proxy; WebFetch does not.</div>
+    </div>
+  </div>
+
+  <!-- PHASE 4: VERIFY — SKIPPED -->
+  <div class="phase-block" style="border-color:var(--fail-b); opacity:0.55; margin-bottom:4px;">
+    <div class="phase-head" style="border-bottom-color:var(--fail-b);">
+      <span class="phase-num">P4</span>
+      <span class="phase-title">Adversarial Verification</span>
+      <span class="phase-status ps-fail">Did not run</span>
+    </div>
+    <div class="phase-body">
+      <div class="agent-row">
+        <div class="agent-box ab-fail">
+          <div class="ab-label c-fail">LLM Agent × 3 per claim</div>
+          <div class="ab-name">Adversarial refuters</div>
+          <div class="ab-note">Would have attempted to falsify each extracted claim. 2/3 majority refute = claim killed. No claims to verify because P3 returned nothing.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 5: SYNTHESIZE — SUBSTITUTED -->
+  <div class="phase-block" style="border-color: var(--orch-b); margin-bottom:4px;">
+    <div class="phase-head" style="border-bottom-color: var(--orch-b);">
+      <span class="phase-num">P5</span>
+      <span class="phase-title">Synthesis</span>
+      <span class="phase-status ps-skip">Manually substituted</span>
+    </div>
+    <div class="phase-body">
+      <div class="agent-row">
+        <div class="agent-box ab-data">
+          <div class="ab-label c-data">Input source (substituted)</div>
+          <div class="ab-name">29 search snippets + training knowledge (cutoff Aug 2025)</div>
+          <div class="ab-note">Instead of verified claims from full source text, synthesis used snippet previews + stable training knowledge as source material.</div>
+        </div>
+        <div class="agent-box ab-agent">
+          <div class="ab-label c-agent">Manual synthesis (main agent)</div>
+          <div class="ab-name">Taxonomy + report generation</div>
+          <div class="ab-note">Performed by the primary Claude instance — not a subagent — after reading the journal file that preserved the search results.</div>
+        </div>
+      </div>
+      <div class="arrow-label"><span class="arr">→</span> Output: AI taxonomy artifact (HTML) — structure reliable; specific 2025–2026 statistics snippet-sourced, not adversarially verified</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════
+     COMPONENT SPECIFICATIONS
+═══════════════════════════════ -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">01</span>
+    <span class="sec-title">Component Specifications</span>
+  </div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-head">
+        <div class="comp-head-dot" style="background:var(--orch)"></div>
+        <div class="comp-head-name">Workflow Orchestrator</div>
+      </div>
+      <div class="comp-body">JavaScript engine — not an LLM. Executes deterministic control flow: spawns agents, enforces concurrency limits (≤10 parallel agents), collects typed outputs, routes data between phases, and handles failures. The key distinction: the orchestrator has no language understanding — it manipulates structured data returned by agents via JSON schemas.</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-head">
+        <div class="comp-head-dot" style="background:var(--agent)"></div>
+        <div class="comp-head-name">LLM Agent (subagent)</div>
+      </div>
+      <div class="comp-body">A fresh Claude instance spawned for a single, scoped task. Each agent has no memory of other agents — it receives only its specific input via prompt and returns only its specific output via a structured schema. 30 agents total ran in this session. They are ephemeral: they exist only for the duration of their task.</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-head">
+        <div class="comp-head-dot" style="background:var(--tool)"></div>
+        <div class="comp-head-name">WebSearch Tool</div>
+      </div>
+      <div class="comp-body">Queries a search engine index. Returns ranked results with URL, title, and snippet. Works through the session proxy. Snippets are 150–400 character index-generated previews — not the source page content. This is what you see under a Google search result. This tool worked correctly.</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-head">
+        <div class="comp-head-dot" style="background:var(--fail)"></div>
+        <div class="comp-head-name">WebFetch Tool</div>
+      </div>
+      <div class="comp-body">Loads the full content of a URL — equivalent to opening a webpage. Should return the complete article or report text for downstream extraction. Failed for all 24 attempts in this session due to proxy configuration blocking outbound fetch requests. The failure is deterministic: same proxy blocks all fetches equally.</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-head">
+        <div class="comp-head-dot" style="background:var(--data)"></div>
+        <div class="comp-head-name">Structured Output (JSON Schema)</div>
+      </div>
+      <div class="comp-body">Each agent is bound to a JSON schema for its return value. The LLM is forced to call a StructuredOutput tool that validates against the schema — it cannot return free text. This means the orchestrator receives typed, programmatically processable data rather than natural language, enabling reliable handoff between pipeline stages.</div>
+    </div>
+
+    <div class="comp-card">
+      <div class="comp-head">
+        <div class="comp-head-dot" style="background:var(--tool)"></div>
+        <div class="comp-head-name">Journal File</div>
+      </div>
+      <div class="comp-body">A JSONL file written during workflow execution — one line per completed agent with its full return value. This is what allowed recovery: after the workflow returned empty results, I read the journal directly and extracted the search snippets that the automated pipeline had discarded when fetches failed. The journal is the observable state of the system.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     INTERFACE DEFINITIONS
+═══════════════════════════════ -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">02</span>
+    <span class="sec-title">Interface Definitions — Data Contracts Between Stages</span>
+  </div>
+
+  <p>Each stage hands off a typed schema to the next. The orchestrator treats these as contracts — it does not interpret the content, only routes the structured fields.</p>
+
+  <div class="iface">
+    <div class="iface-name">P1 → P2: Search Angles Schema</div>
+    <div class="iface-schema">{ "angles": [
+  { "id": 1, "angle": "string", "search_queries": ["string"] },
+  ...×5
+] }</div>
+    <div class="iface-note">Scope agent output. Each angle becomes one search agent's input. 5 angles = 5 parallel agents. The decomposition into independent angles is what enables parallelism — each agent is self-contained with no dependency on others.</div>
+  </div>
+
+  <div class="iface">
+    <div class="iface-name">P2 → P3: Search Results Schema</div>
+    <div class="iface-schema">{ "results": [
+  { "url": "string", "title": "string",
+    "snippet": "string (150-400 chars)", "relevance": "high|medium|low" },
+  ...
+] }</div>
+    <div class="iface-note">Per-agent output from search. Orchestrator collects all 5 result arrays, deduplicates by URL, applies token budget cap, and creates one fetch task per surviving URL. The snippet field is the only content available when fetch fails — it is index-generated metadata, not source text.</div>
+  </div>
+
+  <div class="iface">
+    <div class="iface-name">P3 → P4: Fetched Content Schema (intended — never populated)</div>
+    <div class="iface-schema">{ "url": "string",
+  "content": "string (full page text)",
+  "claims": [
+    { "claim": "string", "source_passage": "string",
+      "falsifiable": true }
+  ]
+}</div>
+    <div class="iface-note">This schema never received real data. Full page text would feed claim extraction, which would then feed the verification stage. Zero instances completed.</div>
+  </div>
+
+  <div class="iface">
+    <div class="iface-name">P4 → P5: Verification Results Schema (intended — never populated)</div>
+    <div class="iface-schema">{ "claim": "string",
+  "votes": [
+    { "verdict": "refuted|confirmed",
+      "reasoning": "string" },
+    ...×3
+  ],
+  "survives": boolean
+}</div>
+    <div class="iface-note">Three independent adversarial agents vote per claim. Survives = true only if &lt; 2 out of 3 refute. This is the quality gate that was bypassed.</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     DESIGN DECISIONS
+═══════════════════════════════ -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">03</span>
+    <span class="sec-title">Design Decisions — What Was Built and Why</span>
+  </div>
+
+  <p>Two layers of decisions exist: those embedded in the pre-built <code>deep-research</code> workflow (architectural defaults), and those I made when invoking it on your prompt.</p>
+
+  <div style="overflow-x:auto;">
+  <table class="dtable">
+    <thead>
+      <tr>
+        <th>Decision</th>
+        <th>Who made it</th>
+        <th>Rationale</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="dtable-label">5 search angles, not 1</td>
+        <td>Workflow default</td>
+        <td>A single query misses orthogonal aspects of a broad topic. 5 independent angles with no shared phrasing maximize the probability of discovering diverse, non-overlapping sources. Cost: 5× search agent overhead. Benefit: coverage that a single search cannot achieve.</td>
+      </tr>
+      <tr>
+        <td class="dtable-label">Parallel search (not sequential)</td>
+        <td>Workflow default</td>
+        <td>The 5 search agents have no dependency on each other's outputs. Running them sequentially would increase wall-clock time by 5× with no quality benefit. Parallelism is valid whenever tasks are independent — this is the defining condition.</td>
+      </tr>
+      <tr>
+        <td class="dtable-label">One fetch agent per URL</td>
+        <td>Workflow default</td>
+        <td>Fetch operations are I/O-bound, not compute-bound. Assigning one agent per URL means slow URLs don't block fast ones. Failure isolation: one failed fetch does not affect others. Contrast with: one agent fetching all 24 URLs sequentially, where a single blocked URL stalls everything.</td>
+      </tr>
+      <tr>
+        <td class="dtable-label">Adversarial (refute) verify, not confirmatory</td>
+        <td>Workflow default</td>
+        <td>Confirmation bias: if you ask agents "is this claim true?", they will tend to confirm it. Asking agents to actively try to falsify a claim is a deliberate inversion. A claim that survives three dedicated refutation attempts has earned higher confidence than one that passed three confirmation checks. Classic red-team pattern.</td>
+      </tr>
+      <tr>
+        <td class="dtable-label">3 votes per claim, 2/3 to kill</td>
+        <td>Workflow default</td>
+        <td>Odd number eliminates ties. 3 is the minimum meaningful ensemble — enough diversity without excessive cost. 2/3 threshold is asymmetric toward survival: a claim needs two independent refuters to die. This calibration accepts some false positives (weak claims that survive) in exchange for not killing strong claims based on a single contrarian agent.</td>
+      </tr>
+      <tr>
+        <td class="dtable-label">Single synthesis agent (not distributed)</td>
+        <td>Workflow default</td>
+        <td>Coherence. Multiple synthesis agents produce fragmented, inconsistent style and structure. The synthesis agent has full context of all surviving claims and can reason about what to merge, what to foreground, and how to structure the output as a whole. The one place sequential execution is the right choice.</td>
+      </tr>
+      <tr>
+        <td class="dtable-label">Invoking deep-research (not a simpler approach)</td>
+        <td>My decision</td>
+        <td>Your question was broad and explicitly asked for multi-source coverage from named institutions. A single WebSearch or a simple research agent would have returned shallower results. The deep-research workflow is designed exactly for this: structured multi-source synthesis with verification. The failure was environmental, not a workflow mis-selection.</td>
+      </tr>
+      <tr>
+        <td class="dtable-label">Detailed structured args string</td>
+        <td>My decision</td>
+        <td>The args string I wrote was deliberately structured — naming source preferences (NVIDIA, Stanford HAI, etc.), enumerating the four coverage domains, and specifying the output format ("structured as a taxonomy a practitioner could use to decide where to specialize"). This shapes what the scope agent decomposes into angles. A vague brief produces vague angles and worse coverage.</td>
+      </tr>
+      <tr>
+        <td class="dtable-label">Read journal, synthesize manually (not re-run)</td>
+        <td>My decision</td>
+        <td>Re-running the workflow would have hit the same proxy failure — the root cause is environmental, not stochastic. Inspecting the journal revealed that 29 search snippets were substantive enough to build the taxonomy structure. Manual synthesis from available evidence was the correct recovery path. Re-running would have wasted 7 minutes and returned the same empty result.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     ARCHITECTURAL PRINCIPLES AT WORK
+═══════════════════════════════ -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">04</span>
+    <span class="sec-title">Architectural Principles at Work</span>
+  </div>
+
+  <div class="callout c-agent-bg">
+    <strong>Specialization enables parallelism.</strong> Every agent in this system has exactly one job. That constraint is not accidental — it is what makes parallel execution safe. When each agent is fully self-contained (input → task → output), many can run concurrently without shared state conflicts. The moment an agent needs to know what another agent is doing, it becomes a dependency and must wait.
+  </div>
+
+  <div class="callout c-orch-bg">
+    <strong>The orchestrator is not intelligent — by design.</strong> The workflow engine that coordinates all agents is a deterministic program, not an LLM. It does not interpret results, does not make judgment calls, and does not hallucinate. All intelligence is encapsulated in the agents it spawns. This separation keeps the control flow reliable and auditable. An LLM orchestrator would introduce non-determinism into the coordination layer.
+  </div>
+
+  <div class="callout c-tool-bg">
+    <strong>Structured schemas are the interfaces.</strong> Agents do not communicate in natural language — they communicate in typed JSON that the orchestrator can process programmatically. This is what makes the pipeline composable: each stage's output is another stage's input, and the contract between them is explicit. When a schema is violated, the system errors rather than silently propagating garbage.
+  </div>
+
+  <div class="callout c-fail-bg">
+    <strong>The failure was systemic, not probabilistic.</strong> WebFetch being blocked by the proxy is a configuration fact, not a flaky network condition. All 24 attempts failing identically is the signature of a deterministic block, not random errors. This distinction matters for recovery: re-running solves random failures; fixing the proxy configuration solves deterministic ones. Journal inspection confirmed this immediately — all 24 results had the same "unreliable" marker.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     WHAT A COMPLETE RUN WOULD LOOK LIKE
+═══════════════════════════════ -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">05</span>
+    <span class="sec-title">What a Complete Run Looks Like</span>
+  </div>
+
+  <p>For perspective: in a session with unrestricted WebFetch, the same workflow would have spawned approximately:</p>
+  <p><strong>1</strong> scope agent + <strong>5</strong> search agents + <strong>15</strong> fetch agents + <strong>3 × N</strong> verification agents (where N = number of extracted claims, typically 20–60 for a broad research question) + <strong>1</strong> synthesis agent.</p>
+  <p>That's roughly <strong>75–100 subagents</strong> for a fully executed deep-research run on a question this size, with wall-clock time dominated by the slowest verification batch (not the total agent count, because most run in parallel).</p>
+  <p>What ran in this session: <strong>30 agents</strong> — scope, 5 search, 24 fetch attempts. Verification and final synthesis were entirely absent from the automated pipeline.</p>
+</section>
+
+</div>
+<div class="spacer"></div>

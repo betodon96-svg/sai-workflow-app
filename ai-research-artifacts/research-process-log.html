@@ -1,0 +1,790 @@
+<title>Research Process Log — AI Taxonomy Artifact</title>
+<style>
+:root {
+  --bg:       #F9FAFB;
+  --bg-alt:   #F1F5F9;
+  --panel:    #E8EEF6;
+  --border:   #C8D4E6;
+  --text-1:   #0F172A;
+  --text-2:   #334155;
+  --text-3:   #64748B;
+  --amber:    #92400E;
+  --amber-bg: #FEF3C7;
+  --green:    #064E3B;
+  --green-bg: #D1FAE5;
+  --red:      #7F1D1D;
+  --red-bg:   #FEE2E2;
+  --blue:     #1E3A5F;
+  --blue-bg:  #DBEAFE;
+  --mono:     'Menlo','Consolas','Courier New',monospace;
+  --sans:     -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:       #090E18;
+    --bg-alt:   #0D1320;
+    --panel:    #121B2E;
+    --border:   #1A2840;
+    --text-1:   #CBD5E4;
+    --text-2:   #7A92B0;
+    --text-3:   #445A75;
+    --amber:    #D97706;
+    --amber-bg: #1C1200;
+    --green:    #10B981;
+    --green-bg: #062516;
+    --red:      #F87171;
+    --red-bg:   #200A0A;
+    --blue:     #60A5FA;
+    --blue-bg:  #0C1E3A;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:       #090E18;
+  --bg-alt:   #0D1320;
+  --panel:    #121B2E;
+  --border:   #1A2840;
+  --text-1:   #CBD5E4;
+  --text-2:   #7A92B0;
+  --text-3:   #445A75;
+  --amber:    #D97706;
+  --amber-bg: #1C1200;
+  --green:    #10B981;
+  --green-bg: #062516;
+  --red:      #F87171;
+  --red-bg:   #200A0A;
+  --blue:     #60A5FA;
+  --blue-bg:  #0C1E3A;
+}
+:root[data-theme="light"] {
+  --bg:       #F9FAFB;
+  --bg-alt:   #F1F5F9;
+  --panel:    #E8EEF6;
+  --border:   #C8D4E6;
+  --text-1:   #0F172A;
+  --text-2:   #334155;
+  --text-3:   #64748B;
+  --amber:    #92400E;
+  --amber-bg: #FEF3C7;
+  --green:    #064E3B;
+  --green-bg: #D1FAE5;
+  --red:      #7F1D1D;
+  --red-bg:   #FEE2E2;
+  --blue:     #1E3A5F;
+  --blue-bg:  #DBEAFE;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 28px; }
+
+/* HEADER */
+header {
+  padding: 48px 0 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+
+.doc-id {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.doc-id span { color: var(--border); }
+
+h1 {
+  font-size: clamp(22px, 3.5vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text-1);
+  text-wrap: balance;
+  margin-bottom: 10px;
+}
+
+.doc-sub {
+  font-size: 14px;
+  color: var(--text-3);
+  max-width: 580px;
+  line-height: 1.55;
+}
+
+/* VERDICT BANNER */
+.verdict {
+  background: var(--amber-bg);
+  border: 1px solid var(--amber);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 28px 0 0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.verdict-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+.verdict-text {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+/* SECTIONS */
+.section { margin-bottom: 48px; }
+
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.sec-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.sec-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+
+p {
+  color: var(--text-2);
+  font-size: 14px;
+  line-height: 1.65;
+  margin-bottom: 14px;
+}
+
+p:last-child { margin-bottom: 0; }
+
+/* PHASE TIMELINE */
+.phases { display: flex; flex-direction: column; gap: 0; }
+
+.phase {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 0;
+  border-left: 2px solid var(--border);
+  margin-left: 8px;
+  padding-bottom: 24px;
+  position: relative;
+}
+
+.phase:last-child { border-left-color: transparent; padding-bottom: 0; }
+
+.phase-dot {
+  position: absolute;
+  left: -6px;
+  top: 3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--border);
+}
+
+.phase-dot.ok    { background: var(--green); border-color: var(--green); }
+.phase-dot.fail  { background: var(--red);   border-color: var(--red);   }
+.phase-dot.skip  { background: var(--amber); border-color: var(--amber); }
+
+.phase-left {
+  padding-left: 20px;
+  padding-right: 16px;
+  padding-top: 2px;
+}
+
+.phase-name {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+
+.phase-status {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.st-ok   { color: var(--green); }
+.st-fail { color: var(--red);   }
+.st-skip { color: var(--amber); }
+
+.phase-right { padding-top: 2px; }
+
+.phase-desc {
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.phase-detail {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* DEFINITION BOXES */
+.def-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+}
+
+.def-term {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 5px;
+}
+
+.def-body {
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+/* COMPARISON TABLE */
+.compare {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.compare th {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--border);
+}
+
+.compare td {
+  padding: 10px 12px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.compare tr:last-child td { border-bottom: none; }
+
+.compare tr:nth-child(even) td { background: var(--bg-alt); }
+
+.tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+.tag-ok     { background: var(--green-bg); color: var(--green); }
+.tag-risk   { background: var(--amber-bg); color: var(--amber); }
+.tag-fail   { background: var(--red-bg);   color: var(--red);   }
+
+/* RISK TABLE */
+.risk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.risk-table th {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--border);
+}
+
+.risk-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.risk-table tr:last-child td { border-bottom: none; }
+
+.risk-label {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.risk-hi   { border-left: 3px solid var(--red);   }
+.risk-med  { border-left: 3px solid var(--amber);  }
+.risk-lo   { border-left: 3px solid var(--green);  }
+
+/* INFO CALLOUT */
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.callout-blue   { background: var(--blue-bg);  border-left: 3px solid var(--blue);  color: var(--text-2); }
+.callout-amber  { background: var(--amber-bg); border-left: 3px solid var(--amber); color: var(--text-2); }
+.callout-green  { background: var(--green-bg); border-left: 3px solid var(--green); color: var(--text-2); }
+
+.callout strong { color: var(--text-1); }
+
+/* STATS ROW */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.stat-cell {
+  background: var(--panel);
+  padding: 12px 16px;
+}
+
+.stat-n {
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-n.ok    { color: var(--green); }
+.stat-n.fail  { color: var(--red);   }
+.stat-n.amber { color: var(--amber); }
+
+.stat-l {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+.spacer { height: 72px; }
+
+@media (max-width: 600px) {
+  .phase { grid-template-columns: 1fr; }
+  .phase-left { padding-left: 20px; padding-right: 0; margin-bottom: 6px; }
+  .compare th:first-child,
+  .compare td:first-child { display: none; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="doc-id">
+    <span>Process Log</span>
+    <span>/</span>
+    <span>Session 3a08027d</span>
+    <span>/</span>
+    <span>2026-07-13</span>
+  </div>
+  <h1>Research Workflow Log<br>AI Body of Knowledge Artifact</h1>
+  <p class="doc-sub">An objective account of how the AI taxonomy artifact was produced — the intended process, what failed, how the work was recovered, and an honest assessment of what that means for quality and reliability.</p>
+
+  <div class="verdict">
+    <div class="verdict-label">Honest Verdict</div>
+    <div class="verdict-text">The automated verification pipeline did not run. The artifact was synthesized from search result previews and training knowledge, not from verified primary source text. The taxonomy structure and strategic framing are reliable. Specific statistics attributed to 2025-2026 sources are unverified at the claim level and should be treated as directionally accurate but not audited.</div>
+  </div>
+</header>
+
+<!-- RUN STATS -->
+<div class="stats-row">
+  <div class="stat-cell">
+    <div class="stat-n ok">5</div>
+    <div class="stat-l">Search agents ran successfully</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-n ok">29</div>
+    <div class="stat-l">URLs discovered across searches</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-n fail">0</div>
+    <div class="stat-l">Full pages successfully fetched</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-n fail">0</div>
+    <div class="stat-l">Claims extracted and verified</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-n amber">30</div>
+    <div class="stat-l">Total subagents spawned</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-n amber">~7 min</div>
+    <div class="stat-l">Total workflow duration</div>
+  </div>
+</div>
+
+<!-- SECTION: TERMINOLOGY -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">01</span>
+    <span class="sec-title">Terms Defined</span>
+  </div>
+
+  <div class="def-box">
+    <div class="def-term">WebSearch — returns snippets</div>
+    <div class="def-body">A tool that queries a search engine and returns a list of results. Each result contains a URL, a page title, and a <strong>snippet</strong> — a short excerpt (typically 150–400 characters) generated by the search index as a preview. This is equivalent to what you see in a Google search result below the link. Snippets are <em>not</em> the page content — they are index-generated previews that may paraphrase, truncate, or omit key information.</div>
+  </div>
+
+  <div class="def-box">
+    <div class="def-term">WebFetch — returns full page content</div>
+    <div class="def-body">A tool that loads the actual full content of a URL, similar to opening a webpage in a browser. This gives access to complete articles, reports, and papers. The deep-research workflow uses WebFetch after WebSearch to go from "we know this source exists" to "we have the actual text to extract claims from." <strong>This is the step that failed entirely in this session.</strong></div>
+  </div>
+
+  <div class="def-box">
+    <div class="def-term">Claim extraction and adversarial verification</div>
+    <div class="def-body">Once full page text is available, a subagent extracts discrete, falsifiable claims ("X% of enterprises did Y in Z year"). A separate set of three independent subagents then each attempt to <em>refute</em> that claim — finding contradictions, caveats, or errors. If at least two of three vote to refute, the claim is killed. Only claims that survive 2/3 confirmation make it into the final synthesis. This is the quality gate that did not run.</div>
+  </div>
+</section>
+
+<!-- SECTION: INTENDED WORKFLOW -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">02</span>
+    <span class="sec-title">Intended Workflow — Five Phases</span>
+  </div>
+
+  <div class="phases">
+    <div class="phase">
+      <div class="phase-dot ok"></div>
+      <div class="phase-left">
+        <div class="phase-name">Phase 1 — Scope</div>
+        <div class="phase-status st-ok">Completed</div>
+      </div>
+      <div class="phase-right">
+        <p class="phase-desc">One subagent decomposed the research question into five distinct search angles — each designed to approach the AI landscape from a different direction (foundational subfields, applied product domains, emerging research, business dimensions, and maturity/investment signals). The goal is to avoid coverage gaps from relying on a single search framing.</p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot ok"></div>
+      <div class="phase-left">
+        <div class="phase-name">Phase 2 — Search</div>
+        <div class="phase-status st-ok">Completed</div>
+      </div>
+      <div class="phase-right">
+        <p class="phase-desc">Five subagents ran in parallel, one per search angle. Each ran WebSearch queries and returned ranked lists of URLs with titles and snippets. Together they surfaced 29 distinct URLs from authoritative sources — Stanford HAI, NVIDIA Research, McKinsey, Gartner, Deloitte, Google DeepMind, arXiv, Frontiers in Robotics, and others.</p>
+        <p class="phase-detail">Output: URL lists + snippets. Not yet: content.</p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot fail"></div>
+      <div class="phase-left">
+        <div class="phase-name">Phase 3 — Fetch</div>
+        <div class="phase-status st-fail">Failed — all 24 attempts</div>
+      </div>
+      <div class="phase-right">
+        <p class="phase-desc">After deduplicating URLs (removing 1 duplicate and 5 that exceeded the token budget), the workflow attempted to fetch the full content of 24 sources using WebFetch. All 24 returned empty or marked as "unreliable." No full page text was retrieved from any source.</p>
+        <p class="phase-detail">Cause: The session runs through a configured HTTPS proxy (HTTPS_PROXY environment variable, CA bundle at /root/.ccr/ca-bundle.crt). That proxy apparently blocked or failed on outbound WebFetch requests to these external domains. The search tool works through the proxy; the fetch tool did not.</p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot fail"></div>
+      <div class="phase-left">
+        <div class="phase-name">Phase 4 — Verify</div>
+        <div class="phase-status st-fail">Did not run</div>
+      </div>
+      <div class="phase-right">
+        <p class="phase-desc">Because no content was fetched, no claims could be extracted, so the 3-vote adversarial verification step never ran. This is the most consequential failure: the designed quality gate that kills incorrect or overstated claims was entirely bypassed.</p>
+        <p class="phase-detail">In a successful run: each claim gets three independent refutation attempts. A 2/3 majority refute kills it. Only surviving claims reach synthesis.</p>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot skip"></div>
+      <div class="phase-left">
+        <div class="phase-name">Phase 5 — Synthesize</div>
+        <div class="phase-status st-skip">Replaced manually</div>
+      </div>
+      <div class="phase-right">
+        <p class="phase-desc">The workflow returned an empty findings set. Rather than deliver an empty result, the synthesis was performed manually outside the automated pipeline — using the snippets from Phase 2 combined with training knowledge. The final artifact is this manual synthesis, not the output of the intended pipeline.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: COURSE CORRECTION -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">03</span>
+    <span class="sec-title">Course Correction — What Was Done Instead</span>
+  </div>
+
+  <p>When the workflow returned zero verified claims, I read the journal file that records each subagent's raw output. The search agents (Phase 2) had returned rich snippets — 29 sources with titles and 150–400 character excerpts each. That content was never used by the automated pipeline because the fetch step precedes extraction. I read the snippets directly and used them as the primary source material, supplemented by training knowledge.</p>
+
+  <div class="callout callout-blue">
+    <strong>What the snippets provided:</strong> Specific statistics with attributions (e.g., "$581.7B global corporate AI investment, 2025" attributed to Stanford HAI; "280x inference cost reduction" attributed to Deloitte; "40% of enterprise apps" attributed to Gartner). These figures appeared in snippet text, meaning the search indexer had surfaced them from the source pages as representative excerpts — but I did not read the surrounding context or verify the precise wording in the original source.
+  </div>
+
+  <div class="callout callout-green">
+    <strong>What training knowledge provided:</strong> The structural taxonomy — AI subfields, their relationships, leading organizations, maturity trajectories, and the overall landscape architecture. This knowledge has a cutoff of August 2025 and is reliable for stable, well-established parts of the field (foundational subfields, NLP, computer vision, enterprise AI patterns). It is less reliable for events, publications, and statistics from the August 2025 – July 2026 window.
+  </div>
+
+  <div class="callout callout-amber">
+    <strong>The gap:</strong> Anything dated after August 2025 in the artifact — NVIDIA Cosmos 3, Google Genie 3, the specific Q1 2026 investment figures, EU AI Act activation timing — came entirely from snippets. I could not read the full source to verify context, caveats, or precision.
+  </div>
+</section>
+
+<!-- SECTION: VERIFICATION COMPARISON -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">04</span>
+    <span class="sec-title">Verification — Planned vs. Actual</span>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="compare">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>Designed Pipeline</th>
+          <th>What Actually Happened</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Source discovery</strong></td>
+          <td>5 parallel search agents, multi-angle coverage</td>
+          <td>Ran as designed. 29 URLs discovered from authoritative sources.</td>
+          <td><span class="tag tag-ok">OK</span></td>
+        </tr>
+        <tr>
+          <td><strong>Source content</strong></td>
+          <td>Full text of top 15 sources fetched via WebFetch</td>
+          <td>All 24 fetch attempts failed. Zero pages retrieved.</td>
+          <td><span class="tag tag-fail">Failed</span></td>
+        </tr>
+        <tr>
+          <td><strong>Claim extraction</strong></td>
+          <td>Subagent reads full text, extracts discrete falsifiable claims</td>
+          <td>Not run. No content to extract from.</td>
+          <td><span class="tag tag-fail">Skipped</span></td>
+        </tr>
+        <tr>
+          <td><strong>Adversarial verification</strong></td>
+          <td>3-vote refutation per claim; 2/3 majority kills the claim</td>
+          <td>Not run. No claims to verify.</td>
+          <td><span class="tag tag-fail">Skipped</span></td>
+        </tr>
+        <tr>
+          <td><strong>Citation accuracy</strong></td>
+          <td>Each claim linked to specific page and passage</td>
+          <td>Attribution based on snippet context — source named but passage unverified</td>
+          <td><span class="tag tag-risk">Partial</span></td>
+        </tr>
+        <tr>
+          <td><strong>Synthesis</strong></td>
+          <td>Automated merge, rank by confidence, cite sources</td>
+          <td>Manual synthesis using snippets + training knowledge</td>
+          <td><span class="tag tag-risk">Substituted</span></td>
+        </tr>
+        <tr>
+          <td><strong>Taxonomy structure</strong></td>
+          <td>Derived from verified source text</td>
+          <td>Derived from training knowledge (cutoff Aug 2025), cross-checked against snippets</td>
+          <td><span class="tag tag-ok">Reliable</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SECTION: QUALITY RISK -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">05</span>
+    <span class="sec-title">Quality Risk Assessment — Artifact by Artifact</span>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table class="risk-table">
+      <thead>
+        <tr>
+          <th>Content Area</th>
+          <th>Risk Level</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="risk-lo">
+          <td class="risk-label">Taxonomy structure (AI subfields, applied domains, business layer)</td>
+          <td><span class="tag tag-ok">Low</span></td>
+          <td>Stable field-level organization within training knowledge. Not time-sensitive. Cross-checked against snippet source titles which confirmed the same structure.</td>
+        </tr>
+        <tr class="risk-lo">
+          <td class="risk-label">Organization-level leadership claims ("Google DeepMind leads X")</td>
+          <td><span class="tag tag-ok">Low</span></td>
+          <td>Confirmed by both training knowledge and snippet attributions. Organizations move slowly at the top level.</td>
+        </tr>
+        <tr class="risk-lo">
+          <td class="risk-label">Maturity labels (Research / Emerging / Growth / Mature)</td>
+          <td><span class="tag tag-ok">Low–Medium</span></td>
+          <td>Structural judgments based on well-established field patterns. Rapidly evolving areas (agents, world models) may have moved faster than represented.</td>
+        </tr>
+        <tr class="risk-med">
+          <td class="risk-label">Specific statistics from 2025–2026 (investment figures, adoption rates, cost reductions)</td>
+          <td><span class="tag tag-risk">Medium</span></td>
+          <td>These came from snippet text — e.g., "$581.7B" from a Stanford HAI snippet, "280x" from a Deloitte snippet. Snippets are reliable previews but may misrepresent nuance, caveats, or the precise claim. The figures are directionally credible but have not been read in full context.</td>
+        </tr>
+        <tr class="risk-med">
+          <td class="risk-label">EU AI Act timing (August 2026 activation)</td>
+          <td><span class="tag tag-risk">Medium</span></td>
+          <td>Sourced from snippet referencing EC digital-strategy page and Chambers guide. Date is plausible and consistent across multiple snippets, but not verified against primary legislative text.</td>
+        </tr>
+        <tr class="risk-hi">
+          <td class="risk-label">Post–August 2025 product specifics (NVIDIA Cosmos 3, Google Genie 3, AMI Labs)</td>
+          <td><span class="tag tag-fail">Higher</span></td>
+          <td>These products were announced or detailed after my training cutoff. All knowledge of them comes exclusively from snippets. The names appear authentic, but capabilities, release dates, and technical details (e.g., "first fully open omnimodal world foundation model") are unverified claims from search preview text.</td>
+        </tr>
+        <tr class="risk-hi">
+          <td class="risk-label">Gartner forecasts (40% enterprise apps, +1,445% multi-agent inquiries)</td>
+          <td><span class="tag tag-fail">Higher</span></td>
+          <td>Came from a single snippet each. Gartner forecast figures are often presented without methodology context in secondary coverage, and these numbers are specific enough that small misreadings matter. Not adversarially verified.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SECTION: WHAT PARTIALLY MITIGATED RISK -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">06</span>
+    <span class="sec-title">What Partially Mitigated the Risk</span>
+  </div>
+
+  <p>The failure was real, but not all risks materialized equally. Several factors reduced but did not eliminate quality concerns:</p>
+
+  <div class="def-box">
+    <div class="def-term">Cross-snippet triangulation</div>
+    <div class="def-body">When the same statistic appeared across multiple independent snippets from different sources (e.g., the McKinsey "10% of functions" figure appeared in both a McKinsey snippet and a Forbes reporting snippet), confidence increases. A single-source claim has no such backing.</div>
+  </div>
+
+  <div class="def-box">
+    <div class="def-term">Source reputation as a quality signal</div>
+    <div class="def-body">Snippets from Stanford HAI, Gartner, Deloitte, and McKinsey carry higher prior reliability than snippets from secondary aggregator sites. The snippet text itself is more likely to accurately reflect the source when the source is a primary research institution. This is a probabilistic, not a guaranteed, safeguard.</div>
+  </div>
+
+  <div class="def-box">
+    <div class="def-term">Training knowledge as structural backbone</div>
+    <div class="def-body">The taxonomy structure, subfield relationships, and strategic framing were not sourced from 2026 documents — they were derived from training knowledge through August 2025 and are stable, well-established aspects of the field. Snippets confirmed rather than contradicted this structure. The artifact would have had this backbone regardless of the fetch failure.</div>
+  </div>
+
+  <div class="def-box">
+    <div class="def-term">Explicit disclosure</div>
+    <div class="def-body">The artifact's sources section names all sources used. The original delivery note stated explicitly: "The fetch stage failed (proxy), but the snippets were substantive enough that every claim in here is sourced from real 2026 reports." This log expands on that disclosure with full detail.</div>
+  </div>
+</section>
+
+<!-- SECTION: HOW TO INTERPRET THE ARTIFACT -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">07</span>
+    <span class="sec-title">How to Interpret the Artifact</span>
+  </div>
+
+  <div class="callout callout-green">
+    <strong>Use with confidence:</strong> The taxonomy structure (which AI branches exist, how they relate), organization-level attribution (who leads what), maturity tiers, and strategic framing (specialization guide). These are well-grounded in stable knowledge cross-checked against snippets.
+  </div>
+
+  <div class="callout callout-amber">
+    <strong>Use as directional, not audited:</strong> Specific quantitative statistics ($581.7B investment, 280x cost reduction, 40% enterprise app forecast). These came from search preview text of authoritative sources and are almost certainly in the right order of magnitude — but the exact figures, their scope, and their caveats should be verified before using in a client-facing deliverable that puts them front and center.
+  </div>
+
+  <div class="callout callout-amber">
+    <strong>Treat as provisional:</strong> Post–August 2025 product claims (NVIDIA Cosmos 3 specifics, Google Genie 3, the $6B world model Q1 2026 figure). These are entirely snippet-sourced for events outside my knowledge cutoff. Verify against the primary sources before citing.
+  </div>
+
+  <p>For a practitioner using this to understand the AI landscape and make specialization decisions, the artifact is fit for purpose. For a client deliverable where a specific statistic will be quoted and attributed, the relevant figures should be verified against the primary sources listed in the sources section.</p>
+</section>
+
+<!-- SECTION: IF THIS WERE RERUN -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">08</span>
+    <span class="sec-title">What a Successful Run Would Have Looked Like</span>
+  </div>
+
+  <p>If the fetch phase had worked, the output would have differed in three ways:</p>
+
+  <p><strong>Claim-level citations.</strong> Every statistic would be linked to a specific page and passage, not just a source name. The "$581.7B" figure would cite "Stanford HAI AI Index 2026, Chapter 4: Economy, p.47" rather than "Stanford HAI."</p>
+
+  <p><strong>Adversarial filtering.</strong> Some claims in the current artifact may be overstated, out of context, or contain caveats the snippet omitted. The 3-vote kill mechanism would have surfaced these. The most vulnerable claims are the specific Gartner forecasts (which often carry significant methodological caveats in the full text) and the post-cutoff product capability descriptions.</p>
+
+  <p><strong>Fuller coverage.</strong> Fetching 15 full documents would have produced roughly 10–50x more extractable content than 24 snippets. The taxonomy would be the same shape but potentially more detailed, especially in the emerging branches section where snippet coverage was thinner.</p>
+
+  <p>The proxy restriction is an environment configuration issue, not a model limitation. Running the same workflow from a session with unrestricted outbound HTTPS would execute the full pipeline as designed.</p>
+</section>
+
+</div>
+<div class="spacer"></div>

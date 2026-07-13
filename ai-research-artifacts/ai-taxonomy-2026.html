@@ -1,0 +1,1103 @@
+<title>AI Body of Knowledge — 2026 Practitioner Taxonomy</title>
+<style>
+:root {
+  --bg:        #F7F9FC;
+  --bg-alt:    #EDF1F8;
+  --panel:     #E4EBF5;
+  --border:    #C9D6EB;
+  --text-1:    #111827;
+  --text-2:    #374B6B;
+  --text-3:    #6B7FA0;
+  --accent:    #1D4ED8;
+  --accent-bg: #DBEAFE;
+  --warm:      #92400E;
+  --warm-bg:   #FEF3C7;
+  --purple:    #5B21B6;
+  --purple-bg: #EDE9FE;
+  --green:     #065F46;
+  --green-bg:  #D1FAE5;
+  --teal:      #0F5A5A;
+  --teal-bg:   #CCFBF1;
+  --mono:      'Menlo','Consolas','Courier New',monospace;
+  --sans:      -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #0A1220;
+    --bg-alt:    #0F1928;
+    --panel:     #141F33;
+    --border:    #1D2E4A;
+    --text-1:    #C8D5EC;
+    --text-2:    #7F96B8;
+    --text-3:    #4A6080;
+    --accent:    #4B83F5;
+    --accent-bg: #0F1E3A;
+    --warm:      #D97706;
+    --warm-bg:   #1C1200;
+    --purple:    #9B72F5;
+    --purple-bg: #1E133A;
+    --green:     #34D399;
+    --green-bg:  #052E1A;
+    --teal:      #2DD4BF;
+    --teal-bg:   #042525;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:        #0A1220;
+  --bg-alt:    #0F1928;
+  --panel:     #141F33;
+  --border:    #1D2E4A;
+  --text-1:    #C8D5EC;
+  --text-2:    #7F96B8;
+  --text-3:    #4A6080;
+  --accent:    #4B83F5;
+  --accent-bg: #0F1E3A;
+  --warm:      #D97706;
+  --warm-bg:   #1C1200;
+  --purple:    #9B72F5;
+  --purple-bg: #1E133A;
+  --green:     #34D399;
+  --green-bg:  #052E1A;
+  --teal:      #2DD4BF;
+  --teal-bg:   #042525;
+}
+:root[data-theme="light"] {
+  --bg:        #F7F9FC;
+  --bg-alt:    #EDF1F8;
+  --panel:     #E4EBF5;
+  --border:    #C9D6EB;
+  --text-1:    #111827;
+  --text-2:    #374B6B;
+  --text-3:    #6B7FA0;
+  --accent:    #1D4ED8;
+  --accent-bg: #DBEAFE;
+  --warm:      #92400E;
+  --warm-bg:   #FEF3C7;
+  --purple:    #5B21B6;
+  --purple-bg: #EDE9FE;
+  --green:     #065F46;
+  --green-bg:  #D1FAE5;
+  --teal:      #0F5A5A;
+  --teal-bg:   #CCFBF1;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 28px; }
+
+/* ---- HEADER ---- */
+header {
+  padding: 52px 0 36px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 36px;
+}
+
+.header-eye {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.eye-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.eye-sep { color: var(--border); }
+
+h1 {
+  font-size: clamp(26px, 4.5vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  color: var(--text-1);
+  text-wrap: balance;
+  margin-bottom: 12px;
+}
+
+.header-sub {
+  font-size: 15px;
+  color: var(--text-3);
+  max-width: 620px;
+  line-height: 1.55;
+  margin-bottom: 32px;
+}
+
+/* Stats strip */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.stat {
+  background: var(--panel);
+  padding: 14px 18px;
+}
+
+.stat-n {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-l {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+/* ---- NAV ---- */
+nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 4px;
+}
+
+nav a {
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-2);
+  padding: 6px 13px;
+  border-radius: 6px;
+  transition: background 0.12s, color 0.12s;
+}
+
+nav a:hover { background: var(--bg); color: var(--text-1); }
+
+/* ---- SECTIONS ---- */
+.section { margin-bottom: 60px; scroll-margin-top: 20px; }
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sec-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.sec-label.c-blue  { color: var(--accent); }
+.sec-label.c-purple{ color: var(--purple); }
+.sec-label.c-green { color: var(--green);  }
+.sec-label.c-warm  { color: var(--warm);   }
+
+.sec-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+
+.sec-note {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-left: auto;
+  font-style: italic;
+  display: none;
+}
+
+/* ---- ENTRY CARDS ---- */
+.entry {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: 1fr 148px;
+  gap: 20px;
+  align-items: start;
+}
+
+.entry-name {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 7px;
+  flex-wrap: wrap;
+}
+
+.ename {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+
+.entry-desc {
+  font-size: 13.5px;
+  color: var(--text-2);
+  line-height: 1.62;
+  margin-bottom: 12px;
+}
+
+.entry-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.meta { min-width: 0; }
+
+.meta-k {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 2px;
+}
+
+.meta-v {
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+
+/* Right aside */
+.entry-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* Maturity pills */
+.pill {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.pill-research { background: var(--bg-alt);    color: var(--text-3);  border: 1px solid var(--border);  }
+.pill-emerging { background: var(--accent-bg); color: var(--accent);  border: 1px solid var(--accent-bg); }
+.pill-growth   { background: var(--purple-bg); color: var(--purple);  border: 1px solid var(--purple-bg); }
+.pill-mature   { background: var(--green-bg);  color: var(--green);   border: 1px solid var(--green-bg);  }
+
+/* Business relevance */
+.biz {
+  text-align: right;
+}
+
+.biz-k {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 2px;
+}
+
+.biz-v {
+  font-size: 11px;
+  font-weight: 700;
+  font-family: var(--mono);
+}
+
+.biz-critical { color: var(--warm);   }
+.biz-high     { color: var(--accent); }
+.biz-medium   { color: var(--purple); }
+.biz-watch    { color: var(--text-3); }
+
+/* Stat callout */
+.scallout {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--warm);
+  background: var(--warm-bg);
+  padding: 5px 8px;
+  border-radius: 5px;
+  text-align: right;
+  line-height: 1.4;
+  max-width: 148px;
+}
+
+/* ---- MATRIX ---- */
+.matrix {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.mcard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+.mcard.accent { border-left: 3px solid var(--accent); }
+.mcard.warm   { border-left: 3px solid var(--warm);   }
+.mcard.purple { border-left: 3px solid var(--purple); }
+.mcard.green  { border-left: 3px solid var(--green);  }
+
+.mcard-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.mcard-angle {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.mcard-body {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+/* ---- SOURCES ---- */
+.sources {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.sources-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 12px;
+}
+
+.src-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.src {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+.spacer { height: 72px; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .entry { grid-template-columns: 1fr; }
+  .entry-aside {
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .biz, .scallout { text-align: left; }
+  .stats { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+
+<div class="wrap">
+
+<!-- HEADER -->
+<header>
+  <div class="header-eye">
+    <span class="eye-tag">Research Brief</span>
+    <span class="eye-sep">/</span>
+    <span class="eye-tag">AI Landscape</span>
+    <span class="eye-sep">/</span>
+    <span class="eye-tag">Mid-2026</span>
+  </div>
+  <h1>AI Body of Knowledge</h1>
+  <p class="header-sub">A practitioner taxonomy of AI branches, subfields, and application domains — organized for specialization decisions. Drawn from Stanford HAI, NVIDIA, Google DeepMind, Anthropic, McKinsey, Gartner, Deloitte, and peer-reviewed literature, 2025–2026.</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-n">$582B</div>
+      <div class="stat-l">Global corporate AI investment, 2025 (+130% YoY)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">280×</div>
+      <div class="stat-l">Inference cost reduction, 2022–2024 ($20→$0.07/M tokens)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">40%</div>
+      <div class="stat-l">Enterprise apps with task-specific agents by end 2026 (Gartner)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">$6B</div>
+      <div class="stat-l">World model company investment in Q1 2026 alone</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">~10%</div>
+      <div class="stat-l">Enterprise functions that have actually scaled agents (McKinsey, Mar 2026)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">Aug 26</div>
+      <div class="stat-l">EU AI Act full high-risk obligations activate</div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav>
+  <a href="#foundations">Foundational Subfields</a>
+  <a href="#applied">Applied Domains</a>
+  <a href="#emerging">Emerging Branches</a>
+  <a href="#business">Business &amp; Organizational</a>
+  <a href="#matrix">Specialization Guide</a>
+</nav>
+
+<!-- SECTION 1: FOUNDATIONS -->
+<section class="section" id="foundations">
+  <div class="section-head">
+    <span class="sec-label c-green">Layer 01</span>
+    <span class="sec-title">Foundational Subfields</span>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Machine Learning</span>
+        <span class="pill pill-mature">Mature</span>
+      </div>
+      <p class="entry-desc">Statistical and computational methods by which systems learn patterns from data without explicit programming. The bedrock beneath all other AI subfields — every practitioner in AI intersects with it whether they know it or not.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Google, Stanford, CMU, Berkeley, Microsoft Research</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Specialization signal</div>
+          <div class="meta-v">Required literacy, not a stand-alone specialization in 2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-critical">CRITICAL</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Deep Learning</span>
+        <span class="pill pill-mature">Mature</span>
+      </div>
+      <p class="entry-desc">Multi-layer neural networks that learn hierarchical representations. The transformer architecture (2017) now dominates almost all frontier AI systems — text, image, audio, code, and video. The engineering substrate of generative AI.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Google DeepMind, Meta AI, OpenAI, MIT CSAIL</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Key architecture</div>
+          <div class="meta-v">Transformer (attention mechanism); mixture-of-experts variants now dominant at frontier scale</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-critical">CRITICAL</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Reinforcement Learning</span>
+        <span class="pill pill-growth">Growth</span>
+      </div>
+      <p class="entry-desc">Training agents through reward signals and environment interaction. Convergence with foundation models via RLHF (Reinforcement Learning from Human Feedback) and RLAIF made RL a core component of every frontier LLM. Now extending into world-model pretraining and agentic decision-making.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Google DeepMind, OpenAI, CMU, Berkeley</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Key shift</div>
+          <div class="meta-v">RLHF/RLAIF now standard training step in all frontier LLMs</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-high">HIGH</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Natural Language Processing / LLMs</span>
+        <span class="pill pill-mature">Mature</span>
+      </div>
+      <p class="entry-desc">Modeling, understanding, and generating human language at scale. Large Language Models are the dominant consumer and enterprise AI product. The most accessible AI entry point across industries — and the battleground for differentiated capability.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Anthropic, OpenAI, Google DeepMind, Meta AI, Mistral</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">2026 frontier</div>
+          <div class="meta-v">Extended reasoning, code generation, agent scaffolding, long context (&gt;1M tokens)</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-critical">CRITICAL</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Computer Vision</span>
+        <span class="pill pill-mature">Mature</span>
+      </div>
+      <p class="entry-desc">Enabling machines to interpret and reason about visual data — image classification, object detection, segmentation, and video understanding. Foundational for manufacturing QA, medical imaging, autonomous vehicles, and retail analytics.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Google DeepMind, NVIDIA, Meta AI, Stanford Vision Lab</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Growth frontier</div>
+          <div class="meta-v">Video generation and understanding (Sora, Veo 3) still emerging as product domain</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-high">HIGH</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Multimodal AI</span>
+        <span class="pill pill-growth">Growth</span>
+      </div>
+      <p class="entry-desc">Systems that process and generate across multiple modalities simultaneously — text, image, audio, video, and code in a single model. Gemini 2.5 Pro and GPT-4o are current benchmarks. Unlocks document intelligence, medical imaging + text, and design workflows.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Google DeepMind (Gemini), OpenAI (GPT-4o), Anthropic (Claude 3.x)</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Maturity note</div>
+          <div class="meta-v">Text + image mature; native video + audio output still scaling toward reliability</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-high">HIGH</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: APPLIED DOMAINS -->
+<section class="section" id="applied">
+  <div class="section-head">
+    <span class="sec-label c-blue">Layer 02</span>
+    <span class="sec-title">Applied &amp; Product Domains</span>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Generative AI</span>
+        <span class="pill pill-mature">Mature</span>
+      </div>
+      <p class="entry-desc">AI systems that produce novel content: text, code, images, video, audio, and 3D objects. The productized face of deep learning. Now a platform, not a feature — every software category is being rebuilt around generative capabilities.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">OpenAI, Google DeepMind, Anthropic, Midjourney, Adobe, Stability AI</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Business pattern</div>
+          <div class="meta-v">Commodity at the model layer; value migrating to vertical applications and workflow integration</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-critical">CRITICAL</div>
+      </div>
+      <div class="scallout">$582B global corporate AI investment in 2025, +130% YoY (Stanford HAI)</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">AI Agents &amp; Agentic Systems</span>
+        <span class="pill pill-growth">Growth</span>
+      </div>
+      <p class="entry-desc">AI systems that perceive context, plan multi-step action sequences, use external tools, and operate autonomously toward goals. The defining product shift of 2025-2026. Multi-agent architectures (orchestrator + specialist agents) are the emerging enterprise architecture pattern.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Anthropic, OpenAI, Google, Salesforce, ServiceNow, Microsoft</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Reality check</div>
+          <div class="meta-v">Despite 40% enterprise app adoption forecast, McKinsey (Mar 2026) finds &lt;10% of functions have actually scaled agents</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-critical">CRITICAL</div>
+      </div>
+      <div class="scallout">Multi-agent inquiry volume +1,445% Q1 2024–Q2 2025 (Gartner)</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">AI Infrastructure &amp; MLOps</span>
+        <span class="pill pill-growth">Growth</span>
+      </div>
+      <p class="entry-desc">Compute platforms, model serving, observability, orchestration, and deployment pipelines. Inference now dominates (~2/3 of all AI compute). The invisible layer that makes every AI product viable — and increasingly a source of competitive advantage and cost risk.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">NVIDIA (H100/B200/GB200), AWS, Azure, Google Cloud, Databricks, Modal</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Key tension</div>
+          <div class="meta-v">Per-token cost fell 280x (2022–2024) — yet enterprise inference bills rising as volume multiplies</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-high">HIGH</div>
+      </div>
+      <div class="scallout">~2/3 of AI compute is now inference, not training (Deloitte 2026)</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Enterprise AI &amp; Workflow Automation</span>
+        <span class="pill pill-growth">Growth</span>
+      </div>
+      <p class="entry-desc">Deploying AI to automate, augment, and redesign knowledge work across business functions — finance, legal, HR, sales, operations. Agentic systems are the operative mechanism. The primary near-term value creation domain for most enterprise clients.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Microsoft (Copilot), Salesforce, ServiceNow, SAP, Workday, UiPath</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Practitioner lens</div>
+          <div class="meta-v">Intersection of AI capability and change management — both technical and organizational competency required</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-critical">CRITICAL</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">AI Safety &amp; Alignment</span>
+        <span class="pill pill-emerging">Emerging</span>
+      </div>
+      <p class="entry-desc">Ensuring AI systems behave as intended, remain controllable, and do not cause harm as capabilities scale. Covers interpretability (understanding model internals), robustness, value alignment, and long-horizon risk. Transitioning from academic concern to compliance requirement.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Anthropic, OpenAI Safety, DeepMind Safety, MIT, ARC Evals, Redwood Research</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Regulatory hook</div>
+          <div class="meta-v">EU AI Act high-risk obligations create compliance demand; interpretability increasingly audit-relevant</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-high">HIGH</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">AI for Science</span>
+        <span class="pill pill-growth">Growth</span>
+      </div>
+      <p class="entry-desc">Using AI to accelerate scientific discovery: protein structure prediction (AlphaFold 3), drug discovery, materials science, climate modeling, and mathematical reasoning. Narrow in market size but transformational in impact and defensibility.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Google DeepMind (AlphaFold 3, Isomorphic Labs), NVIDIA BioNeMo, Insilico Medicine</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Specialization signal</div>
+          <div class="meta-v">Deep defensibility in pharma, biotech, energy — requires domain expertise plus AI fluency</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-medium">NICHE/HIGH</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: EMERGING BRANCHES -->
+<section class="section" id="emerging">
+  <div class="section-head">
+    <span class="sec-label c-purple">Layer 03</span>
+    <span class="sec-title">Emerging Branches</span>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Reasoning Models</span>
+        <span class="pill pill-emerging">Emerging</span>
+      </div>
+      <p class="entry-desc">Models trained with extended test-time compute — chain-of-thought reasoning, self-verification, tree search, and deliberate multi-step problem decomposition before answering. OpenAI o1/o3 and Claude 3.7 Sonnet (extended thinking) established the paradigm. Enables AI on complex professional tasks (law, engineering, strategy) previously out of reach.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">OpenAI (o-series), Anthropic (Claude extended thinking), Google DeepMind</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Practitioner impact</div>
+          <div class="meta-v">Reasoning capability is the key unlock for AI in technical domains — including systems engineering</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-high">HIGH</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">World Models</span>
+        <span class="pill pill-emerging">Emerging</span>
+      </div>
+      <p class="entry-desc">AI systems that build internal causal representations of how the world works — enabling simulation, counterfactual reasoning, and physical action planning without trial and error in the real world. The connective tissue between language models and embodied/physical AI. NVIDIA Cosmos 3 (June 2026) is the first fully open omnimodal world foundation model; Google Genie 3 generates interactive 3D worlds; Yann LeCun's AMI Labs is building world-grounded reasoning systems.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">NVIDIA (Cosmos 3), Google DeepMind (Genie 3), AMI Labs (LeCun), Wayve</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Investment signal</div>
+          <div class="meta-v">$6B into world model companies in Q1 2026 alone — highest single-quarter AI sub-sector investment</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-high">HIGH (2-3yr)</div>
+      </div>
+      <div class="scallout">$6B world model investment Q1 2026</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Embodied AI / Physical AI</span>
+        <span class="pill pill-emerging">Emerging</span>
+      </div>
+      <p class="entry-desc">AI systems that perceive, reason about, and act in the physical world — robots, autonomous vehicles, drones, and humanoid systems. Integrates multimodal perception, world modeling, and structured action strategies. The three-layer framework (perception → world model → action) is the emerging canonical architecture (Frontiers in Robotics &amp; AI, 2025).</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Boston Dynamics, Figure AI, Physical Intelligence (Pi), NVIDIA Isaac, Tesla Optimus</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Risk note</div>
+          <div class="meta-v">The LLM scaling parallel may not hold — physical AI may face fundamentally different capability curves (TechTimes, Jun 2026)</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-high">HIGH (3-5yr)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">Neuromorphic Computing</span>
+        <span class="pill pill-research">Research</span>
+      </div>
+      <p class="entry-desc">Brain-inspired chips that process information via spiking neural networks (SNNs), prioritizing energy efficiency over raw throughput. Not transformer-based — a fundamentally different computing paradigm suited to edge and always-on inference scenarios. Still largely in research labs as of mid-2026.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Leading orgs</div>
+          <div class="meta-v">Intel (Loihi 2), IBM (NorthPole), SynSense</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Specialization signal</div>
+          <div class="meta-v">Long-horizon bet for energy-constrained edge AI; not a near-term business play</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-watch">WATCH</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: BUSINESS & ORGANIZATIONAL -->
+<section class="section" id="business">
+  <div class="section-head">
+    <span class="sec-label c-warm">Layer 04</span>
+    <span class="sec-title">Business &amp; Organizational</span>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">AI Strategy</span>
+        <span class="pill pill-growth">Growth</span>
+      </div>
+      <p class="entry-desc">Frameworks for deciding where and how to invest in AI capability — build vs. buy, vertical vs. horizontal, model selection, identifying sustainable moats, and sequencing capability development. The core practitioner competency for advisory work. Operationalizes as Feasibility x Impact prioritization, capability roadmaps, and AI portfolio management.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Key frameworks</div>
+          <div class="meta-v">Feasibility x Impact matrix, Gartner Hype Cycle positioning, McKinsey AI deployment ladder, AI maturity models</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Demand signal</div>
+          <div class="meta-v">Every enterprise is in strategy mode — the deployment gap (62% experimenting, &lt;10% scaled) means strategy work far outpaces implementation</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-critical">CRITICAL</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">AI Governance &amp; Regulation</span>
+        <span class="pill pill-growth">Growth</span>
+      </div>
+      <p class="entry-desc">Legal and policy frameworks governing AI development and deployment. The EU AI Act is the primary binding force globally — full high-risk obligations activate August 2026, with fines reaching EU35M or 7% of global turnover. US, UK, and APAC are developing their own approaches, creating multi-jurisdictional compliance complexity.</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Key frameworks</div>
+          <div class="meta-v">EU AI Act (binding), US NIST AI RMF, UK pro-innovation approach, Chambers AI Practice Guide 2026</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Demand signal</div>
+          <div class="meta-v">August 2026 activation date is making this urgent for every enterprise operating in the EU</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-high">HIGH</div>
+      </div>
+      <div class="scallout">EU fines up to EU35M or 7% global turnover</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="entry-main">
+      <div class="entry-name">
+        <span class="ename">AI Economics</span>
+        <span class="pill pill-growth">Growth</span>
+      </div>
+      <p class="entry-desc">Cost curves, productivity impacts, ROI frameworks, market structure, and investment dynamics. Inference economics now dominate: per-token costs have fallen 280x since 2022 while total enterprise spending rises. The investment question is shifting from "can we afford AI" to "how do we capture the value." $172B US consumer surplus annually estimated by early 2026 (Stanford HAI).</p>
+      <div class="entry-row">
+        <div class="meta">
+          <div class="meta-k">Key data sources</div>
+          <div class="meta-v">Stanford HAI AI Index 2026, McKinsey, Oxford Economics, Deloitte Tech Trends 2026, Vista Equity (inference ROI framework)</div>
+        </div>
+        <div class="meta">
+          <div class="meta-k">Investment framing</div>
+          <div class="meta-v">Three-way question: direct cost vs. strategic direction vs. opportunity cost of not investing — the core of any AI investment brief</div>
+        </div>
+      </div>
+    </div>
+    <div class="entry-aside">
+      <div class="biz">
+        <div class="biz-k">Business</div>
+        <div class="biz-v biz-critical">CRITICAL</div>
+      </div>
+      <div class="scallout">$172B/yr US consumer surplus from AI (Stanford HAI 2026)</div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECIALIZATION MATRIX -->
+<section class="section" id="matrix">
+  <div class="section-head">
+    <span class="sec-label c-blue">Synthesis</span>
+    <span class="sec-title">Specialization Guide — Business Positioning</span>
+  </div>
+  <p style="font-size:13.5px;color:var(--text-2);margin-bottom:20px;">How the taxonomy maps to actionable specialization bets, ordered by near-term commercial demand. Overlapping zones are intentional — they are where differentiated positioning lives.</p>
+
+  <div class="matrix">
+    <div class="mcard accent">
+      <div class="mcard-title">Enterprise AI &amp; Agentic Systems</div>
+      <div class="mcard-angle">Highest immediate demand</div>
+      <div class="mcard-body">The deployment gap is the business: 62% of enterprises are experimenting, fewer than 10% have scaled. Advisory, implementation, and workshop work all live here. Agents are the operative mechanism; organizational change management is the bottleneck.</div>
+    </div>
+
+    <div class="mcard accent">
+      <div class="mcard-title">AI Strategy &amp; Investment Framing</div>
+      <div class="mcard-angle">Core consulting competency</div>
+      <div class="mcard-body">Every enterprise needs a framework for sequencing AI investment. The Feasibility x Impact matrix, combined with the three-way cost question (direct cost / strategic direction / opportunity cost), is the practitioner tool. This is the layer where SE + business + AI fluency compounds into a premium value proposition.</div>
+    </div>
+
+    <div class="mcard warm">
+      <div class="mcard-title">AI for SE / Technical Corpora</div>
+      <div class="mcard-angle">Defensible niche</div>
+      <div class="mcard-body">Applying AI to large volumes of technical documentation — SysML v2 specs, Arcadia models, engineering reports — is the WS2 product thesis. Combines AI for Science patterns with NLP and RAG. Niche but deeply defensible because it requires both SE domain depth and AI fluency to execute.</div>
+    </div>
+
+    <div class="mcard warm">
+      <div class="mcard-title">AI Governance &amp; Compliance</div>
+      <div class="mcard-angle">Urgency-driven demand</div>
+      <div class="mcard-body">The EU AI Act's August 2026 activation is creating real enterprise urgency. Practitioners who can bridge technical AI understanding and regulatory obligation are scarce. Pairs well with AI strategy work — governance is a forcing function on strategy decisions.</div>
+    </div>
+
+    <div class="mcard purple">
+      <div class="mcard-title">Reasoning Models &amp; Agent Architecture</div>
+      <div class="mcard-angle">Technical specialization to watch</div>
+      <div class="mcard-body">Extended reasoning (chain-of-thought, test-time compute) is what enables AI on complex professional tasks. Understanding which tasks benefit from reasoning models vs. fast inference models is an emerging practitioner skill. Directly relevant to any SE or consulting work involving multi-step analysis.</div>
+    </div>
+
+    <div class="mcard purple">
+      <div class="mcard-title">World Models &amp; Physical AI</div>
+      <div class="mcard-angle">2–4 year horizon bet</div>
+      <div class="mcard-body">$6B in Q1 2026 investment signals the market believes physical AI is the next frontier. Not a near-term business play for most practitioners, but the right place to invest research attention now. Overlaps with SE's simulation and digital twin domains — a potential future positioning.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<div class="sources">
+  <div class="sources-title">Primary Sources — Mid-2026</div>
+  <div class="src-list">
+    <div class="src">Stanford HAI — AI Index Report 2026 (Technical Performance, R&amp;D, Economy chapters)</div>
+    <div class="src">NVIDIA — State of AI 2026 / Cosmos 3 Technical Report (Jun 2026)</div>
+    <div class="src">Google DeepMind — Genie 3 (interactive 3D world generation)</div>
+    <div class="src">McKinsey — State of AI Trust 2026: Shifting to the Agentic Era (Mar 2026)</div>
+    <div class="src">Gartner — Hype Cycle for Agentic AI 2026 / Predicts 2026: AI Agents Reshape Infrastructure</div>
+    <div class="src">Deloitte — Tech Trends 2026: AI Infrastructure Reckoning</div>
+    <div class="src">Oxford Economics — The Economics of AI</div>
+    <div class="src">European Commission — EU AI Act (high-risk obligations activate Aug 2026)</div>
+    <div class="src">Frontiers in Robotics &amp; AI — Embodied Intelligence Systems: Three-Layer Framework (2025)</div>
+    <div class="src">arXiv:2606.00133 — World Models: Comprehensive Survey (Jun 2026)</div>
+    <div class="src">MDPI Computers — Deep RL in the Era of Foundation Models (peer-reviewed survey)</div>
+    <div class="src">Adaline Labs — AI Research Landscape in 2026 (practitioner survey)</div>
+    <div class="src">Sema4.ai — AI Maturity Model 2026</div>
+    <div class="src">Vista Equity Partners — AI Inference Economics: Framework for Investors</div>
+    <div class="src">Chambers &amp; Partners — Artificial Intelligence 2026 (jurisdiction-by-jurisdiction practice guide)</div>
+  </div>
+</div>
+
+</div>
+<div class="spacer"></div>
