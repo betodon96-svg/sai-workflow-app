@@ -1,0 +1,640 @@
+<title>Taxonomy Comparison — Standard vs. Personal AI Knowledge Framework</title>
+<style>
+:root {
+  --bg:       #F8FAFC;
+  --bg-alt:   #EFF3FA;
+  --panel:    #E4EBF5;
+  --border:   #C8D4E8;
+  --text-1:   #0F172A;
+  --text-2:   #334155;
+  --text-3:   #64748B;
+  --A:        #1D4ED8;
+  --A-bg:     #DBEAFE;
+  --A-b:      #BFDBFE;
+  --B:        #92400E;
+  --B-bg:     #FEF3C7;
+  --B-b:      #FDE68A;
+  --win:      #065F46;
+  --win-bg:   #D1FAE5;
+  --gap:      #7F1D1D;
+  --gap-bg:   #FEE2E2;
+  --note:     #3B0764;
+  --note-bg:  #F3E8FF;
+  --mono:     'Menlo','Consolas','Courier New',monospace;
+  --sans:     -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:       #090E18;
+    --bg-alt:   #0D1420;
+    --panel:    #121B2E;
+    --border:   #1A2840;
+    --text-1:   #CBD5E4;
+    --text-2:   #7A92B0;
+    --text-3:   #445A75;
+    --A:        #60A5FA;
+    --A-bg:     #0A1830;
+    --A-b:      #12264A;
+    --B:        #D97706;
+    --B-bg:     #1C1000;
+    --B-b:      #2E1A00;
+    --win:      #34D399;
+    --win-bg:   #041A10;
+    --gap:      #F87171;
+    --gap-bg:   #1A0808;
+    --note:     #C084FC;
+    --note-bg:  #1A0830;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:       #090E18;
+  --bg-alt:   #0D1420;
+  --panel:    #121B2E;
+  --border:   #1A2840;
+  --text-1:   #CBD5E4;
+  --text-2:   #7A92B0;
+  --text-3:   #445A75;
+  --A:        #60A5FA;
+  --A-bg:     #0A1830;
+  --A-b:      #12264A;
+  --B:        #D97706;
+  --B-bg:     #1C1000;
+  --B-b:      #2E1A00;
+  --win:      #34D399;
+  --win-bg:   #041A10;
+  --gap:      #F87171;
+  --gap-bg:   #1A0808;
+  --note:     #C084FC;
+  --note-bg:  #1A0830;
+}
+:root[data-theme="light"] {
+  --bg:       #F8FAFC;
+  --bg-alt:   #EFF3FA;
+  --panel:    #E4EBF5;
+  --border:   #C8D4E8;
+  --text-1:   #0F172A;
+  --text-2:   #334155;
+  --text-3:   #64748B;
+  --A:        #1D4ED8;
+  --A-bg:     #DBEAFE;
+  --A-b:      #BFDBFE;
+  --B:        #92400E;
+  --B-bg:     #FEF3C7;
+  --B-b:      #FDE68A;
+  --win:      #065F46;
+  --win-bg:   #D1FAE5;
+  --gap:      #7F1D1D;
+  --gap-bg:   #FEE2E2;
+  --note:     #3B0764;
+  --note-bg:  #F3E8FF;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body { background:var(--bg); color:var(--text-1); font-family:var(--sans); font-size:14.5px; line-height:1.65; -webkit-font-smoothing:antialiased; }
+.wrap { max-width: 1060px; margin: 0 auto; padding: 0 28px; }
+
+header { padding: 52px 0 36px; border-bottom: 1px solid var(--border); margin-bottom: 44px; }
+
+.eye { font-family:var(--mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-3); margin-bottom:14px; display:flex; gap:10px; flex-wrap:wrap; }
+
+h1 { font-size:clamp(22px,3.5vw,36px); font-weight:800; letter-spacing:-0.025em; line-height:1.08; color:var(--text-1); text-wrap:balance; margin-bottom:10px; }
+
+.sub { font-size:14px; color:var(--text-3); max-width:620px; line-height:1.55; }
+
+/* DUEL HEADER */
+.duel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.duel-card {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 18px 20px;
+}
+
+.duel-card.a { background: var(--A-bg); border-color: var(--A-b); }
+.duel-card.b { background: var(--B-bg); border-color: var(--B-b); }
+
+.duel-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.a .duel-tag { color: var(--A); }
+.b .duel-tag { color: var(--B); }
+
+.duel-name { font-size: 16px; font-weight: 700; color: var(--text-1); margin-bottom: 5px; letter-spacing: -0.01em; }
+.duel-desc { font-size: 13px; color: var(--text-2); line-height: 1.55; margin-bottom: 10px; }
+
+.duel-layers { display: flex; flex-direction: column; gap: 4px; }
+
+.layer-item {
+  font-size: 12px;
+  color: var(--text-2);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.layer-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.a .layer-dot { background: var(--A); }
+.b .layer-dot { background: var(--B); }
+
+/* SECTION */
+.section { margin-bottom: 52px; }
+
+.sec-head {
+  display: flex; align-items: baseline; gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px; margin-bottom: 20px;
+}
+
+.sec-tag { font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-3); }
+.sec-title { font-size:15px; font-weight:700; color:var(--text-1); letter-spacing:-0.01em; }
+
+/* COMPARISON ROWS */
+.crit-row {
+  display: grid;
+  grid-template-columns: 190px 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.crit-label {
+  background: var(--panel);
+  padding: 14px 16px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+.cl-name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+.cl-note { font-size: 11px; color: var(--text-3); font-style: italic; }
+
+.crit-a, .crit-b {
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.crit-a { background: var(--A-bg); color: var(--text-2); border-right: 1px solid var(--border); }
+.crit-b { background: var(--B-bg); color: var(--text-2); }
+
+.tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.tag-win  { background: var(--win-bg);  color: var(--win);  }
+.tag-gap  { background: var(--gap-bg);  color: var(--gap);  }
+.tag-tie  { background: var(--panel);   color: var(--text-3); }
+.tag-note { background: var(--note-bg); color: var(--note); }
+
+/* VERDICT GRID */
+.verdict-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.verdict-card {
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  padding: 16px 18px;
+}
+
+.vc-tag { font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:5px; }
+.vc-title { font-size: 14px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; letter-spacing: -0.01em; }
+.vc-body { font-size: 13px; color: var(--text-2); line-height: 1.55; }
+
+.vc-a { background: var(--A-bg); border-color: var(--A-b); }
+.vc-a .vc-tag { color: var(--A); }
+
+.vc-b { background: var(--B-bg); border-color: var(--B-b); }
+.vc-b .vc-tag { color: var(--B); }
+
+.vc-both { background: var(--note-bg); border-color: var(--border); }
+.vc-both .vc-tag { color: var(--note); }
+
+/* SYNTHESIS */
+.synthesis {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 26px;
+  margin-bottom: 52px;
+}
+
+.syn-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.syn-sub {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.syn-body { font-size: 14px; color: var(--text-2); line-height: 1.65; margin-bottom: 12px; }
+.syn-body:last-child { margin-bottom: 0; }
+
+/* SPRINT TABLE */
+.sprint-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 4px;
+}
+.sprint-table th {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--border);
+}
+.sprint-table td {
+  padding: 10px 12px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.sprint-table tr:last-child td { border-bottom: none; }
+.sprint-table tr:nth-child(even) td { background: var(--bg-alt); }
+.sprint-n { font-weight: 700; color: var(--text-1); white-space: nowrap; font-size: 13px; }
+.sprint-dom { font-family: var(--mono); font-size: 10px; color: var(--B); font-weight: 700; }
+
+p { color:var(--text-2); font-size:14px; line-height:1.65; margin-bottom:12px; }
+p:last-child { margin-bottom:0; }
+.spacer { height: 72px; }
+
+@media (max-width: 680px) {
+  .duel { grid-template-columns: 1fr; }
+  .crit-row { grid-template-columns: 1fr; }
+  .crit-label { border-right: none; border-bottom: 1px solid var(--border); }
+  .crit-a { border-right: none; border-bottom: 1px solid var(--border); }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eye">
+    <span>Analysis</span>
+    <span>/</span>
+    <span>Taxonomy Comparison</span>
+    <span>/</span>
+    <span>July 2026</span>
+  </div>
+  <h1>Two Bodies of Knowledge<br>Side-by-Side Analysis</h1>
+  <p class="sub">Standard field taxonomy (sourced from Stanford HAI, NVIDIA, McKinsey, Gartner) vs. personal practitioner taxonomy (betodon96). Evaluated on relevance and comprehensiveness for the target user: independent advisor at the intersection of SE, business strategy, and AI.</p>
+</header>
+
+<!-- DUEL HEADERS -->
+<div class="duel">
+  <div class="duel-card a">
+    <div class="duel-tag">Taxonomy A</div>
+    <div class="duel-name">Standard Field Taxonomy</div>
+    <div class="duel-desc">Derived from authoritative institutional sources. Describes the AI landscape as the research and industry community has organized it. Layered, comprehensive, oriented toward "what AI is."</div>
+    <div class="duel-layers">
+      <div class="layer-item"><div class="layer-dot"></div>Layer 01: Foundational Subfields (ML, DL, RL, NLP, CV, Multimodal)</div>
+      <div class="layer-item"><div class="layer-dot"></div>Layer 02: Applied Domains (GenAI, Agents, MLOps, Enterprise AI, Safety, AI for Science)</div>
+      <div class="layer-item"><div class="layer-dot"></div>Layer 03: Emerging Branches (Reasoning, World Models, Embodied AI, Neuromorphic)</div>
+      <div class="layer-item"><div class="layer-dot"></div>Layer 04: Business & Organizational (Strategy, Governance, Economics)</div>
+    </div>
+  </div>
+  <div class="duel-card b">
+    <div class="duel-tag">Taxonomy B</div>
+    <div class="duel-name">Personal Practitioner Taxonomy</div>
+    <div class="duel-desc">Built from the practitioner's perspective. Organized around what to DO with AI, not what AI IS. Non-MECE by design — overlap zones are productive research territory.</div>
+    <div class="duel-layers">
+      <div class="layer-item"><div class="layer-dot"></div>Domain 01: Engineering AI Systems (agents, context, pipelines, eval, MCP)</div>
+      <div class="layer-item"><div class="layer-dot"></div>Domain 02: Enterprise AI (strategy, deployment, governance, change)</div>
+      <div class="layer-item"><div class="layer-dot"></div>Domain 03: Eval Sets (horizontal — applies to all other domains)</div>
+      <div class="layer-item"><div class="layer-dot"></div>Domain 04: Engineering Systems through AI (SE augmentation, MBSE, artifact-free AI)</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION: CRITERIA COMPARISON -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">01</span>
+    <span class="sec-title">Criterion-by-Criterion Comparison</span>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Audience alignment</div>
+      <div class="cl-note">Does it speak to the target user's role?</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-gap">Partial</span>
+      Designed for a broad audience — researchers, investors, executives. Treats the field as an object of study. The practitioner role (building, deploying, advising) is implicit, not foregrounded.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-win">Strong</span>
+      Built around doing, not observing. Every category maps directly to a consulting or building activity: engineering products, deploying in orgs, measuring quality, augmenting SE practice.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Context &amp; memory engineering</div>
+      <div class="cl-note">The craft of managing what AI systems know</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-gap">Absent</span>
+      Not named as a topic anywhere in the taxonomy. Assumed to be sub-technique within MLOps. For a practitioner building agentic systems, this is a critical omission.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-win">First-class</span>
+      Explicitly named as a core sub-domain within Engineering AI Systems. Four memory types (in-context, retrieval, structured, document) recognized as distinct engineering choices.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Eval sets</div>
+      <div class="cl-note">Measuring AI performance and process quality</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-gap">Buried</span>
+      Mentioned within AI Safety &amp; Alignment and MLOps. Not elevated to its own domain. Treated as a tool, not a discipline.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-win">Own domain</span>
+      Standalone domain that explicitly applies horizontally across all others. Covers model eval, agent behavior testing, human-in-the-loop eval, and process quality measurement.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">SE / MBSE domain</div>
+      <div class="cl-note">AI applied to systems engineering practice</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-gap">Absent</span>
+      No SE-specific framing. AI for Science covers adjacent territory (biology, materials) but not systems engineering methodology or MBSE tooling.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-win">Core domain</span>
+      Domain 04 is built specifically around this: AI-augmented MBSE, document intelligence for specs and standards, V&V with AI, SE process supporting systems.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Artifact vs. process distinction</div>
+      <div class="cl-note">"The solution doesn't contain AI"</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-gap">Absent</span>
+      All taxonomy categories assume AI is in the delivered product. The paradigm of AI as process instrument (not artifact ingredient) does not exist in the standard field taxonomy.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-win">Defining frame</span>
+      Domain 04 is entirely built around this distinction. The insight that "the artifact stays clean, the process is AI-augmented" is the most counterintuitive and valuable framing for the SE community.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Field comprehensiveness</div>
+      <div class="cl-note">Coverage of AI as a whole</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-win">Broad</span>
+      Covers foundational subfields, 6 applied domains, 4 emerging branches, and 3 business dimensions. Functions as a field map — nearly nothing is missing from an institutional view of AI.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-gap">Focused</span>
+      Deliberately scoped. AI for Science, neuromorphic, world models, embodied AI, AI economics, and regulatory detail are all outside the active research scope. This is a feature, but requires awareness of what's excluded.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Emerging branch awareness</div>
+      <div class="cl-note">World models, reasoning, embodied AI</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-win">Detailed</span>
+      Full layer dedicated to emerging branches with maturity signals, investment data ($6B world model Q1 2026), and leading organizations. Critical for staying current and timing bets.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-gap">Watch list only</span>
+      Emerging branches appear only in "outside scope" as watch items. No structured way to track them or connect them to active research domains.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Governance &amp; regulation</div>
+      <div class="cl-note">EU AI Act, compliance, risk</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-win">Explicit</span>
+      Dedicated section with EU AI Act activation date (August 2026), fine structure, and multi-jurisdiction mapping. Actionable for client advisory.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-note">Embedded</span>
+      Appears as sub-domain within Enterprise AI (governance &amp; risk, regulatory compliance). Present but not foregrounded — relies on standard taxonomy for depth.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Research focus utility</div>
+      <div class="cl-note">Guides what to study next</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-gap">Overwhelming</span>
+      Four layers with 16+ distinct subfields. As a research agenda it provides too many directions with no prioritization logic for a focused practitioner.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-win">Well-focused</span>
+      4 domains + 6 named overlap zones = ~10 actionable research targets. Non-MECE design naturally suggests where to focus: high-overlap zones are highest-ROI research areas.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Client communication</div>
+      <div class="cl-note">Useful in workshop or pitch contexts</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-win">Strong</span>
+      Maturity signals, investment data, named institutions, and Gartner positioning make it immediately useful in client-facing work for explaining where AI is and where it's going.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-gap">Too personal</span>
+      Organized around the practitioner's agenda, not the client's mental model. Would need translation to use in a workshop or pitch context.
+    </div>
+  </div>
+
+  <div class="crit-row">
+    <div class="crit-label">
+      <div class="cl-name">Prompt engineering</div>
+      <div class="cl-note">Core practitioner craft</div>
+    </div>
+    <div class="crit-a">
+      <span class="tag tag-gap">Absent</span>
+      Not named anywhere. Assumed to be a technique rather than a knowledge domain.
+    </div>
+    <div class="crit-b">
+      <span class="tag tag-win">Named</span>
+      Explicit sub-domain within Engineering AI Systems, alongside context architecture, RAG, tool use, and multi-agent orchestration.
+    </div>
+  </div>
+
+</section>
+
+<!-- SECTION: WHERE EACH WINS -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">02</span>
+    <span class="sec-title">Where Each Framework Wins</span>
+  </div>
+  <div class="verdict-grid">
+    <div class="verdict-card vc-a">
+      <div class="vc-tag">Standard Taxonomy wins</div>
+      <div class="vc-title">Explaining the AI landscape</div>
+      <div class="vc-body">When you need to show a client what's happening in AI, where things are in the maturity curve, who's investing in what. A field map rather than a practitioner compass.</div>
+    </div>
+    <div class="verdict-card vc-a">
+      <div class="vc-tag">Standard Taxonomy wins</div>
+      <div class="vc-title">Tracking emerging branches</div>
+      <div class="vc-body">World models, embodied AI, reasoning models — the frontier movements that will matter in 2–4 years. Standard taxonomy has the investment signals and named actors.</div>
+    </div>
+    <div class="verdict-card vc-a">
+      <div class="vc-tag">Standard Taxonomy wins</div>
+      <div class="vc-title">Governance &amp; regulatory depth</div>
+      <div class="vc-body">EU AI Act, multi-jurisdiction compliance, fine structures. Critical for client advisory in regulated industries and not covered with equivalent depth in the personal taxonomy.</div>
+    </div>
+    <div class="verdict-card vc-b">
+      <div class="vc-tag">Personal Taxonomy wins</div>
+      <div class="vc-title">Organizing your own research</div>
+      <div class="vc-body">4 domains + 6 overlap zones = manageable sprint structure. The non-MECE design naturally prioritizes the overlap zones as highest-ROI research targets.</div>
+    </div>
+    <div class="verdict-card vc-b">
+      <div class="vc-tag">Personal Taxonomy wins</div>
+      <div class="vc-title">SE community positioning</div>
+      <div class="vc-body">Domain 04 (Engineering Systems through AI) does not exist in the standard taxonomy. It is the core differentiator for positioning in the SE community and the MBSE engagement.</div>
+    </div>
+    <div class="verdict-card vc-b">
+      <div class="vc-tag">Personal Taxonomy wins</div>
+      <div class="vc-title">Practitioner skill-building</div>
+      <div class="vc-body">Context engineering, prompt engineering, eval methodology, and agent architecture are all named and foregrounded. The standard taxonomy treats these as sub-techniques; this taxonomy treats them as careers.</div>
+    </div>
+    <div class="verdict-card vc-both">
+      <div class="vc-tag">Both needed</div>
+      <div class="vc-title">Agentic systems &amp; Enterprise AI</div>
+      <div class="vc-body">The overlap between Domain 01 (Engineering AI Systems) and Domain 02 (Enterprise AI) maps well to Layer 02 (Applied Domains) in the standard taxonomy. Both cover it — standard provides market data, personal provides skill structure.</div>
+    </div>
+    <div class="verdict-card vc-both">
+      <div class="vc-tag">Both needed</div>
+      <div class="vc-title">Investment framing for clients</div>
+      <div class="vc-body">Standard taxonomy provides the economics data (cost curves, market size). Personal taxonomy provides the three-way investment question frame (direct cost / strategic direction / opportunity cost). Together they complete the WS3 argument.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SYNTHESIS -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">03</span>
+    <span class="sec-title">Synthesis &amp; Research Sprint Recommendations</span>
+  </div>
+
+  <div class="synthesis">
+    <div class="syn-title">The compass and the map</div>
+    <div class="syn-sub">Analytical conclusion</div>
+    <p class="syn-body">The standard taxonomy is a <strong>map of the territory</strong> — comprehensive, sourced, useful for explaining the AI landscape to others and tracking where the frontier is moving. The personal taxonomy is a <strong>compass for navigating it</strong> — focused, practitioner-oriented, built around what to do rather than what exists. Both are correct at what they do. The mistake would be to treat them as alternatives.</p>
+    <p class="syn-body">The personal taxonomy has three genuine innovations that the field taxonomy lacks: (1) Context &amp; memory engineering as a first-class domain, (2) Eval sets as a horizontal discipline rather than a buried sub-technique, and (3) Engineering Systems through AI as a named paradigm. These are not gaps in the standard taxonomy from laziness — they are gaps because the standard taxonomy describes research fields, not practitioner knowledge domains. Your taxonomy is organized around a different question.</p>
+    <p class="syn-body">The personal taxonomy's weak spot is temporal awareness — it has no structure for tracking emerging branches (world models, reasoning models, embodied AI) that are not yet relevant today but will be in 2–3 years. A simple "watch list" connection to the standard taxonomy's Layer 03 closes this gap without requiring active research investment now.</p>
+  </div>
+
+  <p style="font-size:13.5px; color:var(--text-2); margin-bottom:16px;">Proposed research sprint targets for the next few weeks, drawn from the overlap zones where practitioner ROI is highest:</p>
+
+  <div style="overflow-x:auto;">
+  <table class="sprint-table">
+    <thead>
+      <tr>
+        <th>Sprint target</th>
+        <th>Domain</th>
+        <th>Why this, why now</th>
+        <th>Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="sprint-n">Context &amp; memory architecture</td>
+        <td><span class="sprint-dom">D01 × D04</span></td>
+        <td>The gap between a working agent and a useful one. Directly applicable to both the workshop (Cowork / CLAUDE.md pattern) and the WS2 document-reading product (RAG architecture decisions).</td>
+        <td>Design pattern library for memory architecture choices</td>
+      </tr>
+      <tr>
+        <td class="sprint-n">Agent evaluation methodology</td>
+        <td><span class="sprint-dom">D01 × D03</span></td>
+        <td>Most practitioners cannot rigorously assess whether their agents are working. A lightweight eval framework for agentic systems is a defensible consulting deliverable with no existing standard.</td>
+        <td>Eval framework template for agent behavior testing</td>
+      </tr>
+      <tr>
+        <td class="sprint-n">AI-augmented requirements engineering</td>
+        <td><span class="sprint-dom">D04 × D03</span></td>
+        <td>The most tractable starting point for Engineering Systems through AI. Requirements documents are structured, evaluable, and the quality delta from AI assistance is measurable. Proof case for the MBSE engagement.</td>
+        <td>Case study + eval framework for AI-assisted requirements</td>
+      </tr>
+      <tr>
+        <td class="sprint-n">Agentic deployment gap analysis</td>
+        <td><span class="sprint-dom">D01 × D02</span></td>
+        <td>McKinsey: 62% experimenting, &lt;10% scaled. Understanding WHY bridges the technical and organizational — the practitioner's value proposition. Directly feeds workshop content and client advisory.</td>
+        <td>Diagnostic framework for enterprise agent readiness</td>
+      </tr>
+      <tr>
+        <td class="sprint-n">Reasoning models for SE tasks</td>
+        <td><span class="sprint-dom">D01 × D04</span></td>
+        <td>Extended thinking / chain-of-thought is the unlock for AI on complex SE tasks (trade-off analysis, architecture decisions). Understanding where reasoning models outperform standard inference informs WS2 product design.</td>
+        <td>Comparative benchmark: standard vs. reasoning model on SE tasks</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+</div>
+<div class="spacer"></div>

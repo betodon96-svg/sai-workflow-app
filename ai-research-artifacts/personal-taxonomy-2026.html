@@ -1,0 +1,596 @@
+<title>Personal AI Research Agenda — 2026</title>
+<style>
+:root {
+  --bg:        #FDFAF5;
+  --bg-alt:    #F5EFE3;
+  --panel:     #EDE4D3;
+  --border:    #D6C9B0;
+  --text-1:    #1C1408;
+  --text-2:    #4A3C28;
+  --text-3:    #8A7560;
+  --amber:     #92400E;
+  --amber-bg:  #FEF3C7;
+  --amber-b:   #FDE68A;
+  --teal:      #134E4A;
+  --teal-bg:   #CCFBF1;
+  --teal-b:    #99F6E4;
+  --blue:      #1E3A5F;
+  --blue-bg:   #DBEAFE;
+  --blue-b:    #BFDBFE;
+  --purple:    #3B0764;
+  --purple-bg: #F3E8FF;
+  --purple-b:  #E9D5FF;
+  --overlap:   #7C2D12;
+  --overlap-bg:#FFF7ED;
+  --mono:      'Menlo','Consolas','Courier New',monospace;
+  --sans:      -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #120E08;
+    --bg-alt:    #1A1408;
+    --panel:     #231C0E;
+    --border:    #352A18;
+    --text-1:    #EDE0C8;
+    --text-2:    #A8916E;
+    --text-3:    #6B5640;
+    --amber:     #D97706;
+    --amber-bg:  #1C1000;
+    --amber-b:   #2E1A00;
+    --teal:      #2DD4BF;
+    --teal-bg:   #042520;
+    --teal-b:    #083830;
+    --blue:      #60A5FA;
+    --blue-bg:   #0A1830;
+    --blue-b:    #12264A;
+    --purple:    #C084FC;
+    --purple-bg: #1A0830;
+    --purple-b:  #2D1050;
+    --overlap:   #FB923C;
+    --overlap-bg:#1C0800;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:        #120E08;
+  --bg-alt:    #1A1408;
+  --panel:     #231C0E;
+  --border:    #352A18;
+  --text-1:    #EDE0C8;
+  --text-2:    #A8916E;
+  --text-3:    #6B5640;
+  --amber:     #D97706;
+  --amber-bg:  #1C1000;
+  --amber-b:   #2E1A00;
+  --teal:      #2DD4BF;
+  --teal-bg:   #042520;
+  --teal-b:    #083830;
+  --blue:      #60A5FA;
+  --blue-bg:   #0A1830;
+  --blue-b:    #12264A;
+  --purple:    #C084FC;
+  --purple-bg: #1A0830;
+  --purple-b:  #2D1050;
+  --overlap:   #FB923C;
+  --overlap-bg:#1C0800;
+}
+:root[data-theme="light"] {
+  --bg:        #FDFAF5;
+  --bg-alt:    #F5EFE3;
+  --panel:     #EDE4D3;
+  --border:    #D6C9B0;
+  --text-1:    #1C1408;
+  --text-2:    #4A3C28;
+  --text-3:    #8A7560;
+  --amber:     #92400E;
+  --amber-bg:  #FEF3C7;
+  --amber-b:   #FDE68A;
+  --teal:      #134E4A;
+  --teal-bg:   #CCFBF1;
+  --teal-b:    #99F6E4;
+  --blue:      #1E3A5F;
+  --blue-bg:   #DBEAFE;
+  --blue-b:    #BFDBFE;
+  --purple:    #3B0764;
+  --purple-bg: #F3E8FF;
+  --purple-b:  #E9D5FF;
+  --overlap:   #7C2D12;
+  --overlap-bg:#FFF7ED;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--sans);
+  font-size: 14.5px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 28px; }
+
+header {
+  padding: 52px 0 36px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 44px;
+}
+
+.eye {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 14px;
+  display: flex; gap: 10px;
+}
+
+h1 {
+  font-size: clamp(26px, 4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  color: var(--text-1);
+  text-wrap: balance;
+  margin-bottom: 14px;
+}
+
+.sub {
+  font-size: 15px;
+  color: var(--text-3);
+  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.non-mece-note {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--overlap-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  max-width: 640px;
+}
+
+.non-mece-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--overlap);
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+.non-mece-text {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+/* GRID */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 14px;
+  margin-bottom: 52px;
+}
+
+.cat-card {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.cat-head {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cat-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.cat-name {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+.cat-def {
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.cat-body { padding: 18px 22px; }
+
+.domain-group {
+  margin-bottom: 16px;
+}
+
+.domain-group:last-child { margin-bottom: 0; }
+
+.dg-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.domain-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dpill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  line-height: 1;
+}
+
+.key-insight {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  border-left: 3px solid;
+}
+
+/* Per-category color systems */
+.c1 { --cc: var(--amber); --cb: var(--amber-bg); --cbb: var(--amber-b); }
+.c2 { --cc: var(--blue);  --cb: var(--blue-bg);  --cbb: var(--blue-b);  }
+.c3 { --cc: var(--teal);  --cb: var(--teal-bg);  --cbb: var(--teal-b);  }
+.c4 { --cc: var(--purple);--cb: var(--purple-bg);--cbb: var(--purple-b);}
+
+.cat-head  { background: var(--cb); }
+.cat-label { color: var(--cc); }
+.cat-name  { color: var(--cc); }
+.cat-def   { color: var(--text-2); }
+
+.dpill {
+  background: var(--cb);
+  color: var(--cc);
+  border-color: var(--cbb);
+}
+
+.dpill.secondary {
+  background: var(--panel);
+  color: var(--text-2);
+  border-color: var(--border);
+}
+
+.key-insight {
+  background: var(--cb);
+  color: var(--text-2);
+  border-left-color: var(--cc);
+}
+
+/* OVERLAPS */
+.overlaps-section {
+  margin-bottom: 52px;
+}
+
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.sec-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.sec-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.overlap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.overlap-card {
+  background: var(--overlap-bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 16px 18px;
+}
+
+.ov-zone {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--overlap);
+  margin-bottom: 5px;
+}
+
+.ov-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 6px;
+}
+
+.ov-body {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+/* WHAT'S ASSUMED */
+.assumed {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 18px 22px;
+  margin-bottom: 52px;
+}
+
+.assumed-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.assumed-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.assumed-item {
+  font-size: 12px;
+  color: var(--text-3);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.spacer { height: 72px; }
+
+@media (max-width: 640px) {
+  .cat-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eye">
+    <span>Personal Research Agenda</span>
+    <span>/</span>
+    <span>betodon96</span>
+    <span>/</span>
+    <span>July 2026</span>
+  </div>
+  <h1>AI Knowledge Domains<br>Personal Taxonomy</h1>
+  <p class="sub">A practitioner-first framework for organizing research, building expertise, and positioning advisory work. Built from the perspective of what to DO with AI, not what the field IS. Designed to guide 2–6 week research sprints and specialization decisions.</p>
+  <div class="non-mece-note">
+    <span class="non-mece-label">Design intent</span>
+    <span class="non-mece-text">Deliberately non-MECE. Overlap zones between categories are the most productive research areas — not defects to eliminate. The framework separates four orientations; the intersections are where practitioner differentiation lives.</span>
+  </div>
+</header>
+
+<!-- CATEGORIES -->
+<div class="cat-grid">
+
+  <!-- CAT 1: Engineering AI Systems -->
+  <div class="cat-card c1">
+    <div class="cat-head">
+      <div class="cat-label">Domain 01</div>
+      <div class="cat-name">Engineering AI Systems</div>
+      <div class="cat-def">Design, build, and operate AI-native capabilities — the craft of making AI products work reliably in the real world.</div>
+    </div>
+    <div class="cat-body">
+      <div class="domain-group">
+        <div class="dg-label">Core sub-domains</div>
+        <div class="domain-pills">
+          <span class="dpill">AI Agents &amp; Pipelines</span>
+          <span class="dpill">Prompt Engineering</span>
+          <span class="dpill">Context &amp; Memory Architecture</span>
+          <span class="dpill">RAG &amp; Retrieval Systems</span>
+          <span class="dpill">Multi-agent Orchestration</span>
+          <span class="dpill">Tool Use &amp; MCP</span>
+          <span class="dpill">Model Selection &amp; Evaluation</span>
+          <span class="dpill">Fine-tuning &amp; Adaptation</span>
+        </div>
+      </div>
+      <div class="domain-group">
+        <div class="dg-label">Supporting foundations (assumed literacy)</div>
+        <div class="domain-pills">
+          <span class="dpill secondary">LLMs / NLP</span>
+          <span class="dpill secondary">Deep Learning basics</span>
+          <span class="dpill secondary">API integration</span>
+        </div>
+      </div>
+      <div class="key-insight"><strong>Context &amp; memory engineering</strong> belongs here as a first-class sub-domain, not an infrastructure concern. Deciding what goes in the context window, what is stored externally, and how memory persists across sessions is a core product engineering decision that determines whether an AI system is useful or not.</div>
+    </div>
+  </div>
+
+  <!-- CAT 2: Enterprise AI -->
+  <div class="cat-card c2">
+    <div class="cat-head">
+      <div class="cat-label">Domain 02</div>
+      <div class="cat-name">Enterprise AI</div>
+      <div class="cat-def">Organizational deployment, institutionalization, and governance of AI across business functions and workflows at scale.</div>
+    </div>
+    <div class="cat-body">
+      <div class="domain-group">
+        <div class="dg-label">Core sub-domains</div>
+        <div class="domain-pills">
+          <span class="dpill">AI Strategy &amp; Roadmapping</span>
+          <span class="dpill">Workflow Integration</span>
+          <span class="dpill">Change Management</span>
+          <span class="dpill">AI Governance &amp; Risk</span>
+          <span class="dpill">Feasibility × Impact Prioritization</span>
+          <span class="dpill">Organizational Capability Building</span>
+          <span class="dpill">AI Maturity Models</span>
+          <span class="dpill">Regulatory Compliance (EU AI Act)</span>
+        </div>
+      </div>
+      <div class="domain-group">
+        <div class="dg-label">Current high-signal area</div>
+        <div class="domain-pills">
+          <span class="dpill">Agentic system deployment</span>
+          <span class="dpill">Workshop &amp; enablement design</span>
+        </div>
+      </div>
+      <div class="key-insight">The deployment gap — 62% of enterprises experimenting, fewer than 10% scaled — means advisory work here far outpaces implementation. Strategy and change management are the bottlenecks, not the technology.</div>
+    </div>
+  </div>
+
+  <!-- CAT 3: Eval Sets -->
+  <div class="cat-card c3">
+    <div class="cat-head">
+      <div class="cat-label">Domain 03</div>
+      <div class="cat-name">Eval Sets</div>
+      <div class="cat-def">Methods, frameworks, and tooling for measuring AI system performance and the quality of AI-assisted processes — a horizontal that cuts across all other domains.</div>
+    </div>
+    <div class="cat-body">
+      <div class="domain-group">
+        <div class="dg-label">Core sub-domains</div>
+        <div class="domain-pills">
+          <span class="dpill">Model Benchmark Design</span>
+          <span class="dpill">Task-specific Evaluation</span>
+          <span class="dpill">Agent Behavior Testing</span>
+          <span class="dpill">Human-in-the-loop Eval</span>
+          <span class="dpill">Process Quality Measurement</span>
+          <span class="dpill">Output Reliability Frameworks</span>
+          <span class="dpill">Red-teaming &amp; Adversarial Testing</span>
+          <span class="dpill">Eval Dataset Curation</span>
+        </div>
+      </div>
+      <div class="domain-group">
+        <div class="dg-label">Why it's a standalone domain</div>
+        <div class="domain-pills">
+          <span class="dpill secondary">Applies to model builders and deployers alike</span>
+          <span class="dpill secondary">Cuts across all other domains</span>
+        </div>
+      </div>
+      <div class="key-insight">Standard taxonomies bury eval inside MLOps or Safety. That undersells it. Eval methodology is what distinguishes rigorous AI work from intuition-driven AI work — it applies whether you're building a model, deploying an agent, or measuring an AI-augmented SE process.</div>
+    </div>
+  </div>
+
+  <!-- CAT 4: Engineering Systems through AI -->
+  <div class="cat-card c4">
+    <div class="cat-head">
+      <div class="cat-label">Domain 04</div>
+      <div class="cat-name">Engineering Systems through AI</div>
+      <div class="cat-def">Using AI as instrument to architect, design, verify, and develop systems — where the delivered artifact does not itself contain AI, but the engineering process was AI-augmented.</div>
+    </div>
+    <div class="cat-body">
+      <div class="domain-group">
+        <div class="dg-label">Core sub-domains</div>
+        <div class="domain-pills">
+          <span class="dpill">AI-augmented MBSE &amp; SysML</span>
+          <span class="dpill">Document Intelligence (Arcadia, specs, standards)</span>
+          <span class="dpill">AI-assisted Requirements Engineering</span>
+          <span class="dpill">Verification &amp; Validation with AI</span>
+          <span class="dpill">AI for Architecture Decision Support</span>
+          <span class="dpill">Supporting Systems for SE Processes</span>
+          <span class="dpill">Digital Twin &amp; Simulation Augmentation</span>
+        </div>
+      </div>
+      <div class="domain-group">
+        <div class="dg-label">Proof case (WS2 engagement)</div>
+        <div class="domain-pills">
+          <span class="dpill secondary">Arcadia vs SysML v2 document-reading product</span>
+        </div>
+      </div>
+      <div class="key-insight"><strong>The most counterintuitive framing in the SE community.</strong> "The solution doesn't contain AI" is a feature, not a gap — it separates AI capability from AI outcome. The SE community will resist AI adoption partly because they conflate these. This framing resolves the objection.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- PRODUCTIVE OVERLAPS -->
+<section class="overlaps-section">
+  <div class="sec-head">
+    <span class="sec-tag">Intersections</span>
+    <span class="sec-title">Productive Overlap Zones — Where Differentiation Lives</span>
+  </div>
+  <div class="overlap-grid">
+    <div class="overlap-card">
+      <div class="ov-zone">Domain 01 × 03</div>
+      <div class="ov-title">Eval for AI Products</div>
+      <div class="ov-body">Designing evaluation frameworks for agents and pipelines — how do you know your AI system is actually working? Methodology for testing tool use, multi-step reasoning, and context retention under realistic conditions.</div>
+    </div>
+    <div class="overlap-card">
+      <div class="ov-zone">Domain 01 × 02</div>
+      <div class="ov-title">Agentic Workflow Automation</div>
+      <div class="ov-body">The point where building AI systems (technical) meets deploying them in organizations (strategic). Agent architecture decisions that determine enterprise viability: latency, reliability, human oversight, and audit trails.</div>
+    </div>
+    <div class="overlap-card">
+      <div class="ov-zone">Domain 02 × 03</div>
+      <div class="ov-title">AI Adoption Measurement</div>
+      <div class="ov-body">How do organizations know their AI investment is working? Eval methodology applied to enterprise deployment — measuring process quality, productivity delta, and organizational capability change, not just model accuracy.</div>
+    </div>
+    <div class="overlap-card">
+      <div class="ov-zone">Domain 01 × 04</div>
+      <div class="ov-title">AI Tools for SE Practice</div>
+      <div class="ov-body">Engineering the AI systems that augment the SE process — the supporting systems (RAG pipelines, document readers, analysis agents) built specifically for MBSE workflows. The WS2 product thesis lives exactly here.</div>
+    </div>
+    <div class="overlap-card">
+      <div class="ov-zone">Domain 03 × 04</div>
+      <div class="ov-title">Process Quality in SE</div>
+      <div class="ov-body">Evaluating the quality of AI-augmented systems engineering outputs. Did the AI-assisted requirements analysis produce better requirements? How do you measure that rigorously? An almost entirely open research area.</div>
+    </div>
+    <div class="overlap-card">
+      <div class="ov-zone">Domain 02 × 04</div>
+      <div class="ov-title">AI Transformation of SE Orgs</div>
+      <div class="ov-body">The MBSE engagement context — deploying AI augmentation across a systems engineering organization. Strategy, change management, and SE domain knowledge all required simultaneously. The current client engagement.</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S ASSUMED / OUTSIDE SCOPE -->
+<div class="assumed">
+  <div class="assumed-title">Assumed background / outside active research scope</div>
+  <div class="assumed-list">
+    <span class="assumed-item">Foundational ML / deep learning literacy</span>
+    <span class="assumed-item">Transformer architecture basics</span>
+    <span class="assumed-item">Python for automation</span>
+    <span class="assumed-item">AI for Science (biology, materials, climate)</span>
+    <span class="assumed-item">Neuromorphic computing</span>
+    <span class="assumed-item">Embodied AI / robotics</span>
+    <span class="assumed-item">World models (watch, not research)</span>
+    <span class="assumed-item">AI economics (awareness, not specialization)</span>
+  </div>
+</div>
+
+</div>
+<div class="spacer"></div>
