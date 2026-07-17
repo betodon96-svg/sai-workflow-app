@@ -94,10 +94,13 @@ def extract_pdf(raw: bytes, url: str) -> tuple:
     if not HAS_PDF:
         return _title_from_url(url), "[pdfplumber not installed]", 0
     try:
+        # Scale page limit to file size — avoids multi-minute stalls on huge PDFs.
+        size_mb   = len(raw) / 1_000_000
+        max_pages = 15 if size_mb > 10 else (25 if size_mb > 5 else (40 if size_mb > 2 else 60))
         with pdfplumber.open(io.BytesIO(raw)) as pdf:
             meta   = pdf.metadata or {}
             title  = str(meta.get("Title", "")).strip()[:120]
-            pages  = [p.extract_text() or "" for p in pdf.pages[:60]]
+            pages  = [p.extract_text() or "" for p in pdf.pages[:max_pages]]
         if not title and pages:
             title = pages[0].strip().splitlines()[0][:120]
         title = title or _title_from_url(url)
@@ -105,6 +108,25 @@ def extract_pdf(raw: bytes, url: str) -> tuple:
         return title, text, len(text.split())
     except Exception as exc:
         return _title_from_url(url), f"[PDF error: {exc}]", 0
+
+
+# ── PDF detection ────────────────────────────────────────────────────────────
+
+def is_pdf_response(response, content: bytes) -> bool:
+    """
+    Three-signal PDF detection in priority order:
+      1. Magic bytes  — %PDF at start of body (ground truth; server can't lie)
+      2. Final URL    — the URL httpx actually landed on after redirects ends in .pdf
+      3. Content-Type — header says application/pdf or similar (least reliable)
+    Any one signal is sufficient.
+    """
+    if content[:4] == b"%PDF":
+        return True
+    final_url = str(response.url).lower()
+    if final_url.endswith(".pdf") or "/pdf/" in final_url:
+        return True
+    ct = response.headers.get("content-type", "").lower()
+    return "pdf" in ct
 
 
 # ── URL resolution ────────────────────────────────────────────────────────────
@@ -182,18 +204,17 @@ def fetch_url(url: str, timeout: int = 30) -> dict:
             result["duration"]  = round(time.time() - t0, 2)
 
             if r.status_code == 200:
-                ct     = r.headers.get("content-type", "").lower()
-                is_pdf = "pdf" in ct
+                is_pdf = is_pdf_response(r, r.content)
 
-                # If we got HTML back, check for an embedded PDF link and follow it
+                # If not a PDF, scan the HTML for a linked PDF and follow it
                 if not is_pdf:
                     pdf_link = find_pdf_link(r.content, resolved_url)
                     if pdf_link:
                         print(f"    -> HTML page has PDF link, following: {pdf_link}")
                         pdf_r = client.get(pdf_link, headers=headers)
-                        if pdf_r.status_code == 200 and "pdf" in pdf_r.headers.get("content-type", "").lower():
-                            r      = pdf_r
-                            is_pdf = True
+                        if pdf_r.status_code == 200 and is_pdf_response(pdf_r, pdf_r.content):
+                            r            = pdf_r
+                            is_pdf       = True
                             rewrite_note = (rewrite_note + f" | HTML->PDF link: {pdf_link}").lstrip(" | ")
 
                 result["content_type"] = ("PDF" if is_pdf else "HTML") + (f" ({rewrite_note})" if rewrite_note else "")
