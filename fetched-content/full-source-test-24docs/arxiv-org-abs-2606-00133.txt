@@ -1,0 +1,1854 @@
+World Models: A Comprehensive Survey of Architectures,
+Methodologies, Reasoning Paradigms, and Applications
+Arif Hassan Zidan1, Yi Pan2, Hanqi Jiang2, Ruiyu Yan9, Wei Ruan2, Zihao Wu2, Lifeng
+Chen2, Weihang You2, Xinliang Li2, Bowen Chen3, Huawen Hu2, Peilong Wang10, Sizhuang
+Liu12, Jing Zhang5, Siyuan Li2, Zhengliang Liu2, Yu Bao6, Lin Zhao3, Lichao Sun7, Dajiang
+Zhu5, Xiang Li4, Jinglei Lv8, Quanzheng Li4, Wei Liu11, Tianming Liu*2, and Wei Zhang*1
+1School of Computer and Cyber Sciences, Augusta University, Augusta, GA, USA
+2School of Computing, University of Georgia, Athens, GA, USA
+3Department of Biomedical Engineering, New Jersey Institute of Technology, Newark, NJ,
+USA
+4Department of Radiology, Massachusetts General Hospital, Harvard Medical School,
+Boston, MA, USA
+5Department of Computer Science and Engineering, University of Texas at Arlington,
+Arlington, TX, USA
+6Department of Graduate Psychology, James Madison University, Harrisonburg, VA, USA
+7Computer Science and Engineering, Lehigh University, Bethlehem, PA, USA
+8School of Biomedical Engineering, The University of Sydney, Sydney, Australia
+9Tandon School of Engineering, New York University, Brooklyn, NY, USA
+10Department of Radiation Oncology, City of Hope National Medical Center, Duarte, CA,
+USA
+11Department of Mayo Clinic Comprehensive Cancer Center, Mayo Clinics, Phoenix, AZ,
+USA
+12Savannah River Ecology Laboratory (SREL), University of Georgia, Aiken, SC, USA
+*Corresponding author(s). E-mail(s): tliu@uga.edu; wzhang2@augusta.edu
+Abstract
+Worldmodels, internalsimulatorsthatlearnthestructureanddynamicsofanenvironment,
+have emerged as a central paradigm in the pursuit of artificial general intelligence, enabling
+agents to predict, plan, and reason within learned representations. Despite rapid progress
+across reinforcement learning, robotics, autonomous driving, and video generation, the field
+still lacks a unified framework capable of integrating its diverse architectural choices, training
+methodologies, reasoningmechanisms, andapplicationsettings. Thissurveyaddressesthatgap
+by introducing a comprehensive multi-axis taxonomy organized along four complementary di-
+mensions: (i) architecture, encompassing representation format, dynamics formulation, input
+modality, learning paradigm, and downstream application; (ii) methodological family, includ-
+ingstate-spaceandrecurrentapproaches,transformer-basedmodels,diffusion-basedgenerators,
+physics-informed networks, and language-augmented multimodal systems; (iii) reasoning strat-
+egy, covering imagination-based planning, latent policy learning, counterfactual reasoning, and
+planning under uncertainty; and (iv) application domain, spanning robotics, autonomous driv-
+ing, video prediction, multimodal agents, reinforcement learning, scientific modeling, medical
+1
+6202
+yaM
+82
+]GL.sc[
+1v33100.6062:viXra
+
+imaging, educational measurement, and business and finance. Tracing the historical develop-
+ment of the field from early cognitive-science foundations to milestone systems such as PlaNet,
+the Dreamer family, MuZero, Sora, Cosmos, and Genie, we examine how these dimensions
+interact and highlight the recent convergence of chain-of-thought reasoning with world-model
+imagination. Acrosstheseaxes,wereviewevaluationprotocolsandbenchmarks,identifypersis-
+tent challenges—including compounding prediction errors, sim-to-real transfer, and fragmented
+evaluation practices—and outline future directions toward unified multimodal world models,
+foundation-scaleinteractivesimulators, andsafedeploymentinsafety-criticaldomains. Bysyn-
+thesizing these developments within a single cross-disciplinary framework, this survey provides
+a structured roadmap for advancing world-model research toward more general, robust, and
+capable autonomous systems.
+Contents
+1 Introduction 5
+2 Background and Conceptual Foundations of World Model 7
+2.1 Definition and Basic Concepts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+2.2 Key components of a world model . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+2.3 Fundamental distinctions between World models and model-free RL . . . . . . . . . 13
+2.4 Role of latent spaces in world models . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+3 Categorization of World Models by Architecture 16
+3.1 Classification by representation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+3.1.1 Observation-space (pixel-level) representations. . . . . . . . . . . . . . . . . . 17
+3.1.2 Continuous latent representations. . . . . . . . . . . . . . . . . . . . . . . . . 17
+3.1.3 Discrete token representations. . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+3.1.4 Joint-embedding (representation-space) predictions. . . . . . . . . . . . . . . 17
+3.1.5 Structured and object-centric representations. . . . . . . . . . . . . . . . . . . 18
+3.1.6 3D and occupancy-based representations. . . . . . . . . . . . . . . . . . . . . 18
+3.2 Classification by dynamics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+3.2.1 Deterministic Dynamics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+3.2.2 Stochastic Dynamics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+3.2.3 Implicit Generative Dynamics . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+3.2.4 Representation-space Predictive Dynamics . . . . . . . . . . . . . . . . . . . . 19
+3.2.5 Memory-Augmented Dynamics . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+3.2.6 Discussion and Open Challenges . . . . . . . . . . . . . . . . . . . . . . . . . 20
+3.3 Classification by Modality . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+3.3.1 Visual-Only World Models . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+3.3.2 Language-Only World Models . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+3.3.3 3D Geometric World Models . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+3.3.4 Proprioceptive and Tactile World Models . . . . . . . . . . . . . . . . . . . . 23
+3.3.5 Multimodal Fusion World Models . . . . . . . . . . . . . . . . . . . . . . . . . 24
+3.3.6 Discussion and Open Challenges . . . . . . . . . . . . . . . . . . . . . . . . . 25
+3.4 Classification by learning paradigms . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+3.4.1 Self-Supervised and Unsupervised Learning . . . . . . . . . . . . . . . . . . . 25
+3.4.2 Online Model-Based Reinforcement Learning . . . . . . . . . . . . . . . . . . 27
+3.4.3 Offline and Batch Learning . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+3.4.4 Foundation Model Paradigm: Large-Scale Pretraining and Adaptation . . . . 28
+2
+
+3.4.5 Supervised and Imitation Learning . . . . . . . . . . . . . . . . . . . . . . . . 29
+3.4.6 Hybrid and Multi-Stage Learning Paradigms . . . . . . . . . . . . . . . . . . 30
+3.4.7 Discussion and Open Challenges . . . . . . . . . . . . . . . . . . . . . . . . . 31
+3.5 Classification by downstream use . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+3.5.1 Reinforcement Learning and Planning . . . . . . . . . . . . . . . . . . . . . . 33
+3.5.2 Autonomous Driving . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+3.5.3 Robotics and Embodied AI . . . . . . . . . . . . . . . . . . . . . . . . . . . . 34
+3.5.4 Healthcare and Medical Imaging . . . . . . . . . . . . . . . . . . . . . . . . . 34
+3.5.5 Video Generation and Creative Simulation . . . . . . . . . . . . . . . . . . . 35
+3.5.6 Language Reasoning and Decision-Making . . . . . . . . . . . . . . . . . . . . 35
+3.5.7 Discussion and Open Challenges . . . . . . . . . . . . . . . . . . . . . . . . . 36
+4 Categorization of World Models by Methodological Families 36
+4.1 State-space and recurrent latent world models . . . . . . . . . . . . . . . . . . . . . . 36
+4.2 Transformer-based world models . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 37
+4.3 Diffusion-Based World Models. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
+4.4 Physics-informed and structured world model . . . . . . . . . . . . . . . . . . . . . . 43
+4.5 Language-augmented and multi-modal world models . . . . . . . . . . . . . . . . . . 47
+5 Categorization of World Models by Reasoning Strategy 52
+5.1 Imagination-based planning . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53
+5.1.1 Imagination during learning: background planning. . . . . . . . . . . . . . . . 54
+5.1.2 Imagination at decision time: forward search. . . . . . . . . . . . . . . . . . . 54
+5.1.3 Cross-domain advantages of latent imagination. . . . . . . . . . . . . . . . . . 55
+5.1.4 Open challenges: compounding errors and objective mismatch. . . . . . . . . 55
+5.2 Policy learning with a world model . . . . . . . . . . . . . . . . . . . . . . . . . . . . 56
+5.3 Counterfactual reasoning. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 58
+5.3.1 The abduction–action–prediction pipeline. . . . . . . . . . . . . . . . . . . . . 59
+5.3.2 Why counterfactuals matter: isolating decision effects. . . . . . . . . . . . . . 59
+5.3.3 Toward causally structured world models. . . . . . . . . . . . . . . . . . . . . 60
+5.3.4 Fundamental limits: non-identifiability and counterfactual validity. . . . . . . 61
+5.4 Planning under uncertainty . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 61
+6 Categorization of World Models by Application Domains 63
+6.1 Robotics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63
+6.2 Autonomous driving and control systems . . . . . . . . . . . . . . . . . . . . . . . . . 67
+6.3 Video prediction and scene understanding . . . . . . . . . . . . . . . . . . . . . . . . 69
+6.4 Multimodal agents and language-grounded systems . . . . . . . . . . . . . . . . . . . 75
+6.5 Reinforcement learning and Games . . . . . . . . . . . . . . . . . . . . . . . . . . . . 78
+6.6 Scientific and Domain-specific Modeling . . . . . . . . . . . . . . . . . . . . . . . . . 82
+6.7 Medical Images and Video Recordings . . . . . . . . . . . . . . . . . . . . . . . . . . 85
+6.7.1 Medical Imaging Analysis and Progressive Disease Prediction . . . . . . . . . 85
+6.7.2 Tumor Evolution and Treatment Planning . . . . . . . . . . . . . . . . . . . . 87
+6.7.3 Surgical Video and Robotic Surgery . . . . . . . . . . . . . . . . . . . . . . . 88
+6.7.4 Disease Progression Modeling from Electronic Health Records . . . . . . . . . 89
+6.7.5 Capability Assessment and Open Challenges . . . . . . . . . . . . . . . . . . 89
+6.8 Educational Measurement . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
+6.9 Business and Finance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 94
+3
+
+6.9.1 Beyond physical laws: the belief-modeling paradigm. . . . . . . . . . . . . . . 94
+6.9.2 Methodological trajectories. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 94
+6.9.3 The imperative of counterfactual reasoning in corporate and financial strategy. 95
+6.9.4 Fundamental bottlenecks: non-stationarity, identifiability, and reflexivity. . . 95
+7 Evaluation Protocols and Benchmarks 96
+7.1 Common Evaluation Metrics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 96
+7.2 Benchmark Environments and Datasets . . . . . . . . . . . . . . . . . . . . . . . . . 97
+8 Major Challenges and Limitations 99
+9 Discussion and Future Directions 106
+4
+
+1 Introduction
+The pursuit of artificial general intelligence (AGI) has long motivated researchers to develop intel-
+ligent systems that not only recognize meaningful patterns from multimodal data but also acquire
+a coherent and causal understanding of the environments in which they operate. Central to this
+ambition is the concept of the World Model (WM)—an internal simulator that captures environ-
+mental dynamics and enables both forward and counterfactual rollouts for perception, prediction,
+and decision-making [1]. The intellectual foundations of this idea extend far beyond contemporary
+machine learning. In cognitive science, it has long been recognized that humans interpret the ex-
+ternal world by abstracting it into simplified elements and relational structures. This perspective is
+articulated in Johnson-Laird’s theory of mental models [2] and resonates with early developments
+in artificial intelligence, such as Minsky’s frame representations proposed in the 1970s [3]. In brief,
+these perspectives highlight the longstanding interdisciplinary interest in constructing internal rep-
+resentations that enable reasoning about complex environments.
+While these early frameworks were largely symbolic, the advent of deep learning ushered in
+a new era for operationalizing the world model concept. In reinforcement learning (RL), Ha and
+Schmidhuber [4] revitalized this idea by demonstrating that generative neural networks can learn
+compact spatial and temporal representations of an environment in an unsupervised manner. No-
+tably, their work showed that agents could even be trained entirely within internally generated
+simulations derived from these learned representations. More recently, LeCun [5] identified the
+world model as a central architectural component for autonomous intelligence, proposing that it
+should infer missing information about the current state of the world and predict plausible future
+states resulting from imagined sequences of actions.
+Since these seminal contributions, the field has expanded rapidly in both scope and ambition.
+Inmodel-basedreinforcementlearning(MBRL),theDreamerseries[6–8]demonstratedthatagents
+canlearncomplexbehaviorsentirelythroughlatentimagination,scalingfromsimplecontroltasksto
+diversedomainsusingaunifiedalgorithmicframework. Inparallel,DeepMind’sMuZero[9]achieved
+superhuman performance in several challenging domains without access to explicit environment
+rules by learning an implicit model that predicts only planning-relevant quantities.
+Beyond MBRL, OpenAI’s Sora [10] introduced large-scale video generation as a form of world
+simulation,sparkingdebateaboutwhethersuchmodelsconstitutegenuineworldmodels[11]. Foun-
+dation model approaches from Meta (V-JEPA 2 [12]), DeepMind (Genie [13]), and NVIDIA (Cos-
+mos [14]) have further demonstrated that large-scale self-supervised pretraining can yield action-
+able world simulators for robotic planning, interactive environment generation, and physical AI,
+respectively. These efforts align with LeCun’s broader vision [5] of a modular cognitive architec-
+ture centered on a configurable predictive world model trained via his proposed Joint-Embedding
+Predictive Architecture (JEPA), offering a theoretically grounded alternative to purely generative
+approaches. Collectively, these developments have transformed world models from a niche MBRL
+topic into a central pillar of the broader pursuit of AGI.
+Within this expanding landscape, a particularly promising development is the integration of
+chain-of-thought (CoT) reasoning [15] with world models. Traditional CoT represents reasoning as
+explicit sequences of natural language tokens, a process that can be computationally expensive and
+limited by the relatively low information density of discrete textual representations [16]. Recent
+researchhasbeguntoshiftthisreasoningprocessintolatentspaces,whereworldmodelsprovidethe
+underlying substrate for multi-step deliberation. For instance, Coconut [17] introduces continuous
+thought representations that enable breadth-first reasoning directly in latent space. Similarly,
+LCDrive [18] integrates CoT-style reasoning with action planning by interleaving action-proposal
+tokens with latent world model predictions, allowing agents to simulate counterfactual futures
+5
+
+before committing to a trajectory. Building on this direction, FutureX [19] proposes an auto-think
+mechanism that dynamically activates a latent world model only when scene complexity warrants
+deliberative reasoning. Collectively, these approaches suggest that world models may function
+not merely as predictive simulators but also as reasoning engines in their own right—potentially
+replacing linguistic chains of thought with grounded, spatiotemporal chains of imagination (CoI).
+Notably, the growing prominence of world models is also driven by increasing recognition of the
+fundamentallimitationsoflargelanguagemodels(LLMs)builtontransformerarchitectures[20,21].
+Despite the remarkable success of models such as GPT-4 [22] and reasoning-augmented systems
+like o1 [23] in tasks involving language understanding and code generation, these systems operate
+primarily within the discrete and relatively low-dimensional space of text tokens. As a result, they
+lack a grounded understanding of the continuous and high-dimensional physical world [5]. Mean-
+while, LLMs generally lack persistent world-state representations, have limited capacity for causal
+reasoning, and struggle with long-horizon planning—capabilities that are routinely exhibited by bi-
+ological organisms. This gap reflects Moravec’s paradox [24]: while high-level cognitive tasks such
+as language processing and chess playing appear tractable for machines, sensorimotor competencies
+that have been refined through billions of years of biological evolution remain far more difficult to
+replicate.
+In contrast, world models aim to address these limitations by learning to predict the conse-
+quences of actions within physical or simulated environments, thereby constructing internal rep-
+resentations of object dynamics and temporal evolution. By enabling agents to simulate possible
+futures and evaluate alternative action sequences, world models provide a foundation for plan-
+ning, reasoning, and adaptive decision-making in complex environments. The growing institutional
+investment in this direction—exemplified by the establishment of Advanced Machine Intelligence
+(AMI) [25], DeepMind’s continued development of the Genie family of models, and NVIDIA’s Cos-
+mos platform—signals an emerging consensus that the next frontier of artificial intelligence lies in
+building systems capable of modeling and interacting with the world itself.
+Yet, as research activity accelerates and world models attract attention from increasingly di-
+verse communities, a fundamental question remains: what exactly constitutes a world model? In
+model-based reinforcement learning (MBRL), the concept is often defined narrowly as a learned
+transitionfunctionTb (s
+t+1
+| s
+t
+,a
+t
+)coupledwitharewardpredictorRb (r
+t
+| s
+t
+,a
+t
+)[26]. Inthebroader
+AI literature, however, world models are increasingly viewed as general-purpose simulators capa-
+ble of supporting counterfactual reasoning, causal inference, and hierarchical planning [1, 5]. This
+diversity of perspectives has led to a fragmented research landscape, in which communities work-
+ing on latent dynamics models, generative video prediction, object-centric representations, and
+language-grounded planning often develop their approaches in relative isolation.
+Importantly, various recent surveys have begun to organize this rapidly evolving field. For
+example, Ding et al. [11] examine world models from the perspective of understanding versus
+prediction, while Li et al. [1] propose a three-axis taxonomy for embodied AI. Additional domain-
+specific surveys have explored applications in autonomous driving [27], robotic manipulation [28],
+and 3D/4D scene modeling [29]. Nevertheless, existing reviews typically focus on specific method-
+ologicalperspectivesorapplicationdomainsanddonotsimultaneouslyaddressthefullspectrumof
+architectural paradigms, methodological families, reasoning mechanisms, and application contexts
+withinaunifiedframework. Theworldmodelsareopeningupanunderexploreddomains, including
+medical imaging and educational measurement—further highlighting the need for a comprehensive,
+cross-disciplinary survey.
+To address this gap, this survey provides a structured and comprehensive review organized
+along several complementary axes:
+6
+
+1. Architecture (Section 3): key architectural design choices, including representation type,
+dynamics modeling approach, input modality, learning paradigm, and downstream use cases.
+2. Methodological Families (Section 4): major modeling paradigms such as state-space
+and recurrent latent models, variational and generative approaches, transformer-based archi-
+tectures, object-centric and compositional models, physics-informed models, and language-
+augmented multimodal systems.
+3. Reasoning Strategies(Section5): mechanismsfordecision-makingandplanning,including
+imagination-based planning, policy learning within learned models, counterfactual reasoning,
+long-horizon and hierarchical planning, and planning under uncertainty.
+4. Application Domains (Section 6): representative application areas, including robotics,
+autonomous driving, video prediction and scene understanding, multimodal agents, rein-
+forcement learning and games, scientific modeling, medical imaging and video analysis, and
+educational measurement.
+Figure 1 summarizes this landscape visually, organized in three layers. Top: The conceptual
+taxonomy divides world models into two complementary perspectives—implicit representations of
+the external world, encompassing decision-making (Section 5) and world knowledge learning (Sec-
+tion 4), and future predictions of the physical world, covering video generation (Section 6) and
+embodied environments (Section 3). Middle: A historical timeline of milestone contributions, from
+Minsky’s frame system theory (1974) through Ha and Schmidhuber’s neural world models (2018),
+LeCun’s JEPA (2022), world knowledge in LLMs (2023), to recent large-scale simulators including
+Sora and UniSim (2024). Bottom: Representative application-domain deployments—DayDreamer
+for robotics (Section 6.1), Smallville for social simulacra (Section 6.4), and Vista for autonomous
+driving (Section 6.2)—illustrating the breadth of deployment contexts that world models now sup-
+port. Additionally, we further examine evaluation protocols and benchmarks (Section 7), identify
+key challenges facing current approaches (Section 8), and outline promising directions for future
+research (Section 9). By providing a unified, multi-axis perspective, this survey aims to serve both
+as a comprehensive reference for researchers entering the field and as a roadmap for advancing
+world models toward robust, general-purpose autonomous intelligence.
+2 Background and Conceptual Foundations of World Model
+Worldmodelsarestate-of-the-artintelligentmodelsthatenableanintelligentagenttoformcompact
+representations of its environment and predict how that environment may evolve over time. In
+artificialintelligence, themodernideaiscloselyassociatedwithmodel-basedreinforcementlearning
+and generative latent-dynamics modeling, where an agent learns not only how to act but also how
+the world changes in response to actions.
+Conceptually, world models are rooted in a broader predictive view of intelligence. Rather
+than reacting only to current inputs, intelligent systems benefit from anticipating future states,
+estimating consequences of actions, and using internal simulation to guide behavior. This idea
+has strong connections to earlier traditions in cognitive science, neuroscience, and reinforcement
+learning, including predictive processing, predictive coding, and predictive representations. The
+following sections present the vital background, conceptual architecture, and foundations of World
+Model.
+7
+
+Figure1: Overviewoftheworldmodellandscape, organizedintoaconceptualtaxonomyofimplicit
+representations and future predictions, a historical timeline of milestone contributions from 1974
+to 2024, and representative application-domain deployments spanning robotics, social simulation,
+and autonomous driving.
+2.1 Definition and Basic Concepts
+In artificial intelligence, a world model is an internal predictive model that captures how an en-
+vironment evolves over time and how that evolution depends on an agent’s actions. An early
+formulation by Schmidhuber described a model-building control system in which the controller
+was equipped with an additional module, the world model, trained to predict future inputs from
+prior input–action pairs [30]. In contemporary machine learning, the term has broadened while
+retaining this core idea: a world model is a learned representation of environment dynamics that
+supports prediction, simulation, and decision-making. Ha and Schmidhuber’s neural world-model
+framework made this formulation especially influential in modern deep learning by demonstrating
+that an agent can learn compressed spatial and temporal representations of an environment and
+then use them to support downstream control [4].
+To make this definition precise, let o denote the observation at time t, a the action, r the
+t t t
+reward, and s a latent state intended to summarize the information necessary for predicting the
+t
+future. A world model can then be written as a parameterized predictive system with parameters
+θ that approximates the environment dynamics
+To formalize this definition, let o denote the observation at time t, a the action, r the reward,
+t t t
+and s a latent state, intended to summarize the information necessary for predicting the future.
+t
+A world model can then be expressed as a parameterized predictive system with parameters θ that
+approximates the environment dynamics:
+p (s ,o ,r | s ,a ). (1)
+θ t+1 t+1 t t t
+Infullyobservedsettings,onemayidentifys withthetrueenvironmentstate. Inpartiallyobserved
+t
+8
+
+settings, however, the model must infer a latent belief-like state from the history h = (o ,a ),
+t ≤t <t
+for example through an encoder of the form
+Infullyobservedsettings,s maycoincidewiththetrueenvironmentstate. Inpartiallyobserved
+t
+settings, however, the model must infer a latent, belief-like state from the interaction history
+h = (o ,a ), for example through an encoder of the form
+t ≤t <t
+s ∼ q (s | h ). (2)
+t θ t t
+This notation highlights an essential point: a world model need not reproduce the external world
+in full detail; rather, it must represent those aspects of experience that are sufficient for useful
+prediction and control.
+The objective of a world model is therefore not merely to reconstruct observations, but to
+learn state representations that make future outcomes predictable. In simple settings, this may
+involve forecasting the next observation directly. In more realistic settings, particularly under
+partialobservability,themodelmustmaintainalatentstatethatsummarizespastobservationsand
+actionssufficientlywelltopredictfutureobservations,rewards,andothertask-relevantsignals. This
+perspectivehelpsexplainwhylaterworkshiftedfromrawobservationpredictiontolatentdynamics
+modeling. PlaNet,forinstance,learnsenvironmentdynamicsfromimagesinacompactlatentspace
+and explicitly combines deterministic and stochastic transition components, reflecting the insight
+thatusefulworldmodelsmusttrackbothpersistentstructureanduncertaintyovermultiplepossible
+futures [31]. Dreamer extends this line of work by treating learned latent dynamics not only as a
+predictive model but also as a substrate for behavior learning through imagined rollouts [32].
+Most world models therefore contain several recurring components. First, they include a per-
+ception or representation module that compresses high-dimensional sensory inputs into a tractable
+state representation, such as a latent vector or token sequence. Second, they include an action-
+conditioned dynamics model that predicts how this latent state evolves over time. Third, many
+systems incorporate task-level heads, such as reward or continuation predictors, because control
+requires estimating not only what the world will look like, but also whether imagined trajectories
+are desirable or terminal. Ha and Schmidhuber instantiated this decomposition using a variational
+autoencoder for visual compression and a recurrent dynamics model for temporal prediction [33].
+PlaNet and Dreamer refined the same blueprint into latent state-space models suitable for planning
+and policy optimization [31, 32], while Genie scaled the idea into a generative interactive environ-
+mentbuiltfromaspatiotemporalvideotokenizer, anautoregressivedynamicsmodel, andalearned
+latent action interface [13].
+Fromafunctionalperspective,thecentralpromiseofworldmodelsisimagination. Onceamodel
+can simulate likely future trajectories under candidate actions, an agent can use those imagined
+trajectories to evaluate plans, improve a policy, or train partly or entirely within a learned environ-
+ment rather than the real one. This is why world models are so closely connected to model-based
+reinforcement learning. Ha and Schmidhuber showed that policies could be trained inside a model-
+generated environment and then transferred back to the actual task [33]. Dreamer advanced this
+idea by learning behaviors purely through latent imagination, propagating value gradients through
+imaginedtrajectoriesincompactlatentspace[32]. Geniebroadensthesameconceptbeyondnarrow
+task simulators by introducing action-controllable virtual worlds learned from unlabeled internet
+video, which the authors describe as a “foundation world model” [13]. Across these variants, the
+unifying principle is that the model serves as an internal sandbox for counterfactual interaction.
+Formally, if a policy π(a | s ) acts inside the learned dynamics, the model can generate an
+t t
+imagined rollout
+s ,a ,s ,a ,...,s (3)
+t t t+1 t+1 t+H
+9
+
+forhorizonH, withactionssampledfromπ andtransitionssampledfromp (s | s ,a ). Planning
+θ t+1 t t
+or policy learning can then optimize an expected return inside the model,
+"H−1 #
+J(π) = E X γkr , (4)
+p θ ,π t+k
+k=0
+where γ ∈ [0,1) is the discount factor. This equation captures the operational role of a world
+model: it turns future interaction into a differentiable or at least simulatable object that can be
+searched, optimized, or evaluated before executing behavior in the real environment.
+Several conceptual distinctions are useful when defining world models. One is the distinction
+between observation-space and latent-space models. Observation-space models attempt to predict
+future pixels, frames, or sensor readings directly, whereas latent-space models predict compressed
+hidden states that are typically more computationally efficient and more useful for planning. A
+second distinction is between deterministic and stochastic world models. Deterministic models are
+often simpler, but they may blur over genuinely uncertain futures; stochastic models are better
+suited to capturing ambiguity and multimodality. A third distinction concerns task-specific versus
+general-purpose world models. Earlier systems were usually trained on a single environment for
+planning or control, whereas newer systems such as Genie seek to learn broadly reusable, action-
+controllable generative environments from large-scale, weakly supervised data. These distinctions
+matter because they shape what the model can represent, how it is trained, and how its predictions
+can be used.
+Meanwhile, a world model is not equivalent to a perfect simulator or a complete ontology of
+reality. Its value depends on whether it captures the aspects of the environment that matter
+for prediction and control. Ha and Schmidhuber explicitly noted that an unsupervised visual
+modelmayreproducevisuallydetailedbuttask-irrelevantstructurewhilefailingtocapturefeatures
+critical for successful behavior [33]. PlaNet likewise framed learned dynamics as a long-standing
+challenge because errors compound across multi-step prediction horizons, especially in image-based
+domains [31]. For this reason, the practical quality of a world model is typically judged not only
+by reconstruction fidelity, but also by whether it yields stable imagined rollouts, supports useful
+planning, improves sample efficiency, and generalizes beyond the exact trajectories observed during
+training. In this sense, the core idea of a world model is predictive abstraction: the model should
+compress experience into a form that is simple enough to simulate yet rich enough to support
+effective action.
+Aworldmodelcanalsobedescribedmorecompactlyasalearnedfunctionf thatapproximates
+θ
+the transition dynamics of an environment:
+s ,r = f (s ,a ) (5)
+bt+1 bt+1 θ t t
+where s denotes the state (or observation) at time t, a the action taken, s the predicted next
+t t bt+1
+state, and r the predicted reward. In practice, world models often operate in a learned latent
+bt+1
+space z = enc(o ) rather than directly over raw observations o , enabling compact representations
+t t t
+and tractable long-horizon prediction.
+Moreover, three properties distinguish a world model from a generic predictive model:
+1. Action-conditioning: The model predicts how the environment evolves in response to spe-
+cific actions, enabling counterfactual reasoning (“What would happen if I turned left instead
+of right?”).
+2. Multi-step rollout: The model can be applied autoregressively to generate trajectories of
+arbitrary length, supporting planning and simulation.
+10
+
+3. Utility for decision-making: The model’s predictions are used downstream—for policy
+optimization, planning, data augmentation, or safety verification—rather than serving as an
+end in themselves.
+2.2 Key components of a world model
+MostmodernworldmodelsoperatewithinapartiallyobservableMarkovdecisionprocess(POMDP)
+framework (S,A,T,R,Ω,O,γ), where S is the state space, A the action space, T the transition
+function, R the reward function, Ω the observation space, O the emission function, and γ ∈ [0,1)
+a discount factor. A world model approximates T and optionally R and O. We will summarize
+multiple key components of World Model in the following four functional modules:
+Encoder. The encoder maps raw, high-dimensional observations o (images, point clouds,
+t
+sensor readings) into a compact latent representation:
+z = q (z | o ,a ) (6)
+t ϕ t ≤t <t
+Notably, this compression step is essential, as raw observations are often too high-dimensional to
+support tractable multi-step prediction. The encoder can be either deterministic, such as a convo-
+lutional neural network, or stochastic, such as the posterior network in a variational autoencoder
+(VAE).Forexample, HaandSchmidhuber[4]usedaVAE-basedencodertocompress64×64image
+frames into 32-dimensional latent vectors. Similarly, the Dreamer family of models [32, 34] employs
+a posterior encoder conditioned on observation history to infer both deterministic and stochastic
+components of the latent state.
+Dynamics model (transition predictor). The dynamics model predicts the next latent
+state given the current state and action:
+z = p (z | z ,a ) (7)
+bt+1 θ bt+1 t t
+Importantly, the dynamics model constitutes the core of a world model. In RNN-based architec-
+tures [31], it is typically implemented as a Recurrent State-Space Model (RSSM), which factorizes
+the latent state into a deterministic recurrent component h that preserves long-range tempo-
+t
+ral dependencies, and a stochastic component h that captures uncertainty in the environment.
+t
+In transformer-based architectures [35, 36], the dynamics model is commonly formulated as an
+autoregressive transformer that predicts subsequent token(s) in a discrete latent sequence. In
+diffusion-based approaches [37], future states are generated through an iterative denoising process.
+Besides, at a high level, current world models can be understood as a system composed of three
+tightly coupled components: a visual model, a memorial model, and a control model. Together,
+thesecomponentsenableanagenttoperceiveitsenvironment,retainandorganizepastinformation,
+and select actions on the basis of predicted future outcomes. This decomposition is especially
+useful because it clarifies how world models transform raw sensory inputs into structured internal
+representations that support reasoning, planning, and decision-making.
+The visual model is responsible for perception and representation learning. Its primary role
+is to transform high-dimensional sensory observations, such as images, video frames, or other raw
+inputs, into a compact and informative latent representation. In many modern world models, this
+component is implemented using convolutional neural networks, variational autoencoders, vision
+transformers, or tokenizers that compress observations into latent vectors or discrete tokens. The
+importance of the visual model lies in its ability to filter out irrelevant perceptual details while
+preserving the features that are most critical for downstream prediction and control. Without
+such compression, directly modeling future trajectories in raw observation space would often be
+computationally prohibitive and statistically inefficient.
+11
+
+The memorial model serves as the temporal and predictive core of the architecture. Its function
+is to maintain a representation of past experience and to model how the latent state of the envi-
+ronment evolves over time. This component is called “memorial” because it provides the system
+with memory: it integrates current observations with historical context, allowing the agent to infer
+hidden structure, track temporal dependencies, and represent uncertainty about future states. In
+recurrent world models, the memorial model is often implemented using recurrent neural networks
+or recurrent state-space models, which combine deterministic memory states with stochastic latent
+variables. Inmorerecentarchitectures, transformersanddiffusion-basedsequencemodelshavealso
+beenusedtocapturelong-rangetemporaldependenciesandgeneratefuturelatenttrajectories. The
+memorial model is what allows a world model to go beyond static perception and function as a
+predictive simulator of environment dynamics.
+The control model is the decision-making component. Given the latent state produced by
+the visual model and updated through the memorial model, the control model determines which
+action should be taken in order to maximize expected reward, achieve a specified goal, or satisfy
+a task constraint. In reinforcement learning settings, this component may take the form of a
+policy network, a value function, or a planning module that evaluates imagined future rollouts
+generated by the world model. More broadly, the control model translates predictive knowledge
+into purposeful behavior. Its effectiveness depends not only on the quality of the learned policy,
+but also on the fidelity of the perceptual and temporal representations provided by the other two
+components.
+These three modules are not independent; rather, they operate as an integrated system. The
+visual model encodes the current observation into a latent state, the memorial model updates
+this latent state in light of prior context and predicts future states, and the control model uses
+these representations to evaluate alternatives and select actions. Their interaction enables the
+central capability of a world model: the ability to imagine possible futures before acting in the
+real environment. In this sense, the visual model answers the question of what is being observed,
+the memorial model addresses how the world changes over time, and the control model determines
+what should be done next.
+This tripartite view also provides a useful conceptual framework for comparing different world
+model architectures. Some systems emphasize stronger visual encoding through powerful tokeniza-
+tion or representation learning, whereas others focus on more expressive memorial mechanisms for
+long-horizon prediction. Still others devote greater modeling capacity to the control component,
+especially in tasks that require sophisticated planning or policy optimization. Despite these differ-
+ences, the visual–memorial–control decomposition captures a common structural logic underlying
+manyworld-model-basedsystemsacrossreinforcementlearning,robotics,autonomoussystems,and
+scientific applications.
+Reward predictor. The reward predictor estimates the scalar reward from the current latent
+state:
+r = p (r | z ) (8)
+bt ψ t t
+Accurate reward prediction is essential for model-based RL, as policy optimization in imagination
+depends on the quality of predicted returns. MuZero [38] demonstrated that a world model whose
+dynamicsoperateentirelyinalearnedabstractspace—predictingreward,value,andpolicywithout
+ever reconstructing observations—suffices for superhuman performance in Go, chess, shogi, and
+Atari.
+Decoder (optional). The decoder reconstructs observations from latent states:
+o = p (o | z ) (9)
+bt ξ t t
+12
+
+Decoders serve two roles: (1) providing a reconstruction loss signal for training the encoder and
+dynamics model, and (2) enabling visualization of imagined trajectories. However, the decoder is
+architecturally optional. MuZero dispenses with it entirely, and JEPA-based models [5, 39] predict
+in representation space rather than pixel space, sidestepping the computational burden and the
+blurriness associated with pixel-level reconstruction.
+Beyond these four modules, several world models incorporate additional components. Continu-
+ation predictors estimateepisodeterminationprobabilities. Discount predictors modeltime-varying
+discount factors. DreamerV3 [40] uses symlog-transformed predictions and categorical value repre-
+sentations to achieve cross-domain generality.
+2.3 Fundamental distinctions between World models and model-free RL
+A foundational distinction in reinforcement learning lies in whether the agent learns an explicit
+model of environmental dynamics or learns behavior directly from reward-driven interaction. This
+divide separates world-model-based approaches from model-free reinforcement learning (RL) and
+has important consequences for planning, sample efficiency, transfer, uncertainty handling, and
+interpretability [33, 41].
+Atthemostbasiclevel,thetwoparadigmsdifferinwhat is being learned. World-modelmethods
+learn predictive structure—for example, transition, observation, and reward dynamics in observa-
+tion space or in a latent state space—so that future trajectories can be imagined or evaluated
+internally [31–33]. By contrast, model-free RL typically learns a policy, value function, or both
+directly from interaction data, without requiring an explicit predictive model of the environment
+[42–44]. In this sense, world models emphasize learning how the environment evolves, whereas
+model-free methods emphasize learning which action maximizes return.
+This difference naturally induces a second distinction: planning versus direct policy execution.
+Learned world models can be rolled forward to support online planning or latent imagination.
+PlaNet performs online planning in latent space, PETS uses learned dynamics for model-predictive
+control, Dreamer improves behavior by imagining trajectories in a learned latent model, and TD-
+MPC combines a latent dynamics model with trajectory optimization at decision time [31, 32, 45,
+46]. In contrast, canonical model-free methods such as DQN, PPO, and SAC typically act through
+a direct forward pass of a learned policy or value-based decision rule rather than explicit search
+through hypothetical futures [42–44].
+A third distinction concerns sample efficiency. A recurrent motivation for world-model ap-
+proaches is that a learned dynamics model allows the agent to reuse real experience more effec-
+tively through prediction, imagination, or planning. PILCO is a classic example of extreme data
+efficiency in model-based control, while PETS, MBPO, and Dreamer show that learned models can
+substantially improve performance per real environment step in modern continuous-control and
+visual-control settings [32, 45, 47, 48]. Model-free methods, by construction, do not exploit an
+explicit learned simulator in this way; instead, they improve policies or value functions from real
+or replayed transitions alone [42–44].
+However, the advantages of world models come with a characteristic liability: model bias. If the
+learned dynamics are inaccurate, long imagined rollouts can drift away from the true environment
+and induce the policy to exploit modeling errors. PILCO explicitly frames model bias as a central
+problemandaddressesitwithprobabilisticdynamicsanduncertainty-awareplanning,whileMBPO
+shows that short branched rollouts can reduce the harmful effects of model exploitation in practice
+[47,48]. Model-freeRLavoidsthisparticularfailuremodebecauseitdoesnotrelyonexplicitmulti-
+step predictions of environment dynamics, although it sacrifices some of the structural leverage
+available to model-based systems [42, 44].
+13
+
+The two paradigms also differ in representation learning. In modern world-model architectures,
+latent states are trained not only to support action selection but also to summarize the hidden
+dynamics of the environment over time. World Models, PlaNet, and Dreamer all rely on compact
+latent representations that support prediction and imagination, rather than purely reactive control
+[31–33]. By contrast, in standard model-free RL, learned representations are typically optimized
+only insofar as they improve policy or value estimation for the current task [42–44]. This differ-
+ence often makes world-model representations more naturally reusable for downstream planning or
+adaptation.
+This distinction becomes especially important for generalization and transfer. DARLA showed
+that disentangled representations can improve zero-shot transfer in RL, while Schema Networks
+demonstratedthatagenerative,causalmodelofenvironmentdynamicscanenablestrongertransfer
+andcombinatorialgeneralizationthanreactivebaselinesonstructuredtasks[49,50]. Morebroadly,
+a learned world model can in principle be paired with new rewards, goals, or planners without
+discarding all previously acquired knowledge of environment dynamics. Model-free policies, in
+contrast, are typically more tightly coupled to the reward structure under which they were trained
+[42, 43].
+Another key difference is support for counterfactual and hypothetical reasoning. Because world
+models specify how the world would evolve under alternative actions, they naturally support “what
+if” analysis. Woulda, Coulda, Shoulda formalized this idea by using structural causal models for
+counterfactual policy search from logged experience, and Schema Networks likewise emphasized
+generative causal structure for reasoning about unseen situations [50, 51]. Standard model-free RL
+does not natively provide an explicit simulator for evaluating alternate futures; any such reasoning
+must be added externally or approximated indirectly through value estimation [42, 43].
+World models can also offer greater transparency of internal predictions. In World Models
+and Dreamer, researchers can inspect reconstructions, latent rollouts, or imagined trajectories,
+while Schema Networks exposes an explicitly structured generative model of object interactions
+and consequences [32, 33, 50]. Model-free policies such as DQN or SAC, by contrast, usually
+encode their knowledge more implicitly in policy and value parameters, which can make post hoc
+interpretation harder [42, 44].
+A further distinction concerns uncertainty. PETS uses probabilistic ensembles to capture un-
+certainty in learned dynamics, and PILCO models uncertainty directly through Gaussian process
+dynamics; more generally, approximate Bayesian techniques such as Monte Carlo dropout provide
+a practical route for predictive uncertainty estimation in deep models [45, 47, 52]. Model-free RL
+can also reason about uncertainty, but typically through uncertainty in value estimation rather
+than explicit uncertainty over future world trajectories; examples include Bootstrapped DQN for
+deep exploration and distributional RL for learning return distributions [53, 54]. Thus, uncertainty
+in world models is often tied more directly to forecasting and planning.
+Despitethesecontrasts, theboundarybetweenworldmodelsandmodel-freeRLisnotabsolute.
+Many strong modern agents are hybrid. Dreamer combines a learned world model with actor-critic
+learninginlatentimagination,MBPOusesalearnedmodeltosupplysyntheticdatatoanoff-policy
+learner, TD-MPC combines latent dynamics with value learning for control, and SPR shows how
+predictive latent objectives can substantially improve otherwise model-free agents [32, 46, 48, 55].
+The modern landscape is therefore better viewed as a continuum: world-model approaches place
+predictionandinternalsimulationatthecenterofcontrol, whereasmodel-freemethodsplacedirect
+return optimization at the center.
+In summary, the fundamental distinction is that world models learn an internal predictive
+account of the environment and use it for imagination, planning, or reasoning, whereas model-free
+RL learns to act effectively without requiring explicit environmental simulation. This difference
+14
+
+propagatesintodownstreampropertiesincludingplanningability,sampleefficiency,vulnerabilityto
+model bias, transfer potential, counterfactual reasoning, and uncertainty handling [32, 33, 41, 42].
+2.4 Role of latent spaces in world models
+A defining design choice in modern world models is whether future predictions are made in the
+observation space (e.g., raw pixels) or in a learned latent space. Most successful world models
+operate in latent space, and this design choice has major implications for predictive accuracy,
+computational efficiency, and downstream task performance.
+Motivation for latent prediction. Raw observations in real-world are high-dimensional and
+contain substantial task-irrelevant information. A 64×64 RGB image has 12,288 dimensions; a
+256×256 image has 196,608. Predicting every pixel of every future frame is computationally ex-
+pensive and forces the model to allocate capacity to visually complex but decision-irrelevant details
+(e.g., exact textures, lighting variations). Latent space prediction compresses observations into a
+compact representation z that retains decision-relevant information while discarding perceptual
+t
+noise, reducing the dimensionality by orders of magnitude (e.g., from 12,288 to 32–256 dimensions
+in typical implementations).
+Motivation for latent prediction. Real-world observations are typically high-dimensional
+and contain substantial information that is irrelevant to decision-making. For example, a 64 ×
+64 RGB image contains 12,288 dimensions, whereas a 256 × 256 RGB image contains 196,608.
+Predicting every pixel of future frames is therefore computationally expensive and forces the model
+to devote representational capacity to visually complex but task-irrelevant details, such as textures
+or lighting variations. By contrast, latent-space prediction compresses observations into a compact
+representation, z that preserves decision-relevant information while filtering out perceptual noise,
+t
+often reducing dimensionality by several orders of magnitude (e.g., from 12,288 dimensions to 32–
+256 in typical implementations).
+Deterministic vs. stochastic latent spaces. Early world models used deterministic en-
+coders,butstochasticenvironmentsdemandstochasticlatentrepresentationsthatcapturealeatoric
+uncertainty. Ha and Schmidhuber [4] used a VAE with a Gaussian latent space, where the stochas-
+ticity of the latent code captures the inherent unpredictability of the environment. The RSSM [31]
+introduced a hybrid design: a deterministic recurrent state h that preserves temporal memory,
+t
+combined with a stochastic component z sampled from a learned prior or posterior distribution.
+t
+This dual structure has been adopted by the entire Dreamer line and many subsequent models.
+DreamerV2 [34] further demonstrated that discrete categorical latent variables (32 categorical dis-
+tributions with 32 classes each, yielding a 3232 representational capacity) outperform continuous
+Gaussian latents on Atari games, likely because discrete representations better capture the discrete
+nature of game state transitions.
+Deterministic versus stochastic latent spaces. Early world models often relied on deter-
+ministic encoders, but stochastic environments require representations that can capture aleatoric
+uncertainty. Ha and Schmidhuber [4], for example, used a VAE with a Gaussian latent space, in
+which the stochastic latent code reflects the inherent unpredictability of the environment. The
+RSSM [31] introduced a hybrid formulation consisting of a deterministic recurrent state, h that
+t
+preserves temporal memory, together with a stochastic component, z sampled from a learned prior
+t
+or posterior distribution. This dual-state design has since become standard in the Dreamer family
+andmanysubsequentworldmodels. DreamerV2[34]furthershowedthatdiscrete categoricallatent
+variables can outperform continuous Gaussian latents on Atari benchmarks, likely because discrete
+representations better align with the discrete transition structure of many game environments.
+Continuous versus discrete tokenization. An alternative to continuous latent spaces is
+15
+
+discrete tokenization, in which observations are mapped to a finite vocabulary of learned codes.
+IRIS[35],forinstance, usesaVQ-VAE[56]tokenizertotransformimageframesintodiscretetokens
+and then models dynamics through next-token prediction with a transformer. This formulation
+creates a close parallel to language modeling and allows training with categorical cross-entropy
+objectives. STORM [36] adopts a hybrid strategy by combining stochastic continuous latents with
+transformer-based dynamics, thereby occupying an intermediate position between continuous and
+fully discrete approaches.
+Prediction in representation space (JEPA). LeCun [5] proposed the Joint-Embedding
+Predictive Architecture (JEPA) as a principled alternative to both pixel-space prediction and
+reconstruction-based latent modeling. In JEPA, the model predicts the representation of a fu-
+ture observation directly in embedding space rather than reconstructing the observation itself, and
+no decoder is required. This formulation avoids the bottleneck of pixel reconstruction, which often
+penalizes errors in task-irrelevant details, as well as the mode-averaging effects associated with
+pixel-wise losses. I-JEPA [39] validated this approach for image representation learning, while V-
+JEPA[57]andV-JEPA2[58]extendedittovideo, demonstratingstrongperformanceinlarge-scale
+video understanding and zero-shot robotic planning.
+Latent-space structure and downstream performance. The structure of the latent space
+directly influences the quality of imagined rollouts and, consequently, the effectiveness of policies
+trainedonimaginedtrajectories. Ifthelatentspacefailstoencodedecision-relevantfactors, suchas
+object positions, velocities, or contact dynamics, then even an accurate dynamics model will gener-
+ateuninformativepredictions. Conversely, anoverlydetailedlatentspacethatattemptstopreserve
+every perceptual feature may waste capacity on irrelevant variation. The success of MuZero [38],
+which learns a latent representation optimized solely for reward and value prediction without any
+reconstruction objective, illustrates that task-aligned latent spaces can outperform reconstruction-
+based alternatives. DreamerV3 [40] further highlights the importance of carefully structured latent
+representations by using symlog transformations and categorical value distributions to maintain
+calibration across domains with highly variable reward scales.
+Despitethesuccessoflatentworldmodels,severalopenchallengesremain,including: (1)latent-
+space collapse, where distinct observations are mapped to identical codes and critical information
+is lost; (2) representation drift, where the latent space shifts within training and undermines the
+consistency of imagined data; (3) disentanglement, namely, learning latent dimensions that cor-
+respond to interpretable physical factors; and (4) scalability, that is, designing latent spaces that
+remain both compact and expressive as environmental complexity increases.
+3 Categorization of World Models by Architecture
+World model architectures can be analyzed along several complementary axes, each reflecting a key
+designdimensionofhowthemodelencodesobservations, representsdynamics, handlesuncertainty,
+and supports downstream decision-making. In brief, these axes provide a structured framework
+for comparing existing approaches and understanding the trade-offs among different architectural
+choices. World model architectures can be categorized along several complementary axes described
+below:
+3.1 Classification by representation
+The choice of how to represent environment states is a fundamental design decision that deter-
+mines what information the world model retains, how tractable multi-step prediction is, and what
+downstream tasks the model can support. We identify six principal representation families.
+16
+
+3.1.1 Observation-space (pixel-level) representations.
+The most direct approach predicts future observations in raw observation space—typically RGB
+pixels or LiDAR point clouds. Early video prediction models [59, 60] operated in pixel space, as do
+recent diffusion-based world models such as DIAMOND [37] and GameNGen [61]. The advantage
+is that no information is discarded: every visual detail is available for downstream use. The
+disadvantages are high dimensionality (a 256×256 RGB frame has 196,608 dimensions), allocation
+of model capacity to decision-irrelevant details (textures, lighting), and the computational cost of
+multi-step prediction. Pixel-space models are most appropriate when visual fidelity is itself the
+objective, as in video generation or game simulation.
+3.1.2 Continuous latent representations.
+Most successful world models compress observations into continuous latent vectors via a learned
+encoder, then predict dynamics in this compact space. Ha and Schmidhuber [4] used a VAE to
+compress 64×64 frames into 32-dimensional Gaussian latent codes. The RSSM [31] introduced
+a hybrid continuous latent state comprising a deterministic recurrent component h (preserving
+t
+temporal memory through GRU updates) and a stochastic component z (sampled from a learned
+t
+Gaussian distribution to capture environmental uncertainty):
+h = GRU(h ,z ,a ), z ∼ N(µ (h ),σ (h )) (10)
+t t−1 t−1 t−1 t θ t θ t
+This deterministic-stochastic split has been adopted across the entire Dreamer line [32, 40] and
+many subsequent models (STORM [36]). Continuous latent spaces offer principled uncertainty
+quantificationthroughthestochasticcomponentandarewell-suitedforcontinuouscontroldomains
+where smooth interpolation between states is meaningful. Their limitation is the tendency toward
+blurryreconstructionswhenapixel-wisedecoderisused,duetotheGaussianlikelihoodassumption.
+3.1.3 Discrete token representations.
+An alternative is to quantize observations into a finite vocabulary of discrete codes, typically via
+a VQ-VAE [56] tokenizer. IRIS [35] converts each image frame into a sequence of discrete tokens,
+then treats dynamics as next-token prediction—drawing a direct parallel with language modeling.
+DreamerV2[34]demonstratedthatdiscretecategoricallatentvariables(32categoricaldistributions
+with32classeseach)outperformcontinuousGaussianlatentsonAtarigames,likelybecausediscrete
+representations better capture the discrete nature of game state transitions. GAIA-1 [62] extends
+this approach to driving, tokenizing video frames and predicting future tokens autoregressively
+with a 9-billion-parameter transformer. Discrete representations enable the use of powerful autore-
+gressive transformer architectures with categorical cross-entropy training, but sacrifice fine-grained
+spatial detail due to the quantization bottleneck.
+3.1.4 Joint-embedding (representation-space) predictions.
+LeCun[5]proposedtheJoint-EmbeddingPredictiveArchitecture(JEPA)asaprincipledalternative
+thatavoidsbothpixel-spacereconstructionandexplicittokenization. InJEPA,apredictornetwork
+maps the embedding of the current observation to the embedding of the next observation, with the
+target embeddings produced by an exponential moving average (EMA) encoder:
+z = predictor (z ), ztarget = enc (o ) (11)
+bt+1 θ t t+1 θ¯ t+1
+17
+
+No decoder is used; the loss operates entirely in representation space. This avoids the pixel-
+reconstruction bottleneck (which penalizes models for failing to predict decision-irrelevant details)
+and the mode-averaging inherent in pixel-wise losses. I-JEPA [39] validated this for images. V-
+JEPA [57] extended it to video, and V-JEPA 2 [58]—pretrained on over one million hours of
+internetvideo—achievedstate-of-the-artvideounderstandingandenabledzero-shotrobotplanning.
+MuZero [38] can also be viewed as operating in a task-aligned representation space, since its latent
+dynamicsareoptimizedsolelyforrewardandvaluepredictionwithoutanyreconstructionobjective.
+3.1.5 Structured and object-centric representations.
+Ratherthantreatingtheworldstateasamonolithicvectorortokensequence,object-centricmodels
+decompose it into a set of slots, each representing a distinct entity with its own properties:
+s = {slot1,slot2,...,slotN} (12)
+t t t t
+Kipf et al. [63] introduced the Contrastive Structured World Model (C-SWM), which learns object-
+centric representations via contrastive learning and models dynamics through a graph neural net-
+work over object slots. RoboDreamer [64] decomposes language instructions into primitive compo-
+nentsandusescompositionaldiffusionmodelsconditionedoneach. DreMa[65]integratesGaussian
+Splatting with physics simulators for object-level scene manipulation. Object-centric representa-
+tionssupportcombinatorialgeneralizationtonovelobjectconfigurationsandaremoreinterpretable,
+but they scale poorly with the number of objects (O(N2) for pairwise interaction modeling) and
+assume that the environment can be cleanly decomposed into discrete entities.
+3.1.6 3D and occupancy-based representations.
+For domains with rich spatial structure, world models can represent the environment as 3D oc-
+cupancy grids, voxels, or point clouds. OccWorld [66] uses a GPT-like model to autoregressively
+predict future 3D occupancy tokens for autonomous driving, enabling spatially consistent scene
+forecasting. Copilot4D [67] learns to forecast LiDAR point clouds via discrete diffusion, achieving
+over 65% reduction in Chamfer distance for 1-second prediction. Kong et al. [68] surveyed 3D and
+4D world modeling approaches, establishing taxonomies across video-based, occupancy-based, and
+LiDAR-based generation. These representations are particularly valuable for autonomous driving
+and robotics, where 3D spatial reasoning is essential for safe planning, but they incur substantial
+memory and compute costs that scale cubically with spatial resolution.
+3.2 Classification by dynamics
+A fundamental dimension for understanding world models lies in how they represent and learn
+dynamics, i.e., the temporal evolution of latent states. Rather than focusing on architectural
+components, this perspective categorizes models based on the form of the transition mechanism,
+typically expressed as p(s | s ,a ). This viewpoint is particularly relevant for domains such as
+t+1 t t
+healthcare,wheredynamicscorrespondtodiseaseprogression,treatmentresponse,andlongitudinal
+physiological changes.
+Inthefollowing,wecategorizeworldmodelsaccordingtotheirformulationofdynamics,ranging
+from explicit parametric transitions to implicit generative processes and adaptive memory-based
+mechanisms.
+18
+
+3.2.1 Deterministic Dynamics
+Deterministicdynamicsmodelsassumethatthenextstateisasingle-valuedfunctionofthecurrent
+state, i.e., s = f (s ,a ). This formulation simplifies learning and enables efficient multi-step
+t+1 θ t t
+rollout in latent space. Early world models such as World Models [33] and PlaNet [31] adopt
+this paradigm, using recurrent networks to propagate latent states. Subsequent works such as
+Dreamer [32] further demonstrate that deterministic latent dynamics can support long-horizon
+imagination and policy optimization.
+However, deterministic formulations inherently struggle to capture multi-modal futures and
+uncertainty, often leading to averaged or overconfident predictions. This limitation is particularly
+problematicinmedicalapplications, wherediseasetrajectoriesexhibitsignificantinter-patientvari-
+ability.
+3.2.2 Stochastic Dynamics
+Toaddressthelimitations ofdeterministictransitions, stochasticdynamicsmodelsintroduce latent
+variablestorepresentuncertainty,modelingtransitionsasdistributionsratherthanpointestimates.
+In practice, this is often implemented through variational state-space models, where latent
+stochastic variables capture unobserved factors influencing temporal evolution. Modern latent
+world models, including extensions of PlaNet and Dreamer, incorporate stochastic components to
+improve expressivity while retaining stable temporal structure.
+Stochastic dynamics are especially important in medical settings, where uncertainty arises from
+both measurement noise and intrinsic biological variability. Such models enable the representation
+of multiple plausible disease trajectories and support probabilistic reasoning in downstream tasks.
+3.2.3 Implicit Generative Dynamics
+An alternative formulation models dynamics implicitly through generative processes, without ex-
+plicitlyparameterizingtransitionfunctions. Diffusion-basedmodelsrepresentaprominentexample,
+where temporal evolution is captured through iterative denoising processes over entire trajectories.
+This paradigm has recently been extended to medical world modeling. MRI Contrast Enhance-
+ment Kinetics World Model (CEKWorld) [69] formulates contrast-agent dynamics as a continuous-
+time generative process conditioned on non-contrast MRI. By leveraging latent diffusion, it syn-
+thesizes temporally dense sequences from sparsely sampled clinical data. To address the challenges
+of low temporal resolution, the model introduces spatiotemporal consistency constraints in la-
+tent space, mitigating content distortion and temporal discontinuity observed in sparse training
+regimes [69].
+Implicitgenerativedynamicsprovidestrongflexibilityandexpressivity,makingthemwell-suited
+for modeling complex biological processes. However, their lack of explicit transition structure can
+limit interpretability and complicate integration with decision-making frameworks.
+3.2.4 Representation-space Predictive Dynamics
+Recent work explores modeling dynamics directly in representation space, focusing on predicting
+future latent embeddings rather than reconstructing observations. This paradigm is closely related
+to joint-embedding predictive architectures (JEPA), where the objective is to learn invariant and
+predictive representations.
+LeWorldModel [70] adopts this approach by learning end-to-end predictive embeddings from
+pixel inputs, improving stability and scalability by avoiding explicit reconstruction. Similarly,
+19
+
+Brain-JEPA[71]extendsthisparadigmtoneuraldata, modelingbraindynamicsfromfMRIsignals
+using spatiotemporal masking and gradient-based target positioning.
+In this formulation, dynamics are defined as transformations in representation space, capturing
+essential temporal structure while discarding irrelevant details. This abstraction is particularly
+advantageous for high-dimensional data such as brain imaging, where direct pixel-level modeling is
+both inefficient and unnecessary.
+3.2.5 Memory-Augmented Dynamics
+A more recent direction extends dynamics modeling with external memory, allowing transitions to
+be conditioned on retrieved past experiences. In this formulation, dynamics are no longer purely
+parametric but depend on both learned representations and an external memory module.
+CLARITY [72] exemplifies this paradigm by modeling context-aware disease trajectories in
+latent space. By incorporating patient-specific information and historical cases, the model dynam-
+ically adapts its predictions, enabling personalized forecasting of disease progression and treatment
+outcomes.
+More broadly, medical world model frameworks [73] emphasize the importance of incorporating
+domain knowledge and patient-specific context into dynamics modeling. Such approaches are par-
+ticularly effective under distribution shift, where purely parametric models may fail to generalize
+across populations or institutions.
+Memory-augmented dynamics thus provide a mechanism for bridging global knowledge and
+local adaptation, a property that is essential for real-world deployment in healthcare settings.
+3.2.6 Discussion and Open Challenges
+The classification above highlights a spectrum of dynamics formulations, ranging from explicit de-
+terministic transitions to implicit generative processes and adaptive memory-based systems. These
+approaches reflect different trade-offs between efficiency, expressivity, interpretability, and adapt-
+ability.
+Despite significant progress, several open challenges remain. First, accurately modeling long-
+term dynamics under sparse and irregular observations remains difficult, particularly in medical
+domains where data acquisition is constrained. Second, balancing expressivity and interpretability
+is an ongoing challenge, as highly flexible generative models often lack clear physical or clinical
+meaning. Third, robustness under distribution shift continues to be a major concern, motivating
+the integration of memory and test-time adaptation mechanisms.
+Finally, a promising direction lies in hybrid models that combine stochastic dynamics, implicit
+generative modeling, and memory augmentation. Such systems may offer a unified framework ca-
+pable of capturing complex temporal processes while remaining adaptable to real-world variability.
+3.3 Classification by Modality
+The modality of input data constitutes a fundamental axis along which world models diverge in
+design, capability, and applicability. Since world models must internalize the dynamics of the
+environments they represent, the sensory channels through which environmental information is
+perceived directly shape both the learned representations and the downstream utility of the model.
+We organize existing world models into five broad modality categories: visual-only, language-only,
+3D geometric, proprioceptive and tactile, andmultimodal fusion. Table1summarizesrepresentative
+works along this taxonomy.
+20
+
+Table 1: Representative world models classified by input modality.
+Model Visual Language LiDAR/3D Proprioceptive Tactile Audio
+Visual-only
+Dreamer (v1–v3) [6–8] ✓
+IRIS [74] ✓
+DIAMOND [75] ✓
+GameNGen [76] ✓
+Sora [10] ✓
+Genie / Genie2 [13] ✓
+Language-only
+RAP [77] ✓
+WebDreamer [78] ✓
+WorldLLM [79] ✓
+3D Geometric (LiDAR / Point Cloud / Occupancy)
+LiDARGen [80] ✓
+LidarDM [81] ✓
+OccWorld [82] ✓
+Proprioceptive and Tactile
+DayDreamer [83] ✓ ✓
+MLA [84] ✓ ✓ ✓ ✓
+Tactile-VLA [85] ✓ ✓ ✓
+Multimodal Fusion
+GAIA-1 / GAIA-2 [86, 87] ✓ ✓
+Cosmos [14] ✓ ✓
+V-JEPA2 [12] ✓ ✓
+UniSim [88] ✓ ✓
+VLWM [89] ✓ ✓
+3.3.1 Visual-Only World Models
+The most extensively studied category of world models operates on visual observations, typically
+in the form of RGB images or video frames. This design choice is natural: vision provides a high-
+bandwidth, information-rich channel that captures spatial layout, object appearance, and temporal
+dynamics simultaneously. Pioneering work in model-based reinforcement learning established this
+paradigm. Ha and Schmidhuber [4] trained a variational autoencoder (VAE) and a recurrent
+neural network (RNN) on image observations to learn compact latent representations of visual
+environments,enablingagentstoactwithininternallygenerated“dreams.” TheDreamerseries[6–8]
+extendedthisapproachthroughtheRecurrentState-SpaceModel(RSSM),learningvisualdynamics
+in a compact latent space and training policies entirely through imagined rollouts. More recently,
+DreamerV3 [8] demonstrated that a single, fixed configuration can master over 150 diverse tasks
+spanning continuous control, Atari games, and even Minecraft, establishing visual world models as
+general-purpose decision-making substrates.
+Animportantarchitecturalshifthasbeentheadoptionoftransformer-basedanddiffusion-based
+21
+
+dynamics models operating on visual tokens. IRIS [74] discretizes visual observations using a VQ-
+VAE and models dynamics with an autoregressive transformer, achieving competitive performance
+on the Atari 100k benchmark. DIAMOND [75] replaces the autoregressive transition model with
+a diffusion process, generating the next observation conditioned on past frames and actions. This
+diffusion-based paradigm has been pushed further by GameNGen [76], which demonstrated real-
+time interactive simulation of the classic game DOOM at over 20 frames per second using a fine-
+tuned Stable Diffusion model, achieving visual fidelity nearly indistinguishable from the actual
+game by human raters.
+At the foundation model scale, video generation has been reframed as a form of world simula-
+tion. OpenAI’s Sora [10] demonstrated that scaling video diffusion transformers trained on diverse
+internet video can produce temporally coherent visual sequences that appear to respect physical
+constraints such as object permanence and rigid-body dynamics, although the extent to which
+such models constitute genuine world models remains debated [11]. DeepMind’s Genie [13] took a
+complementary approach, learning a latent action space from unlabeled video in a self-supervised
+manner, enabling the generation of interactive and controllable 2D environments from single image
+prompts.
+Despite their success, visual-only world models face inherent limitations. Raw pixel reconstruc-
+tion is computationally expensive and may force models to allocate representational capacity to
+task-irrelevant visual details such as textures and lighting variations. Moreover, purely visual rep-
+resentations lack the semantic abstraction needed for high-level reasoning and struggle to capture
+aspects of the world state that are not directly observable in the image, such as object masses,
+material properties, or off-screen entities.
+3.3.2 Language-Only World Models
+A distinct but increasingly influential line of research employs natural language as the primary
+representational medium for world modeling. Rather than predicting future pixel values, language-
+only world models predict future states expressed as textual descriptions, leveraging the semantic
+abstraction and compositional structure inherent in natural language. This paradigm capitalizes
+on the extensive world knowledge already encoded in large language models (LLMs) through pre-
+training on internet-scale text corpora.
+Hao et al. [77] proposed the Reasoning via Planning (RAP) framework, which repurposes an
+LLM to serve simultaneously as a world model—predicting state transitions—and as a reasoning
+agent, combined with Monte Carlo Tree Search for strategic exploration of the reasoning space.
+Notably, RAP on LLaMA-33B surpassed chain-of-thought prompting on GPT-4 in plan generation
+tasks, demonstrating that LLMs can serve as effective approximate world models when coupled
+with principled planning algorithms. In a similar spirit, WebDreamer [78] treats LLMs as world
+models for web-based environments, simulating the outcomes of candidate browser actions in natu-
+ral language before committing to one, achieving substantial improvements over reactive baselines
+on benchmarks such as VisualWebArena.
+Language-based world models offer several attractive properties. Natural language provides a
+semantically rich and human-interpretable interface, enabling straightforward inspection of pre-
+dicted world states and facilitating human-in-the-loop correction. Furthermore, language-based
+predictions are computationally far less expensive to generate than pixel-level reconstructions,
+making them particularly suitable for high-level task planning over long horizons. Recent work
+on WorldLLM [79] induces explicit natural-language hypotheses about transition regularities via
+Bayesianinferenceoveragentexperience,yieldinganinterpretableandlow-dimensionalworldmodel
+that guides both forward prediction and curiosity-driven exploration.
+22
+
+However, language-only world models suffer from significant limitations. Textual descriptions
+are inherently lossy: they cannot capture fine-grained spatial relationships, continuous dynamics,
+orprecisemetricinformation. LLM-basedworldmodelsalsoexhibitcompoundingpredictionerrors
+over long horizons, with accuracy degrading substantially as rollout length increases [78]. Addi-
+tionally, these models inherit the well-documented limitations of LLMs, including hallucination,
+difficulty with precise numerical reasoning, and fragile performance on tasks requiring grounded
+physical understanding.
+3.3.3 3D Geometric World Models
+Athirdcategoryofworldmodelsoperatesonthree-dimensionalgeometricrepresentations,including
+LiDAR point clouds, occupancy grids, and depth maps. These representations provide explicit 3D
+structural information that is complementary to the appearance-centric nature of RGB imagery
+and is especially critical for applications in autonomous driving and outdoor robotics where precise
+spatial reasoning is required.
+LiDAR-based world modeling has advanced rapidly in recent years. LiDARGen [80] formu-
+lated point cloud generation as a denoising diffusion process in an equirectangular projection,
+producing physically plausible LiDAR scans that can be conditionally sampled for tasks such as
+point cloud densification without retraining. Subsequent diffusion-based approaches, including
+R2DM [90] and RangeLDM [91], improved fidelity and scalability by operating in latent range-view
+spaces. LidarDM [81] further demonstrated compositional scene generation, synthesizing LiDAR
+datawithinrealisticdrivingenvironments. Beyondgeneration, occupancy-basedworldmodelssuch
+as OccWorld [82] predict future 3D occupancy states of a scene, providing a structured volumetric
+representation that unifies spatial prediction across both static and dynamic elements.
+3D geometric world models are particularly valuable for autonomous driving, where a compre-
+hensive survey of driving-specific approaches can be found in [27, 29]. These models can faithfully
+represent the geometry of roads, buildings, and vehicles, capturing information that is absent from
+monocular camera images. However, they typically lack semantic richness—a LiDAR point cloud
+encodes where objects are but not necessarily what they are or how they will behave—motivating
+the integration of 3D geometric data with other modalities.
+3.3.4 Proprioceptive and Tactile World Models
+Embodied agents, particularly robots, interact with their environments through sensory channels
+that extend well beyond vision. Proprioceptive signals—such as joint positions, velocities, and
+torques—provide direct information about the agent’s own body state, while tactile sensors convey
+contact forces and surface properties during physical interaction. Incorporating these modalities
+into world models is essential for contact-rich manipulation tasks where visual observation alone is
+insufficient.
+DayDreamer [83] demonstrated that Dreamer-style world models can be applied to physical
+robots by learning dynamics from a combination of visual observations and proprioceptive inputs,
+enabling a quadruped robot to learn locomotion gaits entirely from real-world interaction without
+simulation. Several recent works have further expanded the sensory repertoire. The Multisensory
+Language-Action (MLA) model [84] proposes an encoder-free multimodal alignment scheme that
+repurposes the LLM backbone itself as a perception module, directly interpreting 2D images, 3D
+point clouds, and tactile tokens through positional correspondence. Similarly, Tactile-VLA [85]
+and BiTLA [92] integrate tactile feedback with vision-language-action architectures, demonstrating
+improvements on contact-rich manipulation benchmarks.
+23
+
+The inclusion of proprioceptive and tactile modalities addresses a fundamental blind spot of
+vision-only approaches: the physics of contact. A robot grasping a fragile object must sense grip
+force in real time; a hand manipulating a deformable object must feel how the material yields.
+These signals are inherently low-dimensional compared to vision but carry information that is
+impossible to obtain from cameras alone. The challenge lies in the heterogeneity of these sen-
+sor modalities—tactile readings, joint encoders, and force-torque sensors each operate at different
+frequencies, dimensionalities, and noise characteristics—requiring careful architectural design for
+effective fusion.
+3.3.5 Multimodal Fusion World Models
+Perhaps the most ambitious and rapidly growing category encompasses world models that jointly
+process multiple input modalities, seeking to construct richer and more robust internal represen-
+tations of the world by leveraging the complementary strengths of different sensory channels. The
+intuition is straightforward: the physical world is inherently multimodal, and an agent that can
+simultaneouslyprocessvisualappearance,linguisticcontext,geometricstructure,andphysicalfeed-
+back should develop a more complete understanding of environmental dynamics than one relying
+on any single channel.
+In autonomous driving, GAIA-1 [86] demonstrated a multimodal world model that conditions
+video generation on text descriptions and structured control inputs, enabling controllable synthesis
+ofdrivingscenarios. Itssuccessor,GAIA-2[87],furtheradvancedcontrollabilitythroughmulti-view
+latent diffusion with fine-grained scene-level conditioning. UniSim [88] takes a different approach,
+constructingneuralfeaturegridsfromrecordeddrivinglogstosimultaneouslysimulatebothcamera
+and LiDAR data in a closed-loop fashion, enabling the first closed-loop evaluation of autonomy
+systems on counterfactual safety-critical scenarios.
+At the foundation model scale, NVIDIA’s Cosmos [14] provides a platform for training world
+foundation models that ingest video and text to produce generative simulators for physical AI
+applications. Meta’s V-JEPA 2 [12], a 1.2 billion-parameter model trained via self-supervised
+video prediction using the Joint-Embedding Predictive Architecture (JEPA), achieves state-of-
+the-art performance on visual understanding benchmarks while simultaneously enabling zero-shot
+robotplanningbyintegratingvisualpredictionswithproprioceptiveinputs. Thismodelexemplifies
+LeCun’s [5] vision of a non-generative world model that predicts in abstract representation space
+rather than reconstructing raw pixels, avoiding the computational burden and representational
+waste of pixel-level generation.
+A particularly notable recent development is the Vision-Language World Model (VLWM) [89],
+which perceives the environment through visual observations but predicts world evolution us-
+ing language-based abstraction. By compressing video inputs into hierarchical text descriptions
+(termed “Tree of Captions”) and training a language model to predict action-state trajectories,
+VLWM achieves strong performance on high-level task planning benchmarks while maintaining
+full interpretability of the predicted world states. This approach bridges the visual and language
+modalities in a complementary fashion: vision handles low-level perception while language carries
+the representational burden of dynamics prediction.
+Thekeyarchitecturalchallengeinmultimodalworldmodelsliesinthefusionmechanism. Early
+approachestypicallyemploymodality-specificencodersfollowedbyconcatenationorcross-attention
+in a shared latent space [93]. More recent designs explore tighter integration strategies, such as
+the Global Workspace approach [94], which draws inspiration from cognitive neuroscience’s Global
+Workspace Theory to learn a shared bottleneck representation across modalities, allowing each
+sensorychanneltoinformtheworldmodelwhilemaintainingmodality-specificprocessingpathways.
+24
+
+3.3.6 Discussion and Open Challenges
+The modality landscape of world models reveals several important trends and unresolved tensions.
+First, there is a clear trajectory toward modality convergence: state-of-the-art systems increasingly
+combinemultiplesensoryinputs, mirroringthemultimodalnatureofbiologicalperception. Second,
+the choice of prediction target modality is decoupling from the input modality—models may ingest
+video but predict in language space (VLWM) or ingest images but predict in abstract latent space
+(V-JEPA 2), suggesting that the optimal representation for world dynamics may not coincide with
+any raw sensory modality.
+Several open challenges remain. Scalable multimodal alignment across more than two or three
+modalities remains technically difficult, as the number of pairwise alignment objectives grows
+quadratically. Temporal synchronization poses practical challenges when fusing modalities that
+operate at vastly different sampling rates (e.g., 30 Hz cameras, 1 kHz tactile sensors, and 10 Hz
+LiDAR). Missing modality robustness—the ability of a world model to degrade gracefully when
+one or more sensory channels are unavailable—has received little attention but is critical for real-
+world deployment. Finally, the question of optimal prediction modality remains open: it is not yet
+clear whether world models should predict in pixel space, language space, latent embedding space,
+or some hybrid thereof, as each choice entails distinct trade-offs among fidelity, interpretability,
+computational cost, and downstream task utility.
+3.4 Classification by learning paradigms
+The learning paradigm—how a world model acquires knowledge of environmental dynamics con-
+stitutes a fundamental classification axis that is orthogonal to representation type (Section 3.1),
+dynamicsarchitecture(Section3.2),andinputmodality(Section3.3). Thesamearchitecturalback-
+bone,suchastheRSSMunderlyingtheDreamerfamily,canbetrainedthroughonlinereinforcement
+learning [6], offline batch learning, or large-scale self-supervised pretraining, yielding models with
+markedly different data requirements, generalization capabilities, and deployment characteristics.
+This section organizes existing world models into six broad learning-paradigm categories—self-
+supervised and unsupervised learning, online model-based reinforcement learning, offline and batch
+learning, foundation model pretraining and adaptation, supervised and imitation learning, and hy-
+brid multi-stage paradigms—and analyzes the trade-offs each entails. Table 2 provides a summary
+of representative models classified along this axis.
+3.4.1 Self-Supervised and Unsupervised Learning
+The dominant learning paradigm for modern world models is self-supervised learning (SSL), in
+which models learn compact spatiotemporal representations from raw, unlabeled observations by
+optimizing pretext objectives that exploit the inherent structure of sensory data. This paradigm
+eliminates the need for reward signals or ground-truth labels, enabling training on large-scale
+datasets collected without task-specific annotation.
+Reconstruction-based self-supervision. The earliest and most widely adopted SSL strategy
+forworldmodelsislearningthroughobservationreconstruction. HaandSchmidhuber[4]pioneered
+this approach by training a VAE in an unsupervised manner to compress image observations into
+compact latent vectors, paired with an RNN that predicted future latent distributions. The entire
+world model was learned without any task reward, relying solely on the reconstruction objective
+of the VAE and the predictive loss of the RNN. The Dreamer series [6–8] extended this paradigm
+through the RSSM, where the world model is trained to reconstruct observations, predict rewards,
+25
+
+and predict episode terminations from latent states. A critical finding from DreamerV3 [8] is that
+the world model’s representations are predominantly shaped by its task-agnostic reconstruction
+objective rather than by task-specific reward gradients, suggesting that unsupervised dynamics
+learning provides the primary representational substrate upon which task-specific signals merely
+fine-tune behavior.
+Reconstruction-based self-supervision also underlies video prediction approaches. Stochastic
+video prediction models such as SV2P [59] and SVG [60] learn to predict future video frames
+by introducing variational latent variables to capture the inherent uncertainty of future out-
+comes. More recently, diffusion-based world models—including DIAMOND [37] and GameN-
+Gen [61]—reformulate next-observation prediction as a denoising process, where the model learns
+to reverse a gradual noise-corruption procedure. The denoising score-matching objective is itself a
+form of self-supervision: no labels are required beyond the observations themselves.
+While reconstruction-based approaches have proven remarkably effective, they carry a funda-
+mental limitation: pixel-level reconstruction forces models to allocate representational capacity to
+task-irrelevant visual details such as textures, lighting variations, and background clutter, poten-
+tially at the expense of capturing decision-relevant dynamics.
+Contrastive and non-contrastive representation learning. An alternative SSL strategy
+avoids pixel-level reconstruction entirely, instead learning structured representations through con-
+trastive or non-contrastive objectives. Contrastive Structured World Models (C-SWM) [63] learn
+object-centricstaterepresentationsbycontrastingtemporallyadjacentstate-transitionpairsagainst
+randomly sampled negatives, yielding physically meaningful latent spaces that support accurate
+multi-steppredictionwithoutanyreconstructiondecoder. Self-PredictiveRepresentations(SPR)[95]
+encourage task-relevant latent consistency by training representations to predict their own future
+latentstatesunderalearnedtransitionmodel,achievingsubstantialimprovementsindataefficiency
+on the Atari 100k benchmark.
+Non-contrastive methods, which avoid the need for explicit negative samples, have also gained
+traction. Approaches inspired by BYOL [96] and VICReg [97] learn representations by enforc-
+ing agreement between different augmented views of the same observation while using regulariza-
+tion mechanisms—such as exponential moving average targets, variance-invariance-covariance con-
+straints, or stop-gradient operations—to prevent representational collapse. DINO-WM [98] builds
+world dynamics models on compact DINOv2 patch embeddings rather than raw pixels, predicting
+future patch features from offline behavioral trajectories and enabling zero-shot planning across
+diverse environments without reward models or expert demonstrations. This demonstrates that
+pre-trained visual representations encoding rich semantic structure can serve as powerful inductive
+biases for dynamics learning.
+Joint-Embedding Predictive Architectures (JEPA). Perhaps the most theoretically prin-
+cipled SSL paradigm for world modeling is the Joint-Embedding Predictive Architecture (JEPA)
+proposedbyLeCun[5]. Unlikegenerativeapproachesthatpredictrawobservations,JEPAlearnsto
+predict future representations in a learned latent space, deliberately discarding unpredictable and
+task-irrelevant perceptual details. This design choice reflects a fundamental insight: the optimal
+representation for world dynamics may not coincide with any raw sensory modality, and forc-
+ing pixel-level prediction wastes model capacity on information that is irrelevant for downstream
+decision-making.
+I-JEPA[39]instantiatedthisprincipleforstaticimages,predictingtherepresentationsofmasked
+image regions from visible context entirely in latent space, and achieving competitive performance
+26
+
+with substantially higher computational efficiency than both masked autoencoder and contrastive
+baselines. V-JEPA[57]extendedthistothetemporaldomainbypredictingmaskedspatiotemporal
+regions in video, learning motion-sensitive representations without pixel reconstruction. V-JEPA
+2 [12], pretrained on over one million hours of internet video, demonstrated that scaling JEPA
+pretraining yields video representations with state-of-the-art understanding and prediction capa-
+bilities—achieving 77.3% top-1 accuracy on Something-Something v2 for motion understanding
+and 39.7 recall-at-5 on Epic-Kitchens-100 for action anticipation. Critically, V-JEPA 2 can be
+post-trained into an action-conditioned world model (V-JEPA 2-AC) using fewer than 62 hours of
+unlabeled robot video, enabling zero-shot robotic planning on physical Franka arms without any
+task-specific training or reward. The JEPA paradigm thus represents a shift from “generative”
+to “predictive” self-supervised learning, where the model learns what aspects of the future are
+predictable and relevant rather than attempting to reconstruct every detail.
+3.4.2 Online Model-Based Reinforcement Learning
+In online model-based reinforcement learning (MBRL), the world model is learned concurrently
+with the agent’s policy through iterative interaction with the environment. The agent alternates
+between collecting real experience, updating its internal model of the environment, and using that
+model to improve its behavior—either through synthetic data generation or direct planning.
+Interleaved model learning and data augmentation. Theconceptualrootsofthisparadigm
+trace back to Sutton’s Dyna architecture [99], which interleaved real environment interaction with
+model-based updates by using the learned dynamics to generate synthetic transitions for value
+functiontraining. InmodernMBRL,thisstrategyhasbeenrefinedtobalancethebenefitsofmodel-
+generated data against the risks of compounding model errors. MBPO [48] limits model rollouts
+to short horizons initiated from real states sampled from a replay buffer, providing a theoretical
+monotonic improvement guarantee while substantially improving data efficiency. STEVE [100]
+further explored how uncertainty-aware model rollouts can be incorporated into value estimation,
+usingensemblestoquantifyepistemicuncertaintyandavoidexploitationofpoorlymodeledregions.
+Imagination-based policy learning. Amoreambitioususeofonlineworldmodelsplacesimag-
+inedlatenttrajectoriesatthecenterofpolicyoptimization. PlaNet[31]demonstratedthatcompact
+latentdynamicsmodelscansupportplanningdirectlyfromimageobservations, achieving50×data
+efficiencyimprovementsovermodel-freemethodsusingtheCross-EntropyMethodforonlinetrajec-
+tory optimization. The Dreamer family [6–8] extended this by combining learned latent dynamics
+with actor-critic learning entirely within imagined rollouts: after fitting a world model from real
+experience, the agent rolls forward imagined latent trajectories and uses them to train value and
+policy networks via backpropagation through the differentiable dynamics. Because the transition
+dynamics are implemented as differentiable neural networks, gradients of long-term value esti-
+mates can be propagated through imagined trajectories, effectively transforming imagination into
+a differentiable computation graph. DayDreamer [83] validated this paradigm on physical robots,
+demonstrating that a quadruped could learn locomotion gaits entirely from real-world interaction
+without any simulation.
+Search-based online reasoning. An alternative online paradigm performs explicit planning at
+inference time through search procedures. MuZero [9] learns a latent dynamics model sufficient
+for predicting only planning-relevant quantities—rewards, values, and policy logits—and combines
+it with Monte Carlo Tree Search to achieve superhuman performance across Go, chess, shogi,
+27
+
+and Atari without access to environment rules. This approach embodies the principle of value
+equivalence [101]: the latent space is shaped to preserve decision-relevant structure rather than to
+faithfully reconstruct observations. EfficientZero [102] improved data efficiency by incorporating
+self-supervised consistency objectives, while TD-MPC [46] integrated learned latent dynamics with
+trajectory optimization for continuous control. Unlike amortized approaches that encode planning
+into a parametric policy, search-based methods explicitly recompute optimal actions for each state,
+trading increased computational cost at inference time for improved flexibility and robustness to
+out-of-distribution states.
+3.4.3 Offline and Batch Learning
+In safety-critical domains such as healthcare, autonomous driving, and industrial control, online
+exploration may be prohibitively expensive, dangerous, or ethically impermissible. Offline world
+model learning addresses this constraint by training entirely from pre-collected, static datasets
+without any further environment interaction.
+The core challenge in this setting is distribution shift: when the learned world model is used
+to simulate trajectories beyond the support of the training data, prediction errors can compound
+rapidly,potentiallyleadingto“modelexploitation”—wherethepolicydiscoversunrealisticallyhigh-
+reward trajectories that exist only as artifacts of model inaccuracies. MOPO [103] addresses this
+by learning an ensemble of dynamics models and penalizing the policy’s return estimates by the
+ensemble’s disagreement, providing a conservative lower bound on the true expected return. The
+Diffusion World Model (DWM) [104] departs from the standard one-step autoregressive paradigm
+by predicting multi-step future states and rewards concurrently via diffusion, achieving a 44%
+performance gain over one-step models on D4RL benchmarks. More recently, RLVR-World [105]
+proposedusingreinforcementlearningwithverifiablerewardsasapost-trainingparadigmforworld
+models, directly optimizing transition prediction metrics rather than maximum likelihood, demon-
+strating substantial gains across text games, web navigation, and robotic manipulation.
+A critical insight from the offline learning literature is the tension between predictive accuracy
+and decision utility: a world model that achieves low reconstruction error does not necessarily
+provide the most useful representation for policy optimization [106]. Models may preserve vi-
+sually rich but task-irrelevant details while failing to represent reward-critical structure, helping
+explain why policy performance does not always correlate with prediction quality. This observation
+has motivated growing interest in decision-oriented world models that are explicitly optimized for
+downstream control utility.
+3.4.4 Foundation Model Paradigm: Large-Scale Pretraining and Adaptation
+Inspiredbythetransformativesuccessofthe“pretrainthenfine-tune”paradigminnaturallanguage
+processing and computer vision, an emerging class of world models is trained at industrial scale
+on massive, heterogeneous datasets before being adapted to specific downstream tasks through
+lightweight fine-tuning or zero-shot transfer.
+World foundation models. At the largest scale, World Foundation Models (WFMs) are pre-
+trainedondiverse,internet-scaledatatolearngeneral-purposedynamicspriors. OpenAI’sSora[10]
+demonstrated that training a diffusion transformer on large-scale internet video yields temporally
+coherent visual sequences that appear to respect certain physical constraints, though subsequent
+analysisrevealedthesepropertiestobeinconsistent[11,107]. NVIDIA’sCosmos[14]releasedopen-
+weight WFMs at 7B and 14B parameters trained on over 20 million hours of real-world video, with
+28
+
+its successor Cosmos-Predict2.5 [108] transitioning to flow-matching with RL-based post-training
+on 200 million clips. DeepMind’s Genie series [13, 109, 110] progressively scaled interactive world
+model generation from 2D environments to 3D navigable worlds generated from text prompts at
+720p and 24 fps. The Large World Model (LWM) [111] pursued an orthogonal scaling axis by
+extending context length to one million tokens via RingAttention, enabling joint modeling of long
+video and text sequences. These efforts represent the convergence of video generation and world
+simulation at industrial scale, though whether scale alone can yield genuine physical understand-
+ing—as opposed to sophisticated pattern matching—remains actively debated.
+Pretrain-then-fine-tuneforworldmodels. Belowthescaleoffoundationmodels,thepretrain-
+then-fine-tune paradigm has been adopted to improve the data efficiency of task-specific world
+model training. WPT [112] pretrains a generalist world model on reward-free, non-expert offline
+data from diverse tasks, then fine-tunes it online for specific downstream tasks, demonstrating
+clear improvements in sample efficiency—particularly on hard exploration tasks where learning
+from scratch fails entirely. MOTO [113] explores offline pretraining followed by online fine-tuning
+for model-based robot learning, while Vid2Act [114] uses a mixture world model pretrained on
+multi-task offline trajectories and adaptively transfers dynamics knowledge to novel tasks through
+domain-selective distillation.
+Cross-domain transfer and adaptation. A key promise of pretrained world models is their
+ability to transfer knowledge across domains, embodiments, and environments. SimDist [115] pre-
+trains world model components in simulation and finetunes only the dynamics model for real-world
+deployment, exploiting the modular structure of world models to directly target the sim-to-real dy-
+namicsgap. V-JEPA2-AC[12]achieveszero-shotroboticplanningonphysicalrobotsusingaworld
+model post-trained on fewer than 62 hours of unlabeled robot video—without collecting any data
+from the target environment or performing any task-specific training. The Open X-Embodiment
+initiative[116]demonstratedthatpoliciestrainedonamixtureofoveronemilliontrajectoriesfrom
+22 robot embodiments achieve 50% higher success rates than single-domain policies, establishing
+that cross-embodiment transfer is viable at scale.
+3.4.5 Supervised and Imitation Learning
+While self-supervised and reinforcement learning paradigms dominate the world model literature,
+supervised and imitation learning remain important in settings where ground-truth labels, expert
+demonstrations, or structured prior knowledge are available.
+Learning from demonstrations. In robotic manipulation, world models are frequently trained
+on large-scale teleoperated demonstrations. RT-1 [117] trained a scalable transformer on over
+130,000 real-robot episodes covering more than 700 tasks, achieving 97% success rate on trained
+tasks. While RT-1 and its successors (RT-2 [118], OpenVLA [119]) are primarily framed as Vision-
+Language-Action policies rather than explicit world models, their training paradigm—supervised
+next-action prediction from observation-action pairs—is structurally analogous to world model
+training, and the implicit dynamics knowledge they acquire through large-scale demonstration
+learning increasingly overlaps with the capabilities of explicit world models.
+Language and structured supervision. Language provides a rich form of weak supervision
+for world model learning. GAIA-1 [62] jointly conditions video generation on text descriptions and
+29
+
+structured control inputs, where the text serves as a supervisory signal specifying scene composi-
+tion and ego-vehicle behavior. WorldLLM [79] induces explicit natural-language hypotheses about
+transition regularities via Bayesian inference over agent experience, yielding an interpretable world
+model guided by linguistic structure. Language-conditioned latent dynamics models such as Dy-
+nalang [120] treat language understanding itself as emergent from the dynamics learning objective:
+the model learns to associate diverse language types—descriptions, instructions, corrections—with
+their environmental consequences through supervised prediction.
+Physics-supervised learning. A distinct form of supervision arises when world models are
+trained on data generated by physics simulators with known ground-truth dynamics. Physics-
+informed model-based RL [121] incorporates known physics equations as soft or hard constraints
+withintheworldmodeltrainingloop. MachinelearninginteratomicpotentialssuchasSchNet[122]
+and NequIP [123] are trained on quantum-mechanical calculations to approximate potential energy
+surfaces, functioning as supervised world models of molecular dynamics. These approaches trade
+generality for physical accuracy and are discussed further in Section 4.5.
+3.4.6 Hybrid and Multi-Stage Learning Paradigms
+Inpractice,themosteffectiveworldmodelsystemsincreasinglycombinemultiplelearningparadigms
+instagedorinterleavedtrainingpipelines,leveragingthecomplementarystrengthsofeachapproach.
+Self-supervisedpretrainingfollowedbyRLfine-tuning. Themostprominenthybridparadigm
+combines large-scale self-supervised pretraining with task-specific reinforcement learning. V-JEPA
+2 [12] exemplifies this two-stage approach: a 1.2-billion-parameter video encoder is first pre-
+trained via self-supervised masked prediction on over one million hours of internet video, then
+post-trained as an action-conditioned world model (V-JEPA 2-AC) using a small amount of robot
+interaction data, with planning performed via the Cross-Entropy Method at deployment. Cosmos-
+Predict2.5 [108] follows a similar trajectory: self-supervised pretraining via flow-matching is fol-
+lowed by RL-based post-training to improve physical plausibility. The finding from DreamerV3 [8]
+that world model representations are predominantly shaped by unsupervised reconstruction objec-
+tives further motivates this paradigm, suggesting that task-agnostic pretraining on large unlabeled
+datasets could substantially reduce the online interaction budget required for downstream task
+learning.
+Simulation pretraining with real-world adaptation. A complementary hybrid approach
+leverages the abundant data available in simulation to pretrain world models that are subsequently
+adapted to the real world. DayDreamer [83] demonstrated that world models can bridge this gap
+by learning directly on physical robots, while SimDist [115] takes a modular approach—pretraining
+the full world model stack in simulation and finetuning only the dynamics component using a small
+numberofreal-worldtrajectories. Domainrandomizationandcurriculumlearningstrategiesfurther
+support this paradigm by training world models across distributions of simulated environments to
+improve robustness to real-world variation.
+Multi-task and multi-modal joint training. The Unified World Model (UWM) [124] couples
+video prediction and action generation through a shared diffusion process during pretraining on
+large-scale robotic datasets, enabling a single model to serve simultaneously as a simulator and a
+policy. Motus [125] introduces a Mixture-of-Transformer architecture integrating three specialized
+experts—for understanding, video generation, and action prediction—with flexible mode-switching
+30
+
+withinasingleframework, achievinga45%absoluteimprovementoverpriorvision-language-action
+baselines by pretraining on unlabeled video with optical flow as an embodiment-agnostic action
+proxy.
+3.4.7 Discussion and Open Challenges
+Table 2 presents representative world models classified by learning paradigms, where Data req.”
+indicates the typical scale of training data, Labels” specifies whether task-specific supervision is
+required, and “Generalization” characterizes the breadth of transfer capability.
+The six learning paradigms surveyed above reveal several important cross-cutting trends and
+unresolved tensions.
+First, there is a clear trajectory toward paradigm convergence: the most capable world models
+increasingly combine self-supervised pretraining with task-specific reinforcement learning or super-
+vised fine-tuning, mirroring the “pretrain then adapt” recipe that has proven transformative in
+NLP and computer vision. The finding that DreamerV3’s representations are dominated by unsu-
+pervised objectives [8] provides theoretical motivation for this trajectory, suggesting that the bulk
+of world knowledge can be acquired from unlabeled data.
+Second, the question of objective alignment remains largely unresolved. Self-supervised ob-
+jectives such as pixel reconstruction and denoising are not necessarily aligned with downstream
+decision-makingrequirements[106]. Decision-orientedapproaches—exemplifiedbyMuZero’svalue-
+equivalence principle [101] and JEPA’s selective prediction in representation space [5]—offer prin-
+cipled alternatives, but a unified framework that systematically balances predictive accuracy with
+decision utility is still lacking.
+Third, the emergence of scaling laws for world models represents a critical open question. Foun-
+dation models such as Cosmos and Sora demonstrate that larger models trained on more data
+yield improved generation quality, but whether this improvement translates to genuine physical
+understanding—rather than more sophisticated pattern matching—remains contested. Controlled
+experiments by Kang et al. [107] suggest that video generation models exhibit case-based general-
+ization rather than abstract physical reasoning, highlighting the need for evaluation protocols that
+distinguish statistical regularity from causal understanding.
+Fourth, data efficiency and data scale present a fundamental tension. JEPA and foundation
+model paradigms achieve strong cross-domain generalization but require millions of hours of video
+data for pretraining. Online MBRL methods achieve remarkable data efficiency—PlaNet demon-
+strated 50× improvements over model-free methods—but generalize poorly beyond their training
+distribution. Bridging this gap through sample-efficient transfer from pretrained representations to
+novel environments is among the most important open problems.
+Fifth,continualandlifelonglearning ofworldmodelshasreceivedcomparativelylittleattention.
+Deployed world models must adapt to evolving environments, new objects, and shifting dynamics
+without catastrophically forgetting previously acquired knowledge. Current systems are almost
+universally trained in a single phase and frozen at deployment, a limitation that fundamentally
+constrains their real-world applicability.
+Finally, the interplay between learning paradigm and causal understanding warrants deeper
+investigation. Most self-supervised world models learn correlational rather than causal models of
+dynamics, as demonstrated by the failure modes identified in LLM-based world simulators [126]
+and video generation models [107]. Whether architectural innovations, training objectives, or data
+curation strategies can enable world models to acquire genuine causal understanding through any
+learning paradigm remains one of the field’s most fundamental open questions.
+31
+
+Table 2: Representative world models classified by learning paradigm.
+Learning Paradigm Representative Data Req. Labels Generalization Compute
+Models
+Self-Supervised / Unsupervised
+Reconstruction-based Dreamer Med–High None Moderate Moderate
+v1–v3 [6–8],
+DIAMOND [37],
+GameNGen [61]
+Contrastive / C-SWM [63], Med None Moderate Low–Med
+Non-contrastive SPR [95],
+DINO-WM [98]
+JEPA I-JEPA [39], Very High None High High
+V-JEPA [57],
+V-JEPA 2 [12]
+Online Model-Based RL
+Data augmentation Dyna-Q [99], Low Reward In-domain Moderate
+(Dyna-style) MBPO [48],
+STEVE [100]
+Imagination-based PlaNet [31], Low–Med Reward In-domain Moderate
+Dreamer [6],
+DayDreamer [83]
+Search-based MuZero [9], Effi- Low–Med Reward In-domain Med–High
+cientZero [102],
+TD-MPC [46]
+Offline / Batch Learning
+MOPO [103], Medium Reward Data-limited Low–Med
+DWM [104],
+RLVR-
+World [105]
+Foundation Model Pretraining
+Sora [10], Very High None/Weak Cross-domain Very High
+Cosmos [14],
+Genie [13],
+LWM [111]
+Supervised / Imitation
+RT-1 [117], Med–High Required In-domain Moderate
+GAIA-1 [86],
+Dynalang [120],
+WorldLLM [79]
+Hybrid / Multi-Stage
+V-JEPA Flexible Partial High High
+2-AC [12],
+Cosmos-
+Predict2.5 [108],
+UWM [124],
+Motus [125]
+32
+
+3.5 Classification by downstream use
+While prior subsections have organized world models by their architectural backbone and learn-
+ing paradigm, an equally revealing lens is their downstream application. The same foundational
+idea-learning an internal model of environment dynamics and using it to anticipate future states-
+manifestsverydifferentlydependingonwhethertheendgoalismasteringaboardgame, navigating
+an urban intersection, folding laundry, diagnosing tumors, generating cinematic video, or reasoning
+over natural language. Examining world models through the lens of downstream use exposes not
+only domain-specific design constraints (observation modality, action space, safety requirements,
+real-time latency budgets) but also recurring architectural motifs that transcend individual fields.
+In what follows, we survey six major application families, highlight representative systems in each,
+and close with a cross-cutting discussion of open challenges.
+3.5.1 Reinforcement Learning and Planning
+Reinforcementlearning(RL)andgame-playingremaintheoriginalandmostmatureprovingground
+forworldmodels. PlaNet[31]demonstratedthatarecurrentstate-spacemodeltrainedentirelyfrom
+image observations could support effective planning via the cross-entropy method, eliminating the
+need for a model-free policy altogether. The Dreamer line of work extended this idea to actor-
+critic learning entirely within imagined trajectories: Dreamer [32] introduced latent imagination
+for continuous-action tasks, DreamerV2 [34] replaced Gaussian latents with discrete representa-
+tions and matched model-free performance on the Atari benchmark, and DreamerV3 [40] intro-
+duced a suite of robustness techniques-symlog predictions, layer normalization, and free-bits KL
+balancing-that allowed a single set of hyperparameters to master domains ranging from Minecraft
+to continuous locomotion.
+In parallel, the MuZero family [38] demonstrated that a learned dynamics model, combined
+with Monte Carlo tree search (MCTS), could achieve superhuman performance in Go, chess, shogi,
+and Atari without access to ground-truth game rules. EfficientZero [102] augmented MuZero with
+self-supervised temporal consistency losses and achieved human-level Atari performance with only
+twohoursofreal-timeexperience,dramaticallyimprovingsampleefficiency. Forcontinuouscontrol,
+TD-MPC[46]proposedlearninganimplicitlatentdynamicsmodeljointlyoptimizedwithtemporal-
+differenceobjectivesandlocaltrajectoryoptimization, anditssuccessorTD-MPC2[127]scaledthis
+paradigm to a single 317M-parameter world model capable of solving 80 diverse continuous-control
+tasks, establishing a new benchmark for generalist model-based control. A persistent limitation
+across RL world models is compounding prediction error over long horizons, which degrades both
+planning and policy optimization quality.
+3.5.2 Autonomous Driving
+Autonomous driving presents world models with a distinctive set of challenges: multi-agent inter-
+action, long-tail safety scenarios, multi-sensor fusion, and the need to generate physically plausible
+future states at both the geometric and photometric level. GAIA-1 [86] was among the first large-
+scale generative world models for driving, using a video diffusion architecture conditioned on text,
+action, and map inputs to produce realistic multi-second driving rollouts. Its successor, GAIA-
+2 [128], extended the framework to controllable multi-view generation with improved geometric
+consistency. DriveDreamer [129] adopted a two-stage approach-first learning structured traffic dy-
+namics, then generating video conditioned on predicted layouts-and DriveDreamer-2 [130] further
+incorporatedlargelanguagemodelsfordiversescenariodescriptionandgeneration. WoVoGen[131]
+33
+
+advanced multi-camera consistency through world-volume-aware diffusion, explicitly lifting gener-
+ation into 3D to enforce cross-view coherence.
+Beyond video-centric formulations, several works have explored geometric world models for
+driving. OccWorld [132] learns a 3D occupancy-based world model that jointly predicts future
+scene occupancy and ego-vehicle motion, enabling downstream planning in a structured volumet-
+ric representation. Vista [133] demonstrated that a single autoregressive video world model can
+generalize across diverse driving conditions while offering versatile controllability over viewpoint,
+dynamics,andweather. UniSim[88]pushedtheboundaryfurtherbylearningauniversalreal-world
+simulator that can render novel viewpoints and simulate the visual consequences of arbitrary agent
+actions, bridging the gap between world modeling and closed-loop simulation. A key open question
+in driving world models is the extent to which photorealistic generation translates into improved
+downstream planning performance versus merely serving as a data-augmentation tool.
+3.5.3 Robotics and Embodied AI
+Transferringworldmodelsfromsimulationtophysicalhardwareintroduceschallengesofpartialob-
+servability, noisy actuators, and the prohibitive cost of real-world data collection. DayDreamer [83]
+provided the first demonstration that the Dreamer framework could learn locomotion and ma-
+nipulation behaviors entirely on physical robots, achieving quadruped walking in one hour and
+robotic arm pick-and-place in ten minutes of real interaction-without any simulation pre-training.
+RoboDreamer [64] extended world models to compositional multi-step manipulation by learning
+compositional world dynamics that decompose complex instructions into sequenced sub-goals, en-
+abling robot imagination over long task horizons.
+A complementary line of research focuses on learning general-purpose visual representations
+that implicitly encode world dynamics. V-JEPA 2 [12] pre-trained a joint-embedding predictive
+architecture on over one million hours of internet video, then post-trained an action-conditioned
+predictor (V-JEPA 2-AC) with fewer than 62 hours of unlabeled robot trajectories. The resulting
+model enabled zero-shot prehensile manipulation on Franka arms in new lab environments via
+model-predictive control-without any task-specific reward or additional data collection. While not
+world models per se, the Robotics Transformer series-RT-1 [117] and RT-2 [118]-demonstrated that
+large-scale transformer policies trained on diverse robot data can exhibit emergent generalization,
+and RT-2 in particular showed that vision-language pre-training allows robot policies to inherit
+semantic reasoning from web-scale data. The interplay between explicit world-model planning
+(DayDreamer, RoboDreamer) and implicit world knowledge encoded in large foundation models
+(V-JEPA 2, RT-2) remains an active frontier, with hybrid architectures increasingly favored.
+3.5.4 Healthcare and Medical Imaging
+Healthcare represents a nascent yet high-impact frontier for world models, where the ability to
+simulate disease progression or physiological dynamics can directly inform clinical decision-making.
+CEKWorld [69] introduced the first world model for MRI contrast enhancement kinetics, learning
+to simulate the spatiotemporal dynamics of contrast agent distribution from a single non-contrast
+scan. By modeling pharmacokinetic evolution through spatiotemporal consistency learning, CEK-
+World eliminates the need for exogenous contrast injection, reducing patient risk and cost while
+enabling continuous temporal-resolution imaging. CLARITY [134] proposed a latent-space world
+model for disease trajectory forecasting, conditioning predictions on treatment decisions to support
+treatment planning in oncology. Similarly, MeWM [135] demonstrated generative simulation of tu-
+mor evolution conditioned on clinical interventions, improving optimal treatment protocol selection
+34
+
+by 13% in F1 score.
+Beyond treatment planning, self-supervised world models have entered neuroscience. Brain-
+JEPA [136] applied a JEPA framework with gradient positioning and spatiotemporal masking to
+fMRI data, learning brain dynamics representations that transfer to diverse downstream tasks. A
+recent survey by Qazi et al. [137] provides the first systematic review of world models in healthcare,
+organizing the field into four capability levels: temporal prediction, action-conditioned prediction,
+counterfactual rollouts, and planning or control. The survey highlights that most medical world
+modelsremainatleveloneortwo,withcounterfactualreasoningandclosed-loopplanningrepresent-
+inglargelyunrealizedopportunities. Criticalchallengesincludetheextremescarcityoflongitudinal
+paired data, the need for rigorous uncertainty quantification in clinical deployment, and regulatory
+barriers to using generative models in diagnostic pipelines.
+3.5.5 Video Generation and Creative Simulation
+The convergence of world modeling and video generation has produced some of the most publicly
+visible systems in AI. OpenAI’s Sora [138] framed video generation explicitly as world simulation,
+using a diffusion-transformer architecture to produce photorealistic videos with emergent physical
+behaviors such as object persistence and fluid dynamics, though it notably struggles with fine-
+grained physical consistency. Genie [13] from DeepMind approached interactive world modeling
+by learning a latent action space entirely from unlabeled internet video, enabling playable 2D
+environments generated from a single image. Genie 2 [109] scaled this concept to photorealistic
+3D environments with persistent geometry and object interactions, positioning foundation world
+models as a potential replacement for hand-authored game engines.
+In the domain of interactive simulation, GameNGen [76] demonstrated that a diffusion model
+conditioned on action sequences could simulate the DOOM game engine in real time at over 20
+frames per second, with visual quality nearly indistinguishable from the original engine according
+to human evaluators. DIAMOND [37] showed that diffusion-based world models preserve visual
+details critical for downstream RL performance in Atari, outperforming prior discrete-token world
+models. NVIDIA’s Cosmos [14] introduced a world foundation model platform explicitly designed
+for physical AI applications, providing pre-trained video generation backbones that downstream
+systems can fine-tune for robotics, driving, or creative tasks. A fundamental tension in this space
+is whether video-generation world models truly learn physical laws or merely produce visually
+plausiblehallucinations-adistinctionwithprofoundimplicationsforsafety-criticaldownstreamuses.
+3.5.6 Language Reasoning and Decision-Making
+An emerging research direction reinterprets large language models (LLMs) themselves as world
+models, leveraging their latent knowledge for planning and reasoning. RAP [139] formalized this
+perspective by treating an LLM as a world model within a Monte Carlo tree search framework:
+the LLM simulates the consequences of candidate reasoning steps, a reward function scores par-
+tial solutions, and MCTS guides search toward high-quality completions. This approach achieved
+substantial improvements on mathematical reasoning, plan generation, and logical inference bench-
+marks. WebDreamer [78] applied a similar model-based planning paradigm to web agents, using
+an LLM to simulate the outcomes of candidate browser actions (clicking, typing, navigating) and
+selecting actions via tree search over imagined web page states, outperforming reactive baselines
+on WebArena benchmarks.
+Dynalang [120] explored a different integration point, using language as an additional observa-
+tion modality within a DreamerV3-based world model. By grounding language tokens in the same
+35
+
+latent dynamics as visual observations, Dynalang enables agents to benefit from language hints, in-
+structions, and contextual descriptions during both world model learning and policy optimization.
+WorldLLM [79] introduced curiosity-driven theory-making, where an LLM iteratively builds and
+refines explicit world theories to improve its predictive accuracy and downstream decision-making.
+These language-centric world models highlight a fundamental question: whether the implicit world
+knowledge captured during language pre-training is sufficient for reliable planning, or whether
+explicit dynamics learning remains necessary for robust decision-making in complex environments.
+3.5.7 Discussion and Open Challenges
+Several cross-cutting themes emerge from this survey of downstream applications. First, there is
+a clear progression from task-specific world models (e.g., MuZero for board games, OccWorld for
+driving) toward foundation world models (e.g., Cosmos, Genie 2, V-JEPA 2) that aim to serve as
+general-purpose backbones across domains. Whether such generalist models can match specialist
+performance in safety-critical settings remains unresolved. Second, the evaluation gap is widen-
+ing: video-generation world models are often assessed on perceptual quality metrics (FID, FVD),
+whereas RL world models are measured on task reward, and medical world models on clinical
+endpoints-making cross-domain comparison and progress tracking difficult. Third, the question
+of whether world models learn genuine causal structure or merely correlational shortcuts is in-
+creasingly urgent, particularly as these models enter healthcare and autonomous driving where
+counterfactual reasoning is essential. Finally, the computational cost of training and deploying
+large-scale world models remains a bottleneck, with real-time inference posing particular challenges
+for embodied applications. Addressing these challenges will require not only architectural advances
+but also new evaluation frameworks, safety guarantees, and interdisciplinary collaboration.
+4 Categorization of World Models by Methodological Families
+This section focuses on the main methodological families used to build and train the World Models.
+Each family reflects different assumptions about how environmental dynamics should be modeled,
+which inductive biases are most effective, and how learned representations should relate to underly-
+ing physical processes. We begin with state-space and recurrent latent models (Section 4.1), which
+have longbeen centralto model-based reinforcementlearning, andthen examinetransformer-based
+world models (Section 4.2), which replace recurrence with self-attention and tokenized representa-
+tions. We next consider diffusion-based world models (Section 4.3), followed by physics-informed
+and structured approaches (Section 4.4) that embed domain knowledge directly into the architec-
+ture. Weconcludewithlanguage-augmentedandmulti-modalworldmodels,whichcombinenatural
+language with diverse sensory inputs to support richer grounding and broader generalization.
+4.1 State-space and recurrent latent world models
+Structured State Space Models (SSMs) such as S4 [140] and Mamba [141] offer O(n) sequence
+processing with strong long-range dependency modeling, presenting an alternative to both recur-
+rent and attention-based architectures. S4 introduced structured parameterizations that efficiently
+capturelong-rangedependenciesthroughtheHiPPOframework. Mambaextendedthiswithinput-
+dependent(selective)statetransitions, achievingtransformer-competitiveperformanceonlanguage
+and other modalities at 5× higher throughput. Recent work has begun to explore SSMs explicitly
+as world-model backbones: Po et al. [142] proposed long-context state-space video world models
+36
+
+(ICCV2025),demonstratingthatlinearRNNscancapturelong-rangetemporaldependencieswith-
+out increasing per-frame generation cost. Their linear complexity and strong temporal modeling
+make SSMs promising candidates for long-horizon environment simulation.
+Whereas, recurrent neural networks, particularly LSTMs [143] and GRUs [144], were the first
+deeparchitecturesusedforworldmodeling. HaandSchmidhuber[4]combinedaVAE(the“vision”
+model V) with a Mixture Density Network-RNN (MDN-RNN, the “memory” model M) to learn a
+compactgenerativemodelofRLenvironments. TheVAEcompressedeachimageframeintoalatent
+vectorz , whiletheMDN-RNNpredictedthedistributionofthenextlatentp(z |z ,a ), capturing
+t t+1 t t
+stochastic dynamics. A minimal linear controller (only 867 parameters) trained via CMA-ES could
+solve Car Racing and VizDoom tasks by planning entirely in the model’s imagination.
+Hafner et al. [31] introduced the Recurrent State-Space Model (RSSM) in PlaNet, which
+splits the latent state into a deterministic recurrent component h and a stochastic component
+t
+z . This dual-path design was critical: the deterministic path preserves long-range memory, while
+t
+the stochastic path captures environmental uncertainty. PlaNet used the Cross-Entropy Method
+(CEM) for online planning and demonstrated 50× data efficiency improvements over model-free
+methods on continuous control tasks from pixels.
+The Dreamer series [32, 34, 40] extended the RSSM with actor-critic learning in imagined tra-
+jectories. DreamerV1 learned value functions and policies by backpropagating analytic gradients
+through the world model’s predictions. DreamerV2 introduced discrete categorical latent represen-
+tations, enabling mastery of Atari games. DreamerV3 achieved robustness across 150+ tasks with
+a fixed set of hyperparameters through normalization and transformation techniques, and was the
+first algorithm to collect diamonds in Minecraft from scratch without human demonstrations.
+GAN-based world models exploit adversarial training for sharper outputs. GameGAN [145]
+learned to simulate Pac-Man by ingesting gameplay screenshots and keyboard actions, using a dy-
+namics engine, memory module, and rendering engine—all implemented as neural networks trained
+end-to-end. While producing visually crisp frames, GAN-based approaches suffer from training
+instability and mode collapse, limiting their adoption for complex environments.
+4.2 Transformer-based world models
+Thetransformerarchitecture[146],originallydevelopedfornaturallanguageprocessing,hasemerged
+as a dominant paradigm for world modeling owing to its capacity for long-range dependency mod-
+eling, parallelizable training, and favorable scaling properties. This section surveys the evolution
+of transformer-based world models, from early sequence-modeling formulations of reinforcement
+learning to large-scale interactive environment generators.
+Foundational formulations. The application of transformers to sequential decision-making
+was catalyzed by two concurrent works. The first one is Decision Transformer [147] recast offline
+reinforcement learning as conditional sequence modeling: a causally masked GPT architecture
+autoregressively generates actions conditioned on desired returns-to-go, past states, and actions,
+entirely bypassing temporal-difference learning and value function estimation. The Second one
+is Trajectory Transformer [148] adopted a complementary model-based perspective, discretizing
+continuous state-action-reward trajectories into tokens and modeling their joint distribution with
+a transformer, thereby enabling beam-search-based planning over long horizons. Together, these
+works established that the sequence prediction capabilities of transformers could subsume both
+policy learning and dynamics modeling within a unified framework.
+Concurrentdevelopmentsinvideogenerationprovidedkeyarchitecturalingredients. Forexapmle,
+VideoGPT [149] demonstrated that a VQ-VAE tokenizer paired with an autoregressive trans-
+formercouldgeneratetemporallycoherentvideosequences,foreshadowingthetokenize-then-predict
+37
+
+paradigm that would become standard in visual world models. Scaling these ideas to multi-task
+settings, Gato [150] serialized data from over 600 diverse tasks-spanning Atari games, robotic
+manipulation, image captioning, and dialogue-into a single token sequence consumed by a 1.2B-
+parameter decoder-only transformer, demonstrating the feasibility of a universal generalist agent.
+The Multi-Game Decision Transformer [151] investigated scaling properties by training a single
+transformer policy across multiple Atari games simultaneously, while Algorithm Distillation [152]
+showed that entire RL learning histories could be distilled into a causal transformer, enabling
+in-context reinforcement learning-improvement across episodes without any parameter updates.
+RL agents trained in transformer world models. A pivotal advance came with IRIS [35],
+which demonstrated that transformers are sample-efficient world models for imagination-based
+reinforcement learning. IRIS employs a discrete autoencoder to tokenize visual observations into
+a sequence of codes z = (z1,...,zK) and trains an autoregressive transformer to predict future
+t t t
+token sequences conditioned on past observations and actions:
+K
+p(z ,r ,γ | z ,a ) = Y p (cid:16) zk | z<k,z ,a (cid:17) ·p(r ,γ | z ,a ), (13)
+t+1 t t ≤t ≤t t+1 t+1 ≤t ≤t t t ≤t ≤t
+k=1
+wherer andγ denotethepredictedrewardandterminationsignal,respectively. OntheAtari100k
+t t
+benchmark,IRISachievedameanhuman-normalizedscoreof1.046,surpassinghumanperformance
+on 10 of 26 games and establishing a new state of the art for methods without lookahead search.
+Several works rapidly built upon this paradigm. TransDreamer [153] proposed the Trans-
+formerState-SpaceModel(TSSM),directlyreplacingtheGRU-basedRecurrentState-SpaceModel
+(RSSM) in the Dreamer framework [40] with a transformer backbone while retaining stochastic la-
+tent variables, and demonstrated improved performance on tasks requiring long-range memory.
+TWM [154] applied a Transformer-XL architecture over compact latent representations of states,
+actions, and rewards, efficiently capturing long-term dependencies through segment-level recur-
+rence. STORM [36] combined a GPT-like transformer with a categorical VAE encoder, introduc-
+ing stochastic latent variables that improved robustness over IRIS’s deterministic tokenization; it
+achieved126.7%meanhumanperformanceonAtari100kwithonly4.3hoursoftrainingonasingle
+GPU.
+More recent efforts have targeted efficiency and expressiveness. ∆-IRIS [155] introduced a
+context-awaretokenizerthatencodesstochasticframe-to-framedeltasratherthanfullobservations,
+dramatically reducing the token count per timestep and achieving state-of-the-art performance on
+Crafter while training an order of magnitude faster than IRIS. DART [156] paired a transformer
+decoder for world modeling with a transformer encoder for policy learning, incorporating explicit
+memory tokens to handle partial observability. Dedieu et al. [157] proposed three complementary
+improvements-Dyna-style warmup training, nearest-neighbor patch tokenization, and block teacher
+forcing-that together enabled a transformer world model to surpass both DreamerV3 and human-
+level performance on Craftax-classic for the first time, reaching 69.7% reward versus 53.2% for
+DreamerV3.
+Transformer models as real-world and game simulators. Beyond closed-loop RL train-
+ing, transformers have been scaled to serve as general-purpose interactive simulators. Genie [13],
+an 11-billion-parameter model from Google DeepMind, represents the first generative interactive
+environment trained from unlabeled Internet video. Its architecture comprises three components:
+a spatiotemporal video tokenizer (ST-ViViT), a latent action model that infers discrete action
+codes from video without ground-truth action labels, and an ST-Transformer dynamics model that
+autoregressively predicts future latent frames conditioned on inferred actions. Genie enables con-
+trollable generation of diverse 2D platformer environments from text, sketch, or image prompts.
+38
+
+Its successor, Genie 2 [109], extends this paradigm to rich 3D environments using an autoregressive
+latent diffusion architecture, generating consistent interactive worlds for up to one minute from
+a single image prompt with emergent object interactions, NPC behavior, and persistent world
+memory.
+GAIA-1 [62], a 9-billion-parameter model from Wayve, applies the transformer world model
+paradigm to autonomous driving simulation. Its 6.5B-parameter autoregressive transformer pre-
+dicts future discrete image tokens conditioned on video, text, and action inputs, while a 2.6B-
+parameter video diffusion decoder renders predictions back to pixel space, exhibiting emergent
+understanding of 3D geometry and traffic dynamics. UniSim [158] learns an interactive real-world
+simulator by orchestrating diverse training data-internet images, robotics trajectories, and naviga-
+tion sequences-to simulate visual outcomes of both high-level language instructions and low-level
+motor commands; policies trained entirely within UniSim transfer zero-shot to real robotic manip-
+ulation. Oasis [159] demonstrated real-time open-world generation using a Diffusion Transformer
+(DiT) backbone, producing Minecraft-like interactive environments at 20 FPS. Pandora [160] cou-
+pled a pretrained large language model with a video diffusion model for world simulation controlled
+by free-form natural language. OpenAI’s Sora [161] further established the paradigm of large-scale
+video generation models as implicit world simulators, demonstrating emergent physical reasoning
+in a diffusion transformer trained on internet-scale video.
+Domain-specificadaptations. Transformer-basedworldmodelshaveseenextensiveadoption
+in autonomous driving. UniAD [162], a unified detection, tracking, mapping, motion forecasting,
+occupancy prediction, and planning within a single transformer framework where all perception
+modules serve the downstream planning objective through unified query interfaces. OccWorld [132]
+formulates the driving world model in 3D semantic occupancy space: a VQ-VAE scene tokenizer
+produces discrete volumetric tokens, and a GPT-like spatial-temporal transformer autoregressively
+forecasts future occupancy grids and ego trajectories. Copilot4D [67] applies discrete diffusion on
+VQ-VAE-tokenized LiDAR point clouds using a spatial-temporal transformer, reducing prior state-
+of-the-artChamferdistancebyover65%forone-secondpredictionsonnuScenes. MILE[163]jointly
+learnsaworldmodelanddrivingpolicythroughmodel-basedimitationlearning,executingcomplex
+maneuvers from plans generated entirely in imagination. ViDAR [164] introduced visual point
+cloud forecasting as a scalable self-supervised pretraining objective that jointly learns semantics,
+3D structure, and temporal dynamics, while Vista [133] developed a generalizable driving world
+model with high-fidelity, action-conditioned, long-horizon prediction trained on large-scale web-
+sourced driving video.
+In robotics, the Robotics Transformer series has demonstrated the efficacy of transformer-based
+models for real-world manipulation at scale. RT-1 [117] trained a 35-million-parameter transformer
+on over 130,000 real robot episodes spanning 700+ tasks, establishing robust multi-task general-
+ization. RT-2 [165] co-fine-tuned large vision-language models (PaLI-X 55B and PaLM-E 12B)
+on both web-scale data and robotic trajectories, representing robot actions as text tokens. This
+enabled significant transfer of web knowledge to robotic control-improving success rates on novel
+objects from 32% to 62%-and emergent semantic reasoning capabilities including chain-of-thought
+planning for multi-step manipulation tasks.
+Comparative analysis and key challenges. Transformer-based world models offer several
+structural advantages over recurrent and diffusion-based alternatives. Unlike GRU-based models
+such as the RSSM in the Dreamer line [40], transformers attend directly to any past timestep,
+circumventing the information bottleneck of fixed-size hidden states and enabling superior long-
+range dependency modeling. Compared to diffusion-based world models such as DIAMOND [37],
+autoregressive transformers generate predictions in a single forward pass rather than requiring
+iterativedenoisingsteps,yieldingsubstantialinference-timeefficiency-acriticaladvantageforonline
+39
+
+planning within imagination.
+However, transformers introduce distinct challenges. The quadratic computational complexity
+O(T2) with respect to context length T remains a fundamental bottleneck, particularly for high-
+resolutionvisualworldmodelswhereeachobservationmaycomprisehundredsoftokens. Mitigation
+strategies have included delta encoding to reduce per-frame token counts [155], Transformer-XL
+segment-level recurrence [154], and fused single-token-per-timestep representations [36]. The dis-
+crete tokenization bottleneck poses another limitation: VQ-VAE-based approaches necessarily dis-
+card fine-grained visual information during quantization, a weakness that diffusion-based world
+models [37] explicitly address by operating in continuous pixel space. Furthermore, autoregressive
+error accumulation over extended prediction horizons can degrade imagined trajectory quality, a
+problem partially mitigated by stochastic latent variables in STORM [36] and TransDreamer [153].
+As transformer world models scale from game benchmarks toward open-ended real-world simula-
+tion, addressing these challenges while preserving the architecture’s strengths in expressiveness,
+parallelism, and scalability constitutes an active and rapidly evolving research frontier.
+4.3 Diffusion-Based World Models
+Diffusion models [166] have emerged as a powerful paradigm for world modeling, offering a com-
+pellingalternativetodiscrete-tokenandrecurrentapproaches. Rootedindenoisingscorematching,
+these models learn to reverse a gradual noise-corruption process, generating high-fidelity samples
+through iterative denoising. When adapted for world modeling, diffusion-based approaches inherit
+several attractive properties: capturing complex, multi-modal distributions over future states, pre-
+servingfine-grainedvisualdetailsthatdiscretetokenizationmaydiscard,andnaturallyrepresenting
+environmental stochasticity through the sampling process itself.
+Foundational formulations. The core idea is to recast image generation as a conditional
+next-observation prediction problem. Given past observations o and an action a , the diffusion
+<t t
+world model learns p(o | o ,a ) by training a denoising network ϵ to remove noise from a
+t+1 <t t θ
+corrupted target observation. The training objective follows the standard denoising score matching
+loss:
+L(θ) = E (cid:20)(cid:13) (cid:13)ϵ−ϵ (cid:16) o (k) , o , a , k (cid:17)(cid:13) (cid:13) 2 (cid:21) , (14)
+ot+1,ϵ,k (cid:13) θ t+1 <t t (cid:13)
+where o (k) denotes the observation corrupted at noise level k and ϵ ∼ N(0,I). At inference time,
+t+1
+predictions are generated by starting from pure noise and applying the learned denoising process
+for K steps. A key architectural distinction is whether the diffusion process operates in pixel
+space or a learned latent space. Pixel-space approaches such as DIAMOND [37] operate directly
+on raw observations, preserving all visual details at higher computational cost. Latent diffusion
+approaches [167] first compress observations through a pretrained VAE, then apply diffusion in the
+lower-dimensional latent space. This strategy, adopted by GameNGen [61], Sora [168], NVIDIA
+Cosmos[14],andmanyautonomousdrivingworldmodels,significantlyreducescomputationalcosts
+while maintaining high perceptual quality.
+An important early contribution bridging diffusion models and sequential decision-making
+was Diffuser [169], which directly modeled the joint distribution over state-action trajectories
+p(τ) = p(s ,a ,...,s ,a ) using a temporal U-Net. Planning was accomplished by sampling
+1 1 T T
+from this trajectory distribution, with classifier-guided sampling and inpainting techniques steer-
+ing trajectories toward high-reward regions or goal constraints. Decision Diffuser [170] extended
+this framework with classifier-free guidance, conditioning trajectory generation directly on target
+returns, constraints, or skills without a separately trained reward function. A further development,
+the Diffusion World Model (DWM) [104], departs from the one-step autoregressive paradigm by
+40

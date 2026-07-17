@@ -1,0 +1,76 @@
+N VIDIA in Brief
+NVIDIA pioneered accelerated computing. Today, our technology powers the world’s AI infrastructure,
+transforming every industry. Learn more.
+Company History Impact by Industry
+Founded in 1993, NVIDIA is the world leader in accelerated computing and AI. Automotive
+Our invention of the GPU in 1999 sparked the growth of the PC gaming market, NVIDIA powers all 30 of the 30 top autonomous-vehicle data centers
+redefined computer graphics, revolutionized accelerated computing, and ignited and enables automakers, suppliers, and robotaxi providers with the
+the era of modern AI. Today, NVIDIA is a full-stack AI infrastructure company NVIDIA DRIVE™ AV end-to-end autonomous driving software stack.
+powering the world’s AI factories.
+AI Factories
+Key Stats Over 11,000 AI factories are expected by 2030, up from around
+8,000 today.
+> Founded in 1993
+Digital Twins
+> Founder and CEO: Jensen Huang
+NVIDIA Omniverse™ is used by thousands of developers, including
+> 42,000+ employees in 38 countries leaders in industrial simulation, automation, and robotics.
+> Record full-year revenue of $215.9 billion in FY26
+Gaming
+> 9,800+ granted and pending patent applications worldwide More than 200 million gamers and creators use NVIDIA
+GeForce® GPUs.
+> 1,300+ projects released under an open source license
+> Over 7.5 million developers in the NVIDIA Developer Program Healthcare
+> 38,000 global startups in NVIDIA Inception Over 5.5 million developers have downloaded the MONAI framework
+for AI in medical imaging.
+> No. 1 of “World’s Best Companies of 2025” – TIME
+> No. 1 of “Best-Led Companies 2025” – Glassdoor Robotics
+More than 2 million developers use NVIDIA technologies to accelerate
+> No. 1 of “America’s Most Responsible Companies 2026” – Newsweek
+robotics workflows.
+NVIDIA in Brief 2026
+
+AI Infrastructure
+Computing has transitioned from CPUs to GPUs. For 60 years,
+NVIDIA is building the essential infrastructure of the AI era—AI factories
+the computer industry relied on general-purpose CPUs. That model
+that transform data into intelligence.
+reached its limits. NVIDIA pioneered accelerated computing, driving a
+Through government partnerships with organizations, including the
+fundamental shift across chips, systems, software, and applications.
+US Department of Energy, and private partnerships with companies
+like OpenAI, NVIDIA is powering the buildout of gigawatt-scale,
+million-GPU AI factories.
+CUDA-X™ and domain libraries supply the parallel algorithms needed
+for accelerated computing. NVIDIA develops these libraries in open
+Physical AI
+collaboration with the ecosystem, enabling open source frameworks,
+partners, and developers to extend GPU acceleration into new fields. NVIDIA provides the full-stack computing platform that enables
+intelligent machines to perceive, reason, and act in the real world.
+NVIDIA’s three-computer solution powers robotics, automotive, and
+smart city applications from training to simulation to deployment.
+NVIDIA AI supercomputers are AI factories, systems that generate
+Companies adopting NVIDIA’s physical AI technologies include Agility
+intelligence at scale. They convert energy and data into training,
+Robotics, Boston Dynamics, Foxconn, Lilly, Mercedes-Benz, and Uber.
+refinement, and inference, powering AI across consumer internet,
+science, healthcare, manufacturing, autonomous vehicles, robotics,
+quantum computing, telecommunications, and gaming. Open Source
+NVIDIA is a frontier AI model builder, accelerating global AI innovation
+with open source contributions for developers in every field.
+AI is essential infrastructure transforming every industry. AI has
+become as foundational as electricity or the internet. Every company NVIDIA’s open model families include NVIDIA Nemotron™ for digital
+will use AI. Every country will build AI infrastructure, driving sustained AI, NVIDIA Cosmos™ for physical AI, NVIDIA Isaac™ GR00T for robotics,
+global investment in AI factories and the systems that run them. and NVIDIA Clara™ for biomedical AI. The Cosmos and Nemotron
+families have surpassed 5 million downloads each on Hugging Face.
+Graphics and Consumer
+AI advances through scaling laws and full-stack co-design.
+Three scaling laws—pretraining, post-training, and inference-time NVIDIA is pushing the boundaries of real-time graphics to enable
+reasoning—are driving rapid growth in compute demand and usage. immersive, interactive experiences for gamers and creators.
+NVIDIA co-designs architecture, chips, systems, networking, software, NVIDIA Blackwell-powered NVIDIA RTX™ GPUs introduce new levels
+and models to increase performance and efficiency while reducing of AI-powered rendering and inference. NVIDIA DLSS 4 technology—
+cost per token. available in over 250 games and app—uses AI to render just one out
+of every 10 pixels and predict the rest, massively boosting frame rates
+and energy efficiency.
+Learn more at https://www.nvidia.com/en-us/about-nvidia/
+NVIDIA in Brief 2026
