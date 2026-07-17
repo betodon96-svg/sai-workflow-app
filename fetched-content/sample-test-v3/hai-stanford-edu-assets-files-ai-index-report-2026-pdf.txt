@@ -1,0 +1,456 @@
+Artificial
+Intelligence
+Index Report
+2
+0
+2
+6
+
+AI INDEX REPORT 2026
+Contents
+Introduction 2
+Top Takeaways 9
+1 Research and Development 12
+2 Technical Performance 68
+3 Responsible AI 126
+4 Economy 171
+5 Science 231
+6 Medicine 255
+7 Education 288
+8 Policy and Governance 323
+9 Public Opinion 360
+Appendix 385
+The AI Index is an independent initiative at the Stanford Institute for Human-
+Centered Artificial Intelligence (HAI).
+The AI Index was conceived within the One Hundred Year Study on Artificial
+Intelligence (AI100).
+1
+
+AI INDEX REPORT 2026
+Introduction
+Welcome to the ninth edition of the AI Index report. As AI continues to advance rapidly, the question
+becomes whether the systems built around it can keep up. Governance frameworks, evaluation methods,
+education systems, and the data infrastructure needed to track AI’s impact are struggling to match the pace
+of the technology itself. That gap—between what AI can do and how prepared we are to manage it—runs
+through every chapter of this year’s report. New in this edition, the report tracks how AI is being tested
+more ambitiously across reasoning, safety, and real-world task execution, and why those measurements are
+increasingly difficult to rely on. It also features new estimates of generative AI’s economic value alongside
+emerging evidence of its labor market effects, an analytical framework on AI sovereignty, and a science
+chapter developed in collaboration with Schmidt Sciences. For the first time, the report features standalone
+chapters on AI in science and AI in medicine, reflecting AI’s growing impact across these two domains.
+For close to a decade, the AI Index has worked to bring reliable global data to a field that is evolving faster
+than most efforts to measure it. The report equips policymakers, researchers, executives, journalists, and the
+public with the necessary evidence to make informed decisions about AI. As the technology moves deeper
+into classrooms, clinics, and legislatures—and reshapes how people work, learn, and govern—the cost of
+incomplete data continues to rise.
+In a field where much data is produced by organizations with a stake in the technology’s success, the demand
+for neutral and rigorous measurement continues to grow. The AI Index remains independent and focused on
+revealing the long-term patterns underneath the headlines. The report is relied on by governments, research
+institutions, and companies around the world, and referenced by media outlets and in academic papers.
+The pages that follow offer the most comprehensive, independently sourced picture of AI’s trajectory that
+is available. They also make clear where that picture remains incomplete—because what we cannot yet
+measure matters just as much as what we can.
+2
+
+INTRODUCTION | AI INDEX REPORT 2026
+Message from
+the Co-chairs
+A year ago, this report documented AI’s arrival as a mainstream force. This year’s data shows what
+happens after arrival.
+This is a technology that has reached mass adoption faster than the personal computer or the internet.
+Generative AI hit nearly 53% population-level adoption within three years. Leading AI companies are
+reaching meaningful revenue scale in a fraction of the time it took previous technology generations,
+and global corporate investment more than doubled in 2025. Organizational adoption rose to 88%, and
+early estimates suggest the consumer value of generative AI has grown substantially within a year.
+At the technical frontier, leading models are now
+“
+nearly indistinguishable from one another.
+Open-weight models are more competitive than
+ever. But as models converge, the tools used to The data does not point
+evaluate them are struggling to stay relevant.
+Benchmarks are saturating, frontier labs are in a single direction. It
+disclosing less, and independent testing does not
+reveals a field that is
+always confirm what developers report.
+scaling faster than the
+The chapters that follow trace what this scale
+of activity and capability means in practice. In
+systems around it
+science, AI shifted from accelerating individual
+research steps to attempting full replacement can adapt.
+of entire workflows. In medicine, clinical AI
+tools moved from pilot programs to broader
+deployment, with systems like ambient AI scribes
+scaling across health systems.
+Governments around the world acted on AI in 2025, but not in the same direction. The EU AI Act’s first
+prohibitions took effect, while the United States shifted toward deregulation. Japan, South Korea, and
+Italy each passed national AI laws, and more than half of newly adopted national AI strategies came
+from developing countries entering the policy landscape for the first time. AI sovereignty emerged as a
+central organizing principle across all of these efforts. The public is also navigating competing signals.
+Global optimism about AI rose in 2025, but so did nervousness.
+The data does not point in a single direction. It reveals a field that is scaling faster than the systems
+around it can adapt. We encourage you to explore and decide for yourself.
+Yolanda Gil and Raymond Perrault
+Co-chairs, AI Index Report
+3
+
+INTRODUCTION | AI INDEX REPORT 2026
+Steering Committee
+CHAIR CO-CHAIR
+YOLANDA GIL RAYMOND PERRAULT
+University of Southern California, SRI International
+Information Sciences Institute
+MEMBERS
+RUSS ALTMAN CARLA BRODLEY ERIK JACK CLARK VIRGINIA DIGNUM
+Stanford University Northeastern BRYNJOLFSSON Anthropic, OECD Umeå University
+University Stanford University
+VIPIN KUMAR JAMES LANDAY TERAH LYONS JAMES MANYIKA JUAN CARLOS
+NIEBLES
+University of Stanford University JPMorgan Google, University
+Minnesota Chase & Co. of Oxford Stanford University,
+Salesforce
+VANESSA PARLI YOAV SHOHAM ELHAM TABASSI RUSSELL WALD
+Stanford University Stanford University, Brookings Stanford University
+AI21 Labs
+DAN WELD TOBY WALSH
+University of UNSW Sydney
+Washington
+4
+
+INTRODUCTION | AI INDEX REPORT 2026
+Staff and Researchers
+LEAD AND EDITOR-IN-CHIEF RESEARCH MANAGER
+SHA SAJADIEH LOREDANA FATTORINI
+Stanford University Stanford University
+UNDERGRADUATE GRADUATE
+AFFILIATED RESEARCHERS RESEARCHER RESEARCHER
+NESTOR JUAN NICOLAS LAPO HENRY SUKRUT
+MASLEJ PAVA SANTARLASCI ZHANG OAK
+Stanford University Stanford University IMT School for Stanford University Stanford University
+Advanced Studies Lucca
+How to Cite This Report
+Sha Sajadieh, Loredana Fattorini, Raymond Perrault, Yolanda Gil, Vanessa Parli, Lapo Santarlasci, Juan Pava,
+Nestor Maslej, Russ Altman, Erik Brynjolfsson, Carla Brodley, Jack Clark, Virginia Dignum, Vipin Kumar,
+James Landay, Terah Lyons, James Manyika, Juan Carlos Niebles, Yoav Shoham, Elham Tabassi, Russell
+Wald, Toby Walsh, Dan Weld. “The AI Index 2026 Annual Report,” AI Index Steering Committee, Institute for
+Human-Centered AI, Stanford University, Stanford, CA, April 2026.
+https://doi.org/10.48550/arXiv.2606.15708
+The AI Index 2026 Annual Report by Stanford University is licensed under
+Attribution-NoDerivatives 4.0 International.
+Public Data and Tools
+The AI Index 2026 Report is supplemented by raw data and an interactive tool. We invite each reader to use
+the data and the tool in a way most relevant to their work and interests.
+• Raw data and charts: The public data and high-resolution images of all the charts in the report are
+available on Google Drive.
+• Global AI Vibrancy Tool: Compare the AI ecosystems of 36 countries. The Global AI Vibrancy tool will be
+updated by the end of 2026.
+5
+
+INTRODUCTION | AI INDEX REPORT 2026
+The AI Index welcomes feedback and new ideas for next year. Contact us at shahed@stanford.edu.
+The AI Index is written by a team of human researchers. The authors used ChatGPT and Claude to help refine
+and copy edit drafts. All images in this publication were generated with AI by Johanna Friedman (2026),
+Gemini 3.1 (W-Nanobanana2), Gemini 3 (W-Nanobanana Pro).
+Supporting Partners
+Analytics and
+Research Partners
+6
+
+INTRODUCTION | AI INDEX REPORT 2026
+Contributors
+The AI Index would like to acknowledge the following individuals by chapter and section for their
+contributions of data, analysis, advice, and expert commentary included in the AI Index Report 2026:
+Introduction Chapter 4
+Economy
+Loredana Fattorini, Yolanda Gil, Vanessa Parli, Ray
+Perrault, Sha Sajadieh
+Tara Balakrishnan, Bharat Chandar, Erik Brynjolfsson, Ruyu
+Chen, Michael Chui, Heather English, Loredana Fattorini,
+Yolanda Gil, Bryce Hall, Heather Hanselman, Rosie Hood,
+Chapter 1 Akash Kaura, Elena Magrini, Nestor Maslej, James Manyika,
+Rebecca Milde, David Nguyen, Katherine Ottenbreit, Vanessa
+Research and Development
+Parli, Ray Perrault, Courtney Prabhakar, Brittany Presten, Roger
+Roberts, Sha Sajadieh, Lapo Santarlasci, Alex Singla, Alex
+Usman Anwar, Theo Burn, Emily Chen, Rachel Cook,
+Sukharevsky, Casey Weston, Henry Zhang
+Jean-Stanislas Denain, Meredith Ellison, Loredana
+Fattorini, Nicole Finn, Isabella Florez, Yolanda Gil, Tom
+Hurd, Nabeel Khan, James Landay, Shayne Longpre,
+Nestor Maslej, Magdalena Ortiz, Khalifa Oyebanji, Chapter 5
+Orestis Papakyriakopoulos, Vanessa Parli, Ray Perrault,
+Science
+Tom Piercey, Jennifer Rachford, Thomas Richadson,
+Vesna Sabljakovic-Fritz, Sha Sajadieh, Lapo Santarlasci,
+Michael Clear, Steven Dillmann, Loredana Fattorini, Yolanda Gil,
+Sebastian Sardina, Andrew Shi, Yoav Shoham, Seth
+James Manyika, Vipin Kumar, Minjoon Kouh, Suhas Mahesh,
+Polsley, Daniel Weld, Kevin Xu, Meg Young
+Vanessa Parli, Ray Perrault, Sha Sajadieh
+Chapter 2
+Chapter 6
+Technical Performance
+Medicine
+Erik Brynjolfsson, Loredana Fattorini, Yolanda Gil, Tasha
+Russ Altman, Peter Brodeur, Akshay Chaudhari, Muhammad
+Kim, Sanmi Koyejo, Nestor Maslej, Juan Carlos Niebles,
+Ahmed Tajammul Chaudhury, Jonathan Chen, Matthew
+Sukrut Oak, Vanessa Parli, Ray Perrault, Sha Sajadieh,
+DeVerna, Abdoul Jalil Djiberou Mahamadou, Loredana
+Yoav Shoham, Toby Walsh, Daniel Weld, Henry Zhang
+Fattorini, Andrea Fisher, Ethan Goh, Yolanda Gil, Jeff Hancock,
+Tina Hernandez-Boussard, Malte Jensen, Rohan Koodli,
+Arman Koul, Sanmi Koyejo, Alejandro Lozano, Danielle Luz,
+David Magnus, Stephen P. Ma, Bethel Mieso, Fateme Nateghi
+Chapter 3 Haredasht, Madelena Ng, Natalie Pageler, Ayush Pandit,
+Responsible AI Vanessa Parli, Ray Perrault, Sean Riordan, Ronald Robertson,
+Austin Schoeffler, Christoph Sadée, Sha Sajadieh, Min Woo
+Gabriel Morgan Asaftei, Rishi Bommasani, Virginia Sun, Kotoha Togami, Sang Truong, Chong Wang, Dennis Wall,
+Dignum, Loredana Fattorini, Yolanda Gil, Nestor Maslej, David Wu
+Katherine Ottenbreit, Vanessa Parli, Juan Nicolas Pava,
+Ray Perrault, Brittany Presten, Cécile Prinsen, Roger Chapter 7
+Roberts, Sha Sajadieh, Lapo Santarlasci, Abby Sticha,
+Education
+Elham Tabassi, Yuanhao Zou
+Carla Brodley, Joshua Childs, Lisa Cruz Novohatski, Loredana
+Fattorini, Yolanda Gil, Rachel Goins, Laura Hinton, Sonia
+Koshy, James Landay, Kirsten Lundgren, Jacqueline McCune,
+Vanessa Parli, Ray Perrault, Sha Sajadieh, Bryan Twarek,
+Rebecca Zarch
+7
+
+INTRODUCTION | AI INDEX REPORT 2026
+Chapter 8 Chapter 9
+Policy and Governance Public Opinion
+Virginia Dignum, Loredana Fattorini, Johannes Fritz, Yolanda Erik Brynjolfsson, Matt Carmichael, Zack Devlin-Foltz,
+Gil, Nestor Maslej, Vanessa Parli, Juan Nicolas Pava, Ray Loredana Fattorini, Nadja Flechner, Yolanda Gil, Connacher
+Perrault, Sha Sajadieh, Lapo Santarlasci, Kamran Sattary, Murphy, Vanessa Parli, Juan Nicolas Pava, Ray Perrault, Matt
+Tyler Lenox Smith, Elham Tabassi, Russell Wald Reynolds, Sha Sajadieh, Russell Wald, Henry Zhang
+The AI Index thanks the following organizations and individuals who provided data for inclusion in this
+year’s report:
+ORGANIZATIONS
+Epoch AI McKinsey & Company
+Jean-Stanislas Denain Heather Hanselman, Katherine Ottenbreit, Brittany
+Presten, Cécile Prinsen, Roger Roberts, Abby Sticha
+GitHub Quid
+Kevin Xu Heather English
+Lightcast Zeki
+Elena Magrini, Rebecca Milde Tom Hurd
+LinkedIn
+Rosie Hood, Akash Kaura, Casey Weston
+The AI Index also thanks Jeanina Matias, Nancy King, Carolyn Lehman, Shana Lynch, Jonathan Mindes, and
+Johanna Friedman for their help in preparing this report; Christopher Ellis and Madeleine Wright for their
+help in maintaining the AI Index website; and Annie Benisch, Marc Gough, Caroline Meinhardt, Drew Spence,
+Casey Weston, and Daniel Zhang for their work in helping promote the report.
+8
+
+AI INDEX REPORT 2026
+Top Takeaways
+1 AI capability is not plateauing. It is accelerating and reaching more people than
+ever. Industry produced over 90% of notable frontier models in 2025, and several of those models
+now meet or exceed human baselines on PhD-level science questions, multimodal reasoning, and
+competition mathematics. On a key coding benchmark—SWE-bench Verified—performance rose
+from 60% to near 100% of meeting the human baseline in a single year. Organizational adoption
+reached 88%, and 4 in 5 university students now use generative AI.
+2 The U.S.-China AI model performance gap has effectively closed. U.S. and Chinese
+models have traded the lead multiple times since early 2025. In February 2025, DeepSeek-R1
+briefly matched the top U.S. model, and as of March 2026 Anthropic’s top model leads by just
+2.7%. The U.S. still produces more top-tier AI models and higher-impact patents, while China leads
+in publication volume, citations, patent output, and industrial robot installations. South Korea
+stands out for its innovation density, leading the world in AI patents per capita.
+3 The United States hosts the most AI data centers, with the majority of their chips
+fabricated by one Taiwanese foundry. The United States hosts 5,427 data centers, more
+than 10 times any other country, and it consumes more energy than any other country. A single
+company, TSMC, fabricates almost every leading AI chip, making the global AI hardware supply
+chain dependent on one foundry in Taiwan—though a TSMC-U.S. expansion began operations in
+2025.
+4 AI models can win a gold medal at the International Mathematical Olympiad
+but cannot reliably tell time—an example of what researchers call the jagged
+frontier of AI. Gemini Deep Think earned a gold medal at IMO, yet the top model reads analog
+clocks correctly just 50.1% of the time. AI agents made a leap from 12% to ~66% task success on
+OSWorld, which tests agents on real computer tasks across operating systems, though they still
+fail roughly 1 in 3 attempts on structured benchmarks.
+5 Robots still fail at most household tasks, even as they excel in controlled
+environments. Robots succeed in only 12% of household tasks, highlighting how far AI is from
+mastering the physical world. On RLBench, robotic manipulation in software-based simulations
+has reached 89.4% success, but the gap between predictable lab settings and unpredictable
+household environments is wide.
+6 Responsible AI is not keeping pace with AI capability, with safety benchmarks
+lagging and incidents rising sharply. Almost all leading frontier AI model developers
+report results on capability benchmarks, but reporting on responsible AI benchmarks remains
+spotty. Documented AI incidents rose to 362, up from 233 in 2024. Adding to the challenge, recent
+research found that improving one responsible AI dimension, such as safety, can degrade another,
+such as accuracy.
+9
+
+TOP TAKEAWAYS | AI INDEX REPORT 2026
+7 The United States leads in AI investment, but its ability to attract global talent
+is declining. U.S. private AI investment reached $285.9 billion in 2025, more than 23 times
+the $12.4 billion invested in China—though looking at just private investment figures likely
+understates China’s total AI spending, given its government guidance funds. The U.S. also led in
+entrepreneurial activity with 1,953 newly funded AI companies in 2025, more than 10 times the
+next closest country. However, the number of AI researchers and developers moving to the U.S.
+has dropped 89% since 2017, with an 80% decline in the last year alone.
+8 AI adoption is spreading at historic speed, and consumers are deriving
+substantial value from tools they often access for free. Generative AI reached 53%
+population adoption within three years, faster than the PC or the internet, though the pace
+varies by country and correlates strongly with GDP per capita. Some show higher-than-expected
+adoption, such as Singapore (61%) and the United Arab Emirates (64%), while the U.S. ranks 24th at
+28.3%. The estimated value of generative AI tools to U.S. consumers reached $172 billion annually
+by early 2026, with the median value per user tripling between 2025 and 2026.
+9 Productivity gains from AI are appearing in many of the same fields where entry-
+level employment is starting to decline. Studies show productivity gains of 14% to 26% in
+customer support and software development, with weaker or negative effects in tasks requiring
+more judgment. AI agent deployment remains in single digits across nearly all business functions.
+In software development, where AI’s measured productivity gains are clearest, U.S. developers
+ages 22 to 25 saw employment fall nearly 20% from 2024, even as the headcount for older
+developers continues to grow.
+10 AI’s environmental footprint is expanding alongside its capabilities. Grok 4’s
+estimated training emissions reached 72,816 tons of CO2 equivalent. AI data center power
+capacity rose to 29.6 GW, comparable to New York state at peak demand, and annual GPT-4o
+inference water use alone may exceed the drinking water needs of 1.2 million people.
+11 AI models for science can outperform human scientists, though bigger models
+do not always perform better. Frontier models outperform human chemists on average
+on ChemBench, yet they score below 20% on replication in astrophysics and 33% on Earth
+observation questions. A 111-million-parameter protein language model, MSAPairformer, beat
+previous leading methods on ProteinGym, and a 200-million-parameter genomics model, GPN-
+Star, outperformed a model nearly 200 times larger. Most AI foundation models for science come
+from cross-sector collaborations, in contrast with the industry-dominated landscape of general-
+purpose AI.
+12 AI is transforming clinical care, but rigorous evidence remains limited. AI tools
+that automatically generate clinical notes from patient visits saw substantial adoption in 2025.
+Across multiple hospital systems, physicians reported up to 83% less time spent writing notes and
+significant reductions in burnout. Beyond certain tools, however, the evidence base for clinical AI
+remains thin. A review of more than 500 clinical AI studies found that nearly half relied on exam-
+style questions rather than real patient data, with only 5% using real clinical data.
+10
+
+TOP TAKEAWAYS | AI INDEX REPORT 2026
+13 Formal education is lagging behind AI, but people are learning AI skills at every
+stage of life. Over 80% of U.S. high school and college students now use AI for school-related
+tasks, but only half of middle and high schools have AI policies in place, and just 6% of teachers
+say those policies are clear. Outside the classroom, AI engineering skills are accelerating fastest
+in the United Arab Emirates, Chile, and South Africa. The number of new AI PhDs in the U.S.
+and Canada increased 22% from 2022 to 2024, the PhDs that make up that increase took jobs in
+academia, not in industry.
+14 AI sovereignty is becoming a defining feature of national policy, but capabilities
+remain uneven, even as open-source development helps to redistribute who
+participates. National AI strategies are expanding, particularly among developing economies,
+and state-backed investments in AI supercomputing are rising in parallel—a sign of growing
+ambitions for domestic control over AI ecosystems. Yet model production remains concentrated
+in the U.S. and China. Open-source development is starting to redistribute participation, with
+contributions from the rest of the world now outpacing Europe and approaching the United States
+on GitHub, fueling more linguistically diverse models and benchmarks.
+15 AI experts and the public have very different perspectives on the technology’s
+future, and global trust in institutions to manage AI is fragmented. When it comes
+to how people do their jobs, 73% of experts expect a positive impact, compared with just 23%
+of the public, a 50-point gap. Similar divides appear for AI’s impact on the economy and medical
+care. Globally, trust in governments to regulate AI varies. Among surveyed countries, the United
+States reported the lowest level of trust in its own government to regulate AI, at 31%. Globally, the
+EU is trusted more than the United States or China to regulate AI effectively.
+11
+
+AI INDEX REPORT 2026
+1
+Research and
+Development
+Overview
+The resources powering AI development continued to grow
+in 2025, but fewer notable models were released than the
+year before, and the systems at the frontier are increasingly
+concentrated among a small number of organizations.
+Industry now accounts for over 90% of notable AI models,
+and the most capable systems are also the least transparent,
+with training code, dataset sizes, and parameter counts
+increasingly withheld. The computing power behind these
+models has grown roughly 3.3 times per year since 2022, yet
+almost all of it flows through a single chip foundry in Taiwan,
+making the global hardware supply chain fragile. Open-
+source development and AI publications continued to grow,
+and the research landscape is becoming more geographically
+distributed. China now leads in publication volume, citation
+share, and patent grants, while smaller countries like
+Switzerland and Singapore lead in AI researchers per capita.
+Yet some dimensions of the field have not changed at all.
+Gender gaps in AI talent remain deeply entrenched, with no
+meaningful progress in any country since 2010. This chapter
+covers the research and development pipeline, from the
+landscape of AI models through the compute, data centers,
+energy, and open-source software that support them, to the
+broader research ecosystem of publications, patents, and talent.
+12
+
+1 RESEARCH AND DEVELOPMENT | AI INDEX REPORT 2026
+Contents
+Chapter Highlights 14 Stars 43
+Model and Dataset Ecosystem 44
+1.1 Notable AI Models 16
+By National Affiliation 16 1.6 Publications 47
+By Sector and Organization 18 Total Number of AI Publications 47
+Model Release 20 By Venue 48
+Parameter and Compute Trends 22 Conference Attendance 48
+Highlight: Will Models Run Out of By National Affiliation 50
+Data? 25 By Sector 52
+By Topic 53
+1.2 Compute and Infrastructure 28
+Top 100 Publications 53
+Performance and Efficiency 28
+By National Affiliation 53
+Hardware for Notable Models 29
+By Sector and Organization 54
+Global Computing Capacity 29
+Data Center Power Capacity 30 1.7 Patents 56
+Global Trends 56
+1.3 Data Centers 31
+Forward Citations Flow 58
+AI Infrastructure Beyond GPUs 31
+Speed of Knowledge Diffusion 59
+Geographic Distribution 32
+Technological Proximity 60
+1.4 Energy and Environmental Impact 33 Highlight: AI Patent Examples 61
+Training 33
+1.8 AI Authors and Inventors 62
+Inference 36
+Geographic Distribution 62
+Data Center Usage 39
+By Education Level 63
+1.5 Open-Source AI Software 41 By Gender 65
+AI Development Activity Overview 41 By Specialization 66
+Projects 41 Mobility 66
+13
+
+CHAPTER HIGHLIGHTS | RESEARCH AND DEVELOPMENT | AI INDEX REPORT 2026
+Chapter Highlights
+Contents
+1 Industry produced over 90% of notable AI models in 2025, but the most capable models are
+now the least transparent. Training code, parameter counts, dataset sizes, and training duration
+are no longer disclosed for several of the most resource-intensive systems, including those from
+OpenAI, Anthropic, and Google.
+2 China leads in research, while the U.S. leads in notable model development. China leads in
+publication volume, citations, and patent grants, while the U.S. retains higher-impact patents and
+produced 59 notable models in 2025 to China’s 35. South Korea leads in AI patents per capita, and
+China’s share of the top 100 most-cited AI papers grew from 33 in 2021 to 41 in 2024.
+3 Reported parameters held in the trillions as disclosure dropped. Parameter counts have stayed
+near 1 trillion for three years, though reporting from frontier labs has stopped. Training compute,
+which can be estimated independently, has continued to rise.
+4 Synthetic data is still not replacing real data in pre-training, but data quality and post-training
+techniques are showing promise. OLMo 3.1 Think 32B, with nearly 90 times fewer parameters
+than Grok 4, achieves comparable results on several benchmarks through pruning, deduplication,
+and curation alone.
+5 Global AI compute capacity grew 3.3x per year since 2022, reaching 17.1 million H100-equivalents.
+Nvidia accounts for over 60% of total compute, with Google and Amazon supplying much of the
+remainder and Huawei holding a small but growing share. The buildout is being driven by hyperscaler
+data center expansion and sustained demand for frontier model training and inference.
+6 The United States leads in AI data centers, and one Taiwanese foundry fabricates the majority
+of chips inside them. The United States hosts 5,427 data centers, more than ten times any other
+country, consuming more energy than any other region. A single company, TSMC, fabricates
+almost every leading AI chip and makes the global AI hardware supply chain dependent on one
+foundry in Taiwan, though a TSMC-U.S. expansion began to operate in 2025.
+7 AI’s environmental footprint increases across power, water, and emissions. In 2025, Grok 4’s
+estimated training emissions reached 72,816 tons of CO₂ equivalent. AI data center power capacity
+rose to 29.6 GW, comparable to New York state at peak demand, and annual GPT-4o inference
+water use alone may exceed the drinking water needs of 1.2 million people.
+8 Open-source AI development continues to scale, with 5.6 million projects on GitHub and
+Hugging Face uploads tripling since 2023. U.S.-based projects still attract the most engagement,
+with 30 million cumulative GitHub stars across projects that have crossed the 10-star threshold.
+14
