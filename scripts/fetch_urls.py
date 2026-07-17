@@ -107,9 +107,59 @@ def extract_pdf(raw: bytes, url: str) -> tuple:
         return _title_from_url(url), f"[PDF error: {exc}]", 0
 
 
+# ── URL resolution ────────────────────────────────────────────────────────────
+
+# Site-specific rules that rewrite a landing/abstract URL to the actual content.
+# Add entries here as new source types are encountered.
+def resolve_url(url: str) -> tuple:
+    """
+    Returns (resolved_url, note) where note describes the rewrite applied.
+    If no rewrite applies, returns (url, "").
+    """
+    parsed = urlparse(url)
+    host   = parsed.netloc.lower().lstrip("www.")
+
+    # arXiv: /abs/{id} or /abs/{id}vN  ->  /pdf/{id}
+    if host == "arxiv.org" and parsed.path.startswith("/abs/"):
+        arxiv_id  = parsed.path[5:]   # strip /abs/
+        pdf_url   = f"https://arxiv.org/pdf/{arxiv_id}"
+        return pdf_url, f"arXiv abs->pdf rewrite ({url})"
+
+    # Semantic Scholar: paper page -> PDF via /pdf/ link (handled in fallback)
+    # Add more rules here as needed
+
+    return url, ""
+
+
+def find_pdf_link(raw: bytes, base_url: str) -> str | None:
+    """
+    Scan an HTML page for a linked PDF and return its absolute URL.
+    Looks for <a href> anchors that point to a .pdf file or a /pdf/ path.
+    Returns None if nothing useful is found.
+    """
+    try:
+        soup   = BeautifulSoup(raw, "lxml")
+        parsed = urlparse(base_url)
+        base   = f"{parsed.scheme}://{parsed.netloc}"
+
+        for a in soup.find_all("a", href=True):
+            href = a["href"].strip()
+            lower = href.lower()
+            if lower.endswith(".pdf") or "/pdf/" in lower or "format=pdf" in lower:
+                if href.startswith("http"):
+                    return href
+                elif href.startswith("/"):
+                    return base + href
+    except Exception:
+        pass
+    return None
+
+
 # ── HTTP fetch ────────────────────────────────────────────────────────────────
 
 def fetch_url(url: str, timeout: int = 30) -> dict:
+    resolved_url, rewrite_note = resolve_url(url)
+
     result = {
         "url": url, "title": "", "status": "Failed",
         "http_code": "", "content_type": "", "words": 0,
@@ -126,29 +176,41 @@ def fetch_url(url: str, timeout: int = 30) -> dict:
     }
     try:
         with httpx.Client(follow_redirects=True, timeout=timeout, verify=True) as client:
-            r = client.get(url, headers=headers)
+            r = client.get(resolved_url, headers=headers)
 
-        result["http_code"] = r.status_code
-        result["duration"]  = round(time.time() - t0, 2)
+            result["http_code"] = r.status_code
+            result["duration"]  = round(time.time() - t0, 2)
 
-        if r.status_code == 200:
-            ct     = r.headers.get("content-type", "").lower()
-            is_pdf = "pdf" in ct
-            result["content_type"] = "PDF" if is_pdf else "HTML"
+            if r.status_code == 200:
+                ct     = r.headers.get("content-type", "").lower()
+                is_pdf = "pdf" in ct
 
-            if is_pdf:
-                title, full_text, words = extract_pdf(r.content, url)
+                # If we got HTML back, check for an embedded PDF link and follow it
+                if not is_pdf:
+                    pdf_link = find_pdf_link(r.content, resolved_url)
+                    if pdf_link:
+                        print(f"    -> HTML page has PDF link, following: {pdf_link}")
+                        pdf_r = client.get(pdf_link, headers=headers)
+                        if pdf_r.status_code == 200 and "pdf" in pdf_r.headers.get("content-type", "").lower():
+                            r      = pdf_r
+                            is_pdf = True
+                            rewrite_note = (rewrite_note + f" | HTML->PDF link: {pdf_link}").lstrip(" | ")
+
+                result["content_type"] = ("PDF" if is_pdf else "HTML") + (f" ({rewrite_note})" if rewrite_note else "")
+
+                if is_pdf:
+                    title, full_text, words = extract_pdf(r.content, url)
+                else:
+                    title, full_text, words = extract_html(r.content, url)
+
+                result["title"]     = title
+                result["full_text"] = full_text
+                result["words"]     = words
+                result["summary"]   = " ".join(full_text.split()[:55])[:300]
+                result["status"]    = "Success" if words > 100 else "Partial"
             else:
-                title, full_text, words = extract_html(r.content, url)
-
-            result["title"]     = title
-            result["full_text"] = full_text
-            result["words"]     = words
-            result["summary"]   = " ".join(full_text.split()[:55])[:300]
-            result["status"]    = "Success" if words > 100 else "Partial"
-        else:
-            reason = getattr(r, "reason_phrase", "") or ""
-            result["summary"] = f"HTTP {r.status_code} {reason}".strip()
+                reason = getattr(r, "reason_phrase", "") or ""
+                result["summary"] = f"HTTP {r.status_code} {reason}".strip()
 
     except httpx.TimeoutException:
         result["status"]   = "Timeout"
