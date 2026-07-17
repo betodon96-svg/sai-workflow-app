@@ -1,0 +1,655 @@
+<title>Fetch Layer — Architecture Alternatives</title>
+<style>
+:root {
+  --bg:        #F8FAFC;
+  --bg-alt:    #EEF3FA;
+  --panel:     #E2EBF5;
+  --border:    #C4D3E8;
+  --text-1:    #0F172A;
+  --text-2:    #334155;
+  --text-3:    #64748B;
+  --blue:      #1D4ED8;
+  --blue-bg:   #DBEAFE;
+  --blue-b:    #93C5FD;
+  --green:     #065F46;
+  --green-bg:  #D1FAE5;
+  --green-b:   #6EE7B7;
+  --amber:     #92400E;
+  --amber-bg:  #FEF3C7;
+  --amber-b:   #FCD34D;
+  --red:       #7F1D1D;
+  --red-bg:    #FEE2E2;
+  --red-b:     #FCA5A5;
+  --purple:    #3B0764;
+  --purple-bg: #F3E8FF;
+  --purple-b:  #C084FC;
+  --teal:      #134E4A;
+  --teal-bg:   #CCFBF1;
+  --teal-b:    #5EEAD4;
+  --mono:      'Menlo','Consolas','Courier New',monospace;
+  --sans:      -apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:        #090E18;
+    --bg-alt:    #0D1420;
+    --panel:     #111B2E;
+    --border:    #1A2840;
+    --text-1:    #C8D5EC;
+    --text-2:    #7A92B0;
+    --text-3:    #445A75;
+    --blue:      #60A5FA;
+    --blue-bg:   #0A1830;
+    --blue-b:    #1E3A5F;
+    --green:     #34D399;
+    --green-bg:  #041A10;
+    --green-b:   #065F46;
+    --amber:     #D97706;
+    --amber-bg:  #1C1000;
+    --amber-b:   #2E1A00;
+    --red:       #F87171;
+    --red-bg:    #1A0808;
+    --red-b:     #3A1010;
+    --purple:    #C084FC;
+    --purple-bg: #1A0830;
+    --purple-b:  #3B0764;
+    --teal:      #2DD4BF;
+    --teal-bg:   #042520;
+    --teal-b:    #134E4A;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#090E18;--bg-alt:#0D1420;--panel:#111B2E;--border:#1A2840;
+  --text-1:#C8D5EC;--text-2:#7A92B0;--text-3:#445A75;
+  --blue:#60A5FA;--blue-bg:#0A1830;--blue-b:#1E3A5F;
+  --green:#34D399;--green-bg:#041A10;--green-b:#065F46;
+  --amber:#D97706;--amber-bg:#1C1000;--amber-b:#2E1A00;
+  --red:#F87171;--red-bg:#1A0808;--red-b:#3A1010;
+  --purple:#C084FC;--purple-bg:#1A0830;--purple-b:#3B0764;
+  --teal:#2DD4BF;--teal-bg:#042520;--teal-b:#134E4A;
+}
+:root[data-theme="light"] {
+  --bg:#F8FAFC;--bg-alt:#EEF3FA;--panel:#E2EBF5;--border:#C4D3E8;
+  --text-1:#0F172A;--text-2:#334155;--text-3:#64748B;
+  --blue:#1D4ED8;--blue-bg:#DBEAFE;--blue-b:#93C5FD;
+  --green:#065F46;--green-bg:#D1FAE5;--green-b:#6EE7B7;
+  --amber:#92400E;--amber-bg:#FEF3C7;--amber-b:#FCD34D;
+  --red:#7F1D1D;--red-bg:#FEE2E2;--red-b:#FCA5A5;
+  --purple:#3B0764;--purple-bg:#F3E8FF;--purple-b:#C084FC;
+  --teal:#134E4A;--teal-bg:#CCFBF1;--teal-b:#5EEAD4;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text-1);font-family:var(--sans);font-size:14.5px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1020px;margin:0 auto;padding:0 28px;}
+
+header{padding:52px 0 36px;border-bottom:1px solid var(--border);margin-bottom:44px;}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;}
+h1{font-size:clamp(22px,3.5vw,36px);font-weight:800;letter-spacing:-0.025em;line-height:1.08;color:var(--text-1);text-wrap:balance;margin-bottom:10px;}
+.sub{font-size:14px;color:var(--text-3);max-width:600px;line-height:1.55;}
+
+/* CONSTRAINT BOX */
+.constraint{background:var(--red-bg);border:1px solid var(--red-b);border-radius:10px;padding:18px 22px;margin:28px 0 44px;}
+.constraint-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.constraint-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);}
+.constraint-title{font-size:14px;font-weight:700;color:var(--text-1);}
+.constraint-body{font-size:13.5px;color:var(--text-2);line-height:1.6;}
+.constraint-body strong{color:var(--text-1);}
+.mono-inline{font-family:var(--mono);font-size:12px;background:var(--panel);padding:1px 5px;border-radius:3px;color:var(--text-1);}
+
+/* SECTION */
+.section{margin-bottom:56px;}
+.sec-head{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:22px;}
+.sec-tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-3);}
+.sec-title{font-size:15px;font-weight:700;color:var(--text-1);letter-spacing:-0.01em;}
+
+p{color:var(--text-2);font-size:14px;line-height:1.65;margin-bottom:12px;}
+p:last-child{margin-bottom:0;}
+
+/* ARCHITECTURE CARDS */
+.arch-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px;}
+
+.arch-head{padding:16px 22px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:auto 1fr auto;align-items:start;gap:14px;}
+.arch-badge{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap;margin-top:2px;}
+.arch-name{font-size:16px;font-weight:700;letter-spacing:-0.01em;color:var(--text-1);}
+.arch-tagline{font-size:12.5px;color:var(--text-3);margin-top:3px;}
+.arch-fit{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap;margin-top:2px;}
+
+.arch-body{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border);}
+.arch-desc{padding:16px 22px;border-right:1px solid var(--border);}
+.arch-desc p{font-size:13.5px;margin-bottom:10px;}
+.arch-meta{padding:16px 22px;}
+
+.meta-row{margin-bottom:12px;}
+.meta-row:last-child{margin-bottom:0;}
+.meta-k{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;}
+.meta-v{font-size:13px;color:var(--text-2);line-height:1.5;}
+
+.arch-flow{padding:14px 22px;background:var(--bg-alt);}
+.flow-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;}
+.flow-steps{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+.step{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:5px;white-space:nowrap;}
+.step-new{font-weight:700;}
+.arr{color:var(--border);font-size:14px;}
+
+/* Color schemes per option */
+.opt-A .arch-badge{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b);}
+.opt-A .arch-head{background:var(--blue-bg);}
+.opt-A .step-new{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b);}
+
+.opt-B .arch-badge{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);}
+.opt-B .arch-head{background:var(--green-bg);}
+.opt-B .step-new{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);}
+
+.opt-C .arch-badge{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-b);}
+.opt-C .arch-head{background:var(--purple-bg);}
+.opt-C .step-new{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-b);}
+
+.opt-D .arch-badge{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-b);}
+.opt-D .arch-head{background:var(--teal-bg);}
+.opt-D .step-new{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-b);}
+
+.opt-E .arch-badge{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b);}
+.opt-E .arch-head{background:var(--amber-bg);}
+.opt-E .step-new{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b);}
+
+.step-exist{background:var(--panel);color:var(--text-2);border:1px solid var(--border);}
+.step-block{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b);text-decoration:line-through;}
+
+.fit-strong{background:var(--green-bg);color:var(--green);border:1px solid var(--green-b);}
+.fit-medium{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-b);}
+.fit-limited{background:var(--red-bg);color:var(--red);border:1px solid var(--red-b);}
+
+/* CODE BLOCKS */
+.code-block{font-family:var(--mono);font-size:12px;color:var(--teal);background:var(--teal-bg);border:1px solid var(--teal-b);padding:12px 14px;border-radius:7px;line-height:1.7;overflow-x:auto;white-space:pre;margin:10px 0;}
+
+/* MATRIX */
+.matrix-table{width:100%;border-collapse:collapse;font-size:13px;}
+.matrix-table th{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);text-align:left;padding:8px 12px;border-bottom:2px solid var(--border);}
+.matrix-table td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text-2);vertical-align:middle;}
+.matrix-table tr:last-child td{border-bottom:none;}
+.matrix-table .row-label{font-weight:700;color:var(--text-1);white-space:nowrap;}
+
+.dot-5{color:var(--green);font-size:15px;font-weight:700;}
+.dot-4{color:var(--teal);font-size:15px;font-weight:700;}
+.dot-3{color:var(--blue);font-size:15px;font-weight:700;}
+.dot-2{color:var(--amber);font-size:15px;font-weight:700;}
+.dot-1{color:var(--red);font-size:15px;font-weight:700;}
+
+/* RECOMMENDED CARD */
+.rec{background:var(--green-bg);border:1px solid var(--green-b);border-radius:10px;padding:22px 26px;margin-bottom:40px;}
+.rec-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.rec-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);}
+.rec-title{font-size:16px;font-weight:700;color:var(--text-1);}
+.rec-body{font-size:14px;color:var(--text-2);line-height:1.65;margin-bottom:10px;}
+.rec-body:last-child{margin-bottom:0;}
+.rec-body strong{color:var(--text-1);}
+
+.spacer{height:72px;}
+
+@media(max-width:680px){
+  .arch-body{grid-template-columns:1fr;}
+  .arch-desc{border-right:none;border-bottom:1px solid var(--border);}
+  .arch-head{grid-template-columns:1fr;gap:8px;}
+  .matrix-table th:nth-child(n+3),.matrix-table td:nth-child(n+3){display:none;}
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="eye">
+    <span>Architecture Document</span>
+    <span>/</span>
+    <span>Deep-Research Fetch Layer</span>
+    <span>/</span>
+    <span>Product Alternatives</span>
+  </div>
+  <h1>Fetch Layer<br>Alternative Configurations</h1>
+  <p class="sub">The fetch phase of the deep-research pipeline fails in this cloud environment due to an egress policy that blocks outbound HTTPS. This document enumerates five architectural alternatives for a production-grade, background-capable fetch layer.</p>
+</header>
+
+<!-- CONSTRAINT -->
+<div class="constraint">
+  <div class="constraint-head">
+    <span class="constraint-label">Root Cause</span>
+    <span class="constraint-title">Egress policy — not a tool or code problem</span>
+  </div>
+  <div class="constraint-body">
+    The Claude Code cloud environment routes all outbound HTTPS through a policy-enforcing proxy at <span class="mono-inline">127.0.0.1:38045</span>. Every CONNECT tunnel to an external domain returns <strong>403 policy denial</strong> — confirmed across 13 domains including Stanford HAI, arXiv, NVIDIA, McKinsey, and Gartner. This applies uniformly to <span class="mono-inline">curl</span>, <span class="mono-inline">WebFetch</span>, Python <span class="mono-inline">requests</span>, <span class="mono-inline">wget</span>, and any HTTP client in the environment. <strong>WebSearch works</strong> because it routes through an internal Anthropic search API, not a direct CONNECT. The constraint is at the network layer — it cannot be fixed by iterating on fetch code inside the same environment. Each alternative below relocates the fetch operation to a context where the restriction does not apply.
+  </div>
+</div>
+
+<!-- OPTION A: MCP FETCH SERVICE -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">Option A</span>
+    <span class="sec-title">Dedicated Fetch MCP Service</span>
+  </div>
+
+  <div class="arch-card opt-A">
+    <div class="arch-head">
+      <span class="arch-badge">MCP Microservice</span>
+      <div>
+        <div class="arch-name">Deploy a fetch service, register it as an MCP connector</div>
+        <div class="arch-tagline">A small API that fetches, cleans, and returns page text — callable from any workflow as a native tool</div>
+      </div>
+      <span class="arch-fit fit-strong">Best for production</span>
+    </div>
+    <div class="arch-body">
+      <div class="arch-desc">
+        <p>Deploy a lightweight service (FastAPI, Express, or equivalent) on any unrestricted compute — a VPS, Railway, Fly.io, AWS Lambda. The service exposes one endpoint: given a URL, it fetches the page, extracts clean text (HTML cleaning via BeautifulSoup, PDF text via pdfplumber), and returns structured output the workflow can process directly.</p>
+        <p>Register it as a custom MCP server in claude.ai connector settings. From that point it appears as a native tool — <span class="mono-inline">mcp__fetch__fetch_url</span> — callable in workflow scripts exactly like WebSearch. The workflow does not know or care that the fetch is happening externally; the interface is identical.</p>
+        <p>This is the cleanest long-term architecture because the fetch capability becomes reusable across all workflows, not just deep-research. It can be extended: caching layer, rate limiting, paywall handling, PDF OCR, screenshot rendering for JS-heavy pages.</p>
+      </div>
+      <div class="arch-meta">
+        <div class="meta-row">
+          <div class="meta-k">Infrastructure</div>
+          <div class="meta-v">Any always-on compute with open egress — Railway, Fly.io, Render (free tier), AWS Lambda, VPS. ~$0–$7/month at this scale.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Setup effort</div>
+          <div class="meta-v">~2–3 hours: deploy service, write MCP manifest, register connector in claude.ai settings.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Autonomy</div>
+          <div class="meta-v">Fully autonomous — no user action required once deployed. Background workflows call it transparently.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">PDF support</div>
+          <div class="meta-v">Yes — pdfplumber or PyMuPDF extracts structured text from PDFs. Can handle the Stanford AI Index and similar reports natively.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Dependency</div>
+          <div class="meta-v">External service uptime; rate limiting by target sites. Mitigated by caching and retry logic in the service.</div>
+        </div>
+      </div>
+    </div>
+    <div class="arch-flow">
+      <div class="flow-label">Modified pipeline</div>
+      <div class="flow-steps">
+        <span class="step step-exist">Search agents</span>
+        <span class="arr">→</span>
+        <span class="step step-exist">URL list</span>
+        <span class="arr">→</span>
+        <span class="step step-new">mcp__fetch__fetch_url ×N (parallel)</span>
+        <span class="arr">→</span>
+        <span class="step step-exist">Claim extraction</span>
+        <span class="arr">→</span>
+        <span class="step step-exist">Adversarial verify</span>
+        <span class="arr">→</span>
+        <span class="step step-exist">Synthesize</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+# fetch_service.py — minimal FastAPI implementation
+from fastapi import FastAPI
+import httpx, pdfplumber, io
+from bs4 import BeautifulSoup
+
+app = FastAPI()
+
+@app.post("/fetch")
+async def fetch_url(url: str):
+    async with httpx.AsyncClient(follow_redirects=True, timeout=30) as client:
+        r = await client.get(url, headers={"User-Agent": "ResearchBot/1.0"})
+
+    if "pdf" in r.headers.get("content-type", ""):
+        with pdfplumber.open(io.BytesIO(r.content)) as pdf:
+            text = "\n".join(p.extract_text() or "" for p in pdf.pages[:40])
+    else:
+        soup = BeautifulSoup(r.text, "html.parser")
+        for tag in soup(["script","style","nav","footer"]): tag.decompose()
+        text = soup.get_text(separator="\n", strip=True)
+
+    return {"url": url, "title": soup.title.string if soup.title else "",
+            "content": text[:50000], "chars": len(text)}</div>
+</section>
+
+<!-- OPTION B: GITHUB ACTIONS FETCH RUNNER -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">Option B</span>
+    <span class="sec-title">GitHub Actions as Fetch Runner</span>
+  </div>
+
+  <div class="arch-card opt-B">
+    <div class="arch-head">
+      <span class="arch-badge">GitHub Actions</span>
+      <div>
+        <div class="arch-name">Trigger a GitHub Action from the workflow — it fetches and commits content back</div>
+        <div class="arch-tagline">Uses infrastructure already in place; GitHub Actions runners have unrestricted egress</div>
+      </div>
+      <span class="arch-fit fit-strong">Best for current stack</span>
+    </div>
+    <div class="arch-body">
+      <div class="arch-desc">
+        <p>GitHub Actions runners have full outbound internet access with no proxy restriction. The deep-research workflow can trigger an action via <span class="mono-inline">mcp__github__actions_run_trigger</span> (already in the available toolset), passing a URL list as input. The action fetches all URLs, extracts text, and commits the content to the repo. The workflow then polls <span class="mono-inline">mcp__github__actions_get</span> until the action completes, reads the committed files, and continues with claim extraction.</p>
+        <p>This uses zero new infrastructure — everything is on GitHub, which is already connected. It fits the CLAUDE.md / cowork pattern naturally: the repo becomes the shared state between the workflow and the action runner. Fetched content is also stored persistently, enabling incremental research (don't re-fetch sources already in the corpus).</p>
+        <p>The one limitation is latency: action startup adds ~30–60 seconds. For a background research workflow this is negligible — the fetch phase already takes 2–5 minutes at scale.</p>
+      </div>
+      <div class="arch-meta">
+        <div class="meta-row">
+          <div class="meta-k">Infrastructure</div>
+          <div class="meta-v">GitHub Actions — already in use. Free tier: 2,000 min/month (Ubuntu). No new service to deploy.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Setup effort</div>
+          <div class="meta-v">~1 hour: write the fetch workflow YAML + Python script, commit to repo.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Autonomy</div>
+          <div class="meta-v">Fully autonomous once set up. Workflow triggers action, polls for completion, reads output — no user touch required.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">PDF support</div>
+          <div class="meta-v">Yes — install pdfplumber in the action, handle PDFs natively.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Bonus</div>
+          <div class="meta-v">Fetched content accumulates in the repo as a research corpus. Future runs skip already-fetched sources.</div>
+        </div>
+      </div>
+    </div>
+    <div class="arch-flow">
+      <div class="flow-label">Modified pipeline</div>
+      <div class="flow-steps">
+        <span class="step step-exist">Search → URL list</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Commit URL list to repo (MCP)</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Trigger GH Action (actions_run_trigger)</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Poll until complete (actions_get)</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Read fetched files from repo</span>
+        <span class="arr">→</span>
+        <span class="step step-exist">Claim extraction → Verify → Synthesize</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+# .github/workflows/fetch-research-urls.yml
+name: Research Fetch
+on:
+  workflow_dispatch:
+    inputs:
+      url_list:
+        description: 'JSON array of URLs to fetch'
+        required: true
+      output_dir:
+        description: 'Repo path to write fetched content'
+        default: 'research-corpus'
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install requests beautifulsoup4 pdfplumber -q
+      - name: Fetch URLs
+        run: |
+          python scripts/fetch_urls.py \
+            --urls '${{ inputs.url_list }}' \
+            --output '${{ inputs.output_dir }}'
+      - name: Commit corpus
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add ${{ inputs.output_dir }}/
+          git diff --cached --quiet || git commit -m "Add fetched research content [skip ci]"
+          git push</div>
+</section>
+
+<!-- OPTION C: THIRD-PARTY FETCH API (MCP REGISTERED) -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">Option C</span>
+    <span class="sec-title">Third-Party Fetch API via MCP</span>
+  </div>
+
+  <div class="arch-card opt-C">
+    <div class="arch-head">
+      <span class="arch-badge">External API</span>
+      <div>
+        <div class="arch-name">Register a web-to-text service as an MCP connector</div>
+        <div class="arch-tagline">Jina Reader, Firecrawl, or similar — zero infrastructure to maintain</div>
+      </div>
+      <span class="arch-fit fit-medium">Good option</span>
+    </div>
+    <div class="arch-body">
+      <div class="arch-desc">
+        <p>Services like <strong>Jina.ai Reader</strong> (<span class="mono-inline">r.jina.ai/[URL]</span>) and <strong>Firecrawl</strong> convert any URL to clean LLM-ready text via API. If registered as an MCP tool in claude.ai connector settings, the workflow calls them as native tools — no direct CONNECT to the target domain from this environment. Jina Reader's free tier handles ~200 pages/day with no auth required; Firecrawl adds JS rendering, PDF support, and structured extraction.</p>
+        <p>The caveat: this still requires an MCP-registered endpoint that the claude.ai connector infrastructure can reach. If the connector infrastructure has similar egress restrictions, this hits the same wall. Needs testing. If it works, this is the lowest-maintenance option — no servers to run.</p>
+      </div>
+      <div class="arch-meta">
+        <div class="meta-row">
+          <div class="meta-k">Services</div>
+          <div class="meta-v">Jina Reader (free), Firecrawl (API key, $20/mo), ScrapingBee, Browserless</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Setup effort</div>
+          <div class="meta-v">~30 min: obtain API key, write MCP manifest, register connector.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Risk</div>
+          <div class="meta-v">May hit same egress restriction if MCP calls go through the same proxy. Requires validation before relying on it.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">PDF support</div>
+          <div class="meta-v">Firecrawl: yes. Jina Reader: partial (text PDFs only, no OCR).</div>
+        </div>
+      </div>
+    </div>
+    <div class="arch-flow">
+      <div class="flow-label">Modified pipeline — identical to Option A if connector works</div>
+      <div class="flow-steps">
+        <span class="step step-exist">Search → URL list</span>
+        <span class="arr">→</span>
+        <span class="step step-new">mcp__jina__read_url ×N (parallel)</span>
+        <span class="arr">→</span>
+        <span class="step step-exist">Claim extraction → Verify → Synthesize</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPTION D: GOOGLE DRIVE AS CORPUS -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">Option D</span>
+    <span class="sec-title">Google Drive as Curated Research Corpus</span>
+  </div>
+
+  <div class="arch-card opt-D">
+    <div class="arch-head">
+      <span class="arch-badge">Drive MCP</span>
+      <div>
+        <div class="arch-name">User curates PDFs/pages to Drive; workflow reads from there</div>
+        <div class="arch-tagline">Uses existing connected infrastructure — no new setup required</div>
+      </div>
+      <span class="arch-fit fit-medium">Practical near-term</span>
+    </div>
+    <div class="arch-body">
+      <div class="arch-desc">
+        <p>Google Drive MCP is already connected and working in this environment. The workflow can read files from Drive using <span class="mono-inline">mcp__Google_Drive__read_file_content</span> and <span class="mono-inline">mcp__Google_Drive__search_files</span>. The split: you download key research PDFs and save them to a dedicated Drive folder; the workflow reads from that folder instead of fetching live URLs.</p>
+        <p>This is not fully autonomous for the fetch step — it requires user curation of the Drive folder. But for high-value primary sources (Stanford HAI PDF, Anthropic research papers, key industry reports) that you would read anyway, this creates a durable research corpus that improves over time. The workflow becomes: <em>if source in Drive corpus → read from Drive; else → use snippet only</em>. Practical immediately, zero new infrastructure.</p>
+      </div>
+      <div class="arch-meta">
+        <div class="meta-row">
+          <div class="meta-k">Infrastructure</div>
+          <div class="meta-v">Google Drive — already connected. No new setup.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Autonomy</div>
+          <div class="meta-v">Semi-autonomous — fetch step requires user action (download to Drive). Processing fully automated once files are there.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Best use</div>
+          <div class="meta-v">Primary source PDFs you read anyway (annual reports, key papers). Not suited for broad web scraping.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Compound value</div>
+          <div class="meta-v">Corpus accumulates over time. Future research sessions reuse existing corpus without re-downloading.</div>
+        </div>
+      </div>
+    </div>
+    <div class="arch-flow">
+      <div class="flow-label">Modified pipeline</div>
+      <div class="flow-steps">
+        <span class="step step-exist">Search → URL list</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Drive lookup: in corpus? (Drive MCP)</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Read from Drive if yes / snippet fallback if no</span>
+        <span class="arr">→</span>
+        <span class="step step-exist">Claim extraction → Verify → Synthesize</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPTION E: HYBRID SNIPPET-FIRST -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">Option E</span>
+    <span class="sec-title">Snippet-First Hybrid with On-Demand Escalation</span>
+  </div>
+
+  <div class="arch-card opt-E">
+    <div class="arch-head">
+      <span class="arch-badge">Hybrid mode</span>
+      <div>
+        <div class="arch-name">Run full synthesis on snippets; flag high-value sources for escalation</div>
+        <div class="arch-tagline">Pragmatic middle ground — useful output now, deeper verification when it matters</div>
+      </div>
+      <span class="arch-fit fit-medium">Interim mode</span>
+    </div>
+    <div class="arch-body">
+      <div class="arch-desc">
+        <p>Accept that snippets are the primary source, but build explicit confidence tiers into the workflow output. Claims sourced from snippets are tagged <span class="mono-inline">SNIPPET</span> and carry a lower confidence score. Claims from locally-available full text (Drive corpus, repo files, manually pasted content) are tagged <span class="mono-inline">VERIFIED</span> and carry full adversarial verification.</p>
+        <p>The synthesis output explicitly surfaces which statistics need escalation before use in client-facing work, and from which specific sources. This makes the quality gap legible rather than hidden. Combined with Option B or D for progressive corpus building, it becomes the operating mode: most research runs in snippet mode, high-stakes claims get escalated to full fetch before use.</p>
+      </div>
+      <div class="arch-meta">
+        <div class="meta-row">
+          <div class="meta-k">Infrastructure</div>
+          <div class="meta-v">No new infrastructure — modifies workflow logic only.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Autonomy</div>
+          <div class="meta-v">Fully autonomous. Output quality varies by source availability, but is always explicit about its own confidence level.</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-k">Best use</div>
+          <div class="meta-v">Interim operating mode while Option A or B is being built. Also a permanent complement to any fetch layer — not all claims need full verification.</div>
+        </div>
+      </div>
+    </div>
+    <div class="arch-flow">
+      <div class="flow-label">Modified pipeline</div>
+      <div class="flow-steps">
+        <span class="step step-exist">Search → snippets + URLs</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Classify: full text available? (Drive/repo check)</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Extract from full text OR tag as SNIPPET</span>
+        <span class="arr">→</span>
+        <span class="step step-exist">Adversarial verify (full text claims only)</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Synthesize with explicit confidence tiers</span>
+        <span class="arr">→</span>
+        <span class="step step-new">Escalation list: sources worth fetching for depth</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON MATRIX -->
+<section class="section">
+  <div class="sec-head">
+    <span class="sec-tag">Matrix</span>
+    <span class="sec-title">Decision Matrix</span>
+  </div>
+
+  <div style="overflow-x:auto;">
+  <table class="matrix-table">
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th>Autonomy</th>
+        <th>Setup effort</th>
+        <th>PDF support</th>
+        <th>New infra?</th>
+        <th>Latency</th>
+        <th>Long-term fit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="row-label" style="color:var(--blue)">A — MCP Fetch Service</td>
+        <td><span class="dot-5">●●●●●</span></td>
+        <td>~2–3 hrs</td>
+        <td>Full</td>
+        <td>Yes (VPS/serverless)</td>
+        <td>Low</td>
+        <td><span class="dot-5">●●●●●</span></td>
+      </tr>
+      <tr>
+        <td class="row-label" style="color:var(--green)">B — GitHub Actions</td>
+        <td><span class="dot-5">●●●●●</span></td>
+        <td>~1 hr</td>
+        <td>Full</td>
+        <td>No (uses GitHub)</td>
+        <td>Medium (+60s)</td>
+        <td><span class="dot-4">●●●●○</span></td>
+      </tr>
+      <tr>
+        <td class="row-label" style="color:var(--purple)">C — 3rd-party API</td>
+        <td><span class="dot-5">●●●●●</span></td>
+        <td>~30 min</td>
+        <td>Partial</td>
+        <td>No (API key only)</td>
+        <td>Low</td>
+        <td><span class="dot-3">●●●○○</span></td>
+      </tr>
+      <tr>
+        <td class="row-label" style="color:var(--teal)">D — Drive Corpus</td>
+        <td><span class="dot-3">●●●○○</span></td>
+        <td>~15 min</td>
+        <td>Full (PDF native)</td>
+        <td>No (Drive connected)</td>
+        <td>None</td>
+        <td><span class="dot-3">●●●○○</span></td>
+      </tr>
+      <tr>
+        <td class="row-label" style="color:var(--amber)">E — Snippet Hybrid</td>
+        <td><span class="dot-4">●●●●○</span></td>
+        <td>~1 hr (workflow mod)</td>
+        <td>N/A</td>
+        <td>No</td>
+        <td>None</td>
+        <td><span class="dot-2">●●○○○</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- RECOMMENDATION -->
+<div class="rec">
+  <div class="rec-head">
+    <span class="rec-label">Recommendation</span>
+    <span class="rec-title">Build B now, migrate to A when the research system scales</span>
+  </div>
+  <p class="rec-body"><strong>Option B (GitHub Actions) is the right immediate move.</strong> It requires the least new infrastructure, uses what you already have (this repo, the GitHub MCP tools already available in workflows), and delivers full autonomy and PDF support within about an hour of setup. The workflow triggers an action, polls for completion, reads the committed corpus — all without user intervention. The ~60 second action startup overhead is negligible for a background research process.</p>
+  <p class="rec-body"><strong>Pair it with Option D (Drive corpus)</strong> for primary sources you curate manually — the Stanford HAI report you already fetched is a good first entry. The workflow checks the Drive corpus first before triggering an action fetch.</p>
+  <p class="rec-body"><strong>Option A becomes the right architecture</strong> once the research system is being used regularly and you want a dedicated, low-latency fetch layer with caching, rate limiting, and JS rendering for dynamic pages. It's a small service that could live on Fly.io or a $5 VPS — worth building when the workflow is running weekly or more.</p>
+  <p class="rec-body"><strong>Option E (snippet hybrid) should be built regardless</strong> — explicit confidence tiers on all research output is good practice whether or not the fetch layer is working. It makes the quality boundary legible to anyone reading the synthesis.</p>
+</div>
+
+</div>
+<div class="spacer"></div>

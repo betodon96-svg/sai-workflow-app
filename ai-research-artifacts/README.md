@@ -9,5 +9,6 @@ Three HTML documents produced in a single Claude Code session exploring the AI k
 | `taxonomy-comparison.html` | Side-by-side analysis of both taxonomies across 11 criteria — relevance, comprehensiveness, practitioner utility — with a synthesis conclusion and 5 proposed research sprint targets. |
 | `research-process-log.html` | Objective log of how the standard taxonomy was produced — the intended multi-agent pipeline, what failed (proxy blocked full-page fetching), how the artifact was recovered from search snippets, and an honest quality risk assessment. |
 | `agent-architecture.html` | Systems-level architecture of the deep-research workflow — orchestrator/agent distinction, component specs, interface schemas, design decisions, and failure analysis with a visual pipeline diagram. |
+| `fetch-layer-architecture.html` | Architecture alternatives for the fetch layer — root cause analysis of the 403 egress policy constraint, 5 option cards (FastAPI MCP microservice, GitHub Actions runner, third-party API, Drive corpus, snippet-first hybrid), decision matrix, and a recommendation to build Option B (GitHub Actions) now and migrate to Option A at scale. |
 
 All files are self-contained HTML — open in any browser, support light and dark themes.
