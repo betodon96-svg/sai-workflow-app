@@ -52,6 +52,54 @@ is made or a new artifact is added.
 
 ---
 
+## Donoso Deep Research (DDP)
+
+**Command:** `/ddp [research question]`
+**Architecture doc:** `ddp-architecture.html`
+
+DDP is a three-phase deep research workflow engineered for Claude Code environments where the
+built-in WebFetch is blocked by the HTTPS egress proxy (403 CONNECT). It substitutes the
+fetch step with a GitHub Actions runner that has unrestricted internet access.
+
+### Phases
+1. **Search** (Claude native) -- web search discovers and verifies 12-20 real source URLs
+2. **Fetch** (DDP custom) -- GitHub Actions runner fetches HTML + PDF, extracts text, commits to branch
+3. **Synthesize** (Claude native) -- Claude reads local .txt files, synthesizes a cited report
+
+### Key Files
+| File | Role |
+|---|---|
+| `.claude/commands/ddp.md` | Slash command -- orchestrates all three phases |
+| `~/.claude/commands/ddp.md` | User-level copy -- available in any Claude Code instance |
+| `scripts/fetch_urls.py` | Fetch engine: HTTP client, PDF detection, text extraction, Excel logging |
+| `.github/workflows/fetch-research-urls.yml` | GitHub Actions workflow (workflow_dispatch) |
+| `scripts/requirements-fetch.txt` | Python deps: httpx, pdfplumber, beautifulsoup4, openpyxl, lxml |
+| `research-logs/fetch-log.xlsx` | Cumulative fetch log, one row per URL attempt |
+| `fetched-content/{session}/` | Extracted plain text files, committed after each run |
+| `scripts/seed_fetch_log.py` | One-time utility to pre-populate log with historical attempts |
+| `ddp-architecture.html` | Full architecture reference document |
+
+### Fetch Engine Capabilities
+- Three-signal PDF detection: magic bytes (%PDF) > final URL pattern > Content-Type header
+- arXiv URL rewrite: /abs/{id} -> /pdf/{id} automatically
+- HTML PDF-link follower: scans any HTML page for linked PDFs and follows them
+- Size-aware pdfplumber page limits: 15/25/40/60 pages by file size (MB) to cap processing time
+- Cumulative Excel log with color-coded status rows (Success/Partial/Failed/Timeout/Error)
+
+### Known Constraints
+- JS-rendered pages return <100 words (httpx cannot execute JavaScript)
+- McKinsey, Gartner, and paywall sites always fail (accepted limitation)
+- GitHub Actions cold start adds ~45s overhead
+- URLs must come from real web search -- AI-generated URLs from memory produce 404s
+
+### Deployment to a New Repo
+1. Copy `.github/workflows/fetch-research-urls.yml` and `scripts/` to target repo
+2. Push workflow to default branch (required for workflow_dispatch)
+3. Update repo config in `.claude/commands/ddp.md`
+4. Create `research-logs/.gitkeep`
+
+---
+
 ## Repository Contents
 
 | File | Description |
@@ -62,6 +110,7 @@ is made or a new artifact is added.
 | `ai_product_research_playbook.html` | Predecessor HTML, same design system |
 | `monthly_ai_report_may2026.html` | Monthly AI report (May 2026) |
 | `ECSE_WP11_Strategic_AI_Integration_v2.0.docx` | Strategic AI integration working paper |
+| `ddp-architecture.html` | Donoso Deep Research architecture reference |
 | `app.py` | Flask/Streamlit app entry point |
 | `requirements.txt` | Python dependencies |
 

@@ -1,0 +1,641 @@
+<title>Donoso Deep Research — Architecture</title>
+<style>
+  /* ── Tokens ─────────────────────────────────────────────── */
+  :root {
+    --bg:        #F7F8FA;
+    --surface:   #FFFFFF;
+    --surface-2: #EEF2F8;
+    --line:      #D0D9E8;
+    --ink:       #1A1C22;
+    --ink-2:     #52586A;
+    --ink-3:     #8A93A8;
+    --navy:      #002060;
+    --blue:      #0070C0;
+    --teal:      #006B6B;
+    --green-bg:  #E6F4EC;
+    --green-ink: #1A5E38;
+    --amber-bg:  #FFF3CD;
+    --amber-ink: #7B4F00;
+    --red-bg:    #FDE8E8;
+    --red-ink:   #8B1A1A;
+    --code-bg:   #EEF2F8;
+    --r: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:        #090D18;
+      --surface:   #0D1A2E;
+      --surface-2: #132038;
+      --line:      #1E3050;
+      --ink:       #E8EDF5;
+      --ink-2:     #A0ABBE;
+      --ink-3:     #6B7A92;
+      --code-bg:   #132038;
+      --green-bg:  #0D2518;
+      --green-ink: #4ADE80;
+      --amber-bg:  #2A1E08;
+      --amber-ink: #FBC94A;
+      --red-bg:    #2A0D0D;
+      --red-ink:   #F87171;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg:#F7F8FA; --surface:#FFFFFF; --surface-2:#EEF2F8; --line:#D0D9E8;
+    --ink:#1A1C22; --ink-2:#52586A; --ink-3:#8A93A8; --code-bg:#EEF2F8;
+    --green-bg:#E6F4EC; --green-ink:#1A5E38;
+    --amber-bg:#FFF3CD; --amber-ink:#7B4F00;
+    --red-bg:#FDE8E8; --red-ink:#8B1A1A;
+  }
+  :root[data-theme="dark"] {
+    --bg:#090D18; --surface:#0D1A2E; --surface-2:#132038; --line:#1E3050;
+    --ink:#E8EDF5; --ink-2:#A0ABBE; --ink-3:#6B7A92; --code-bg:#132038;
+    --green-bg:#0D2518; --green-ink:#4ADE80;
+    --amber-bg:#2A1E08; --amber-ink:#FBC94A;
+    --red-bg:#2A0D0D; --red-ink:#F87171;
+  }
+
+  /* ── Reset & Base ───────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'SF Pro Text', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    padding: 0 1rem 4rem;
+  }
+
+  /* ── Layout ─────────────────────────────────────────────── */
+  .wrap { max-width: 860px; margin: 0 auto; }
+
+  /* ── Header ─────────────────────────────────────────────── */
+  header {
+    border-bottom: 1px solid var(--line);
+    padding: 2.5rem 0 2rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .eyebrow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+  h1 {
+    font-family: 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    line-height: 1.2;
+  }
+  :root[data-theme="dark"] h1, @media (prefers-color-scheme: dark) { }
+  @media (prefers-color-scheme: dark) { h1 { color: var(--ink); } }
+  :root[data-theme="dark"] h1 { color: var(--ink); }
+  :root[data-theme="light"] h1 { color: var(--navy); }
+
+  .tagline {
+    color: var(--ink-2);
+    font-size: 1rem;
+    max-width: 600px;
+    text-wrap: balance;
+  }
+  .meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    font-size: 0.78rem;
+    color: var(--ink-3);
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .meta-item strong { color: var(--ink-2); font-weight: 500; }
+
+  /* ── Section headings ───────────────────────────────────── */
+  .section { margin-bottom: 2.5rem; }
+  h2 {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+
+  /* ── Innovation callout ─────────────────────────────────── */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--blue);
+    border-radius: var(--r);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+    color: var(--ink-2);
+  }
+  .callout strong { color: var(--ink); }
+
+  /* ── Pipeline diagram ───────────────────────────────────── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 2.5rem;
+  }
+  .phase-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 1.25rem 1.5rem;
+    position: relative;
+  }
+  .phase-card.native { border-top: 3px solid var(--blue); }
+  .phase-card.custom { border-top: 3px solid var(--teal); }
+
+  .phase-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+  .phase-num {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .phase-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2em 0.6em;
+    border-radius: 3px;
+    margin-left: auto;
+  }
+  .badge.native { background: #E0EDFA; color: var(--blue); }
+  .badge.custom { background: #D6ECEC; color: var(--teal); }
+  :root[data-theme="dark"] .badge.native,
+  @media (prefers-color-scheme: dark) { }
+
+  .phase-desc {
+    font-size: 0.88rem;
+    color: var(--ink-2);
+    margin-bottom: 0.75rem;
+  }
+  .phase-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+  .file-chip {
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.72rem;
+    background: var(--code-bg);
+    color: var(--ink-2);
+    padding: 0.2em 0.55em;
+    border-radius: 3px;
+    border: 1px solid var(--line);
+  }
+
+  /* connector between phases */
+  .connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0;
+    gap: 0.15rem;
+  }
+  .connector-line {
+    width: 1px;
+    height: 18px;
+    background: var(--line);
+  }
+  .connector-label {
+    font-size: 0.7rem;
+    color: var(--ink-3);
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    background: var(--bg);
+    padding: 0 0.4rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  /* ── Component table ────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+  }
+  thead tr { border-bottom: 2px solid var(--line); }
+  tbody tr { border-bottom: 1px solid var(--line); }
+  tbody tr:last-child { border-bottom: none; }
+  th {
+    text-align: left;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 0.6rem 0.75rem;
+  }
+  td { padding: 0.7rem 0.75rem; color: var(--ink-2); vertical-align: top; }
+  td:first-child {
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.78rem;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  tr:hover td { background: var(--surface-2); }
+
+  /* ── Status pills ───────────────────────────────────────── */
+  .pill {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.15em 0.55em;
+    border-radius: 3px;
+  }
+  .pill.green  { background: var(--green-bg);  color: var(--green-ink); }
+  .pill.amber  { background: var(--amber-bg);  color: var(--amber-ink); }
+  .pill.red    { background: var(--red-bg);    color: var(--red-ink); }
+
+  /* ── Constraint grid ────────────────────────────────────── */
+  .constraint-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+  }
+  .constraint-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 0.9rem 1rem;
+  }
+  .constraint-card .c-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+  }
+  .constraint-card .c-cause {
+    font-size: 0.78rem;
+    color: var(--ink-2);
+    margin-bottom: 0.4rem;
+  }
+  .constraint-card .c-status {
+    font-size: 0.7rem;
+    color: var(--ink-3);
+  }
+
+  /* ── Config block ───────────────────────────────────────── */
+  .config-block {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 1.1rem 1.25rem;
+  }
+  .config-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0.5rem 1rem;
+    align-items: baseline;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.83rem;
+  }
+  .config-row:last-child { border-bottom: none; }
+  .config-key {
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.75rem;
+    color: var(--teal);
+    font-weight: 500;
+  }
+  .config-val {
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+
+  /* ── Gap analysis ───────────────────────────────────────── */
+  .gap-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .gap-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+  .gap-row .pill { flex-shrink: 0; margin-top: 0.1rem; }
+  .gap-text { color: var(--ink-2); }
+  .gap-text strong { color: var(--ink); }
+
+  /* ── Footer ─────────────────────────────────────────────── */
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.75rem;
+    color: var(--ink-3);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <span class="eyebrow">Architecture Reference</span>
+    <h1>Donoso Deep Research</h1>
+    <p class="tagline">A three-phase deep research workflow engineered for Claude Code environments with restricted HTTPS egress. Abbreviated DDP.</p>
+    <div class="meta">
+      <span class="meta-item"><strong>Version</strong> 1.0</span>
+      <span class="meta-item"><strong>Repo</strong> betodon96-svg/sai-workflow-app</span>
+      <span class="meta-item"><strong>Command</strong> /ddp</span>
+      <span class="meta-item"><strong>UI</strong> Claude Code</span>
+    </div>
+  </header>
+
+  <!-- Innovation callout -->
+  <div class="callout">
+    <strong>Core innovation.</strong> Claude Code's built-in WebFetch routes through an HTTPS proxy that blocks all outbound CONNECT tunnels (403). DDP replaces that fetch step with a GitHub Actions runner — which has unrestricted internet access — extracting HTML and PDF content and committing the plain text back to the branch. Claude then reads local <code>.txt</code> files, bypassing the proxy entirely. Search and synthesis remain Claude-native.
+  </div>
+
+  <!-- Architecture pipeline -->
+  <div class="section">
+    <h2>System Architecture</h2>
+
+    <div class="pipeline">
+
+      <div class="phase-card native">
+        <div class="phase-top">
+          <span class="phase-num">Phase 1</span>
+          <span class="phase-title">Search</span>
+          <span class="badge native">Claude Native</span>
+        </div>
+        <p class="phase-desc">Web search discovers and verifies sources. 6–10 targeted queries yield 12–20 real, deduplicated URLs. URLs from AI memory are excluded — the only cause of 404s in testing.</p>
+        <div class="phase-files">
+          <span class="file-chip">Claude web search tool</span>
+          <span class="file-chip">URL deduplication</span>
+          <span class="file-chip">Source quality filter</span>
+        </div>
+      </div>
+
+      <div class="connector">
+        <div class="connector-line"></div>
+        <span class="connector-label">verified URL list (JSON array)</span>
+        <div class="connector-line"></div>
+      </div>
+
+      <div class="phase-card custom">
+        <div class="phase-top">
+          <span class="phase-num">Phase 2</span>
+          <span class="phase-title">Fetch</span>
+          <span class="badge custom">DDP Custom</span>
+        </div>
+        <p class="phase-desc">GitHub Actions Ubuntu runner fetches each URL. Handles HTML and PDF with three-signal content detection (magic bytes → final URL pattern → Content-Type). Extracts plain text, appends to the cumulative Excel log, and commits <code>.txt</code> files back to the branch.</p>
+        <div class="phase-files">
+          <span class="file-chip">scripts/fetch_urls.py</span>
+          <span class="file-chip">.github/workflows/fetch-research-urls.yml</span>
+          <span class="file-chip">scripts/requirements-fetch.txt</span>
+          <span class="file-chip">research-logs/fetch-log.xlsx</span>
+          <span class="file-chip">fetched-content/{session}/</span>
+        </div>
+      </div>
+
+      <div class="connector">
+        <div class="connector-line"></div>
+        <span class="connector-label">.txt files committed to branch → git pull</span>
+        <div class="connector-line"></div>
+      </div>
+
+      <div class="phase-card native">
+        <div class="phase-top">
+          <span class="phase-num">Phase 3</span>
+          <span class="phase-title">Synthesize</span>
+          <span class="badge native">Claude Native</span>
+        </div>
+        <p class="phase-desc">Claude reads local <code>.txt</code> files — no network calls needed. Synthesizes a cited report: executive summary, thematic findings, source quality table, and explicit gaps for any failed sources. Only successfully fetched sources are cited.</p>
+        <div class="phase-files">
+          <span class="file-chip">fetched-content/{session}/*.txt</span>
+          <span class="file-chip">Claude deep-research synthesis</span>
+          <span class="file-chip">Cited report output</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Gap analysis -->
+  <div class="section">
+    <h2>Product Completeness</h2>
+    <div class="gap-list">
+      <div class="gap-row"><span class="pill green">Complete</span><span class="gap-text"><strong>Search</strong> — Claude's native web search. Real URLs from search results, not AI memory.</span></div>
+      <div class="gap-row"><span class="pill green">Complete</span><span class="gap-text"><strong>Fetch — HTML</strong> — httpx with redirect following, lxml/BeautifulSoup text extraction.</span></div>
+      <div class="gap-row"><span class="pill green">Complete</span><span class="gap-text"><strong>Fetch — PDF</strong> — Three-signal detection, pdfplumber extraction, size-aware page limits (15–60 pages).</span></div>
+      <div class="gap-row"><span class="pill green">Complete</span><span class="gap-text"><strong>URL rewriting</strong> — arXiv abs→pdf rewrite + general HTML PDF-link follower for other sites.</span></div>
+      <div class="gap-row"><span class="pill green">Complete</span><span class="gap-text"><strong>Logging</strong> — Cumulative Excel log, color-coded by status, hyperlinked URLs, one row per attempt.</span></div>
+      <div class="gap-row"><span class="pill green">Complete</span><span class="gap-text"><strong>Orchestration</strong> — /ddp slash command wires all three phases. Available at user level (~/.claude/commands/) for cross-repo reuse.</span></div>
+      <div class="gap-row"><span class="pill green">Complete</span><span class="gap-text"><strong>Synthesis</strong> — Claude native deep-research synthesis from local text files.</span></div>
+      <div class="gap-row"><span class="pill green">Complete</span><span class="gap-text"><strong>UI</strong> — Claude Code itself. No additional interface layer needed.</span></div>
+      <div class="gap-row"><span class="pill amber">Partial</span><span class="gap-text"><strong>JS-rendered pages</strong> — httpx fetches static HTML only. Pages requiring JavaScript execution return &lt;100 words. Workaround: Playwright extension (not yet implemented).</span></div>
+      <div class="gap-row"><span class="pill red">Excluded</span><span class="gap-text"><strong>Paywalled content</strong> — McKinsey, Gartner, and similar require authentication. Accepted constraint: use open alternatives in source selection.</span></div>
+    </div>
+  </div>
+
+  <!-- Component inventory -->
+  <div class="section">
+    <h2>Component Inventory</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Role</th>
+            <th>Phase</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>scripts/fetch_urls.py</td>
+            <td>Core fetch engine. HTTP client, PDF detection, text extraction, Excel logging.</td>
+            <td>2</td>
+            <td><span class="pill green">Production</span></td>
+          </tr>
+          <tr>
+            <td>.github/workflows/fetch-research-urls.yml</td>
+            <td>GitHub Actions workflow. Accepts url_json, session_id, output_branch inputs. Runs on ubuntu-latest.</td>
+            <td>2</td>
+            <td><span class="pill green">Production</span></td>
+          </tr>
+          <tr>
+            <td>scripts/requirements-fetch.txt</td>
+            <td>Python dependencies: httpx, pdfplumber, beautifulsoup4, openpyxl, lxml.</td>
+            <td>2</td>
+            <td><span class="pill green">Production</span></td>
+          </tr>
+          <tr>
+            <td>research-logs/fetch-log.xlsx</td>
+            <td>Cumulative fetch log. One row per attempt across all sessions. Color-coded by status.</td>
+            <td>2</td>
+            <td><span class="pill green">Production</span></td>
+          </tr>
+          <tr>
+            <td>fetched-content/{session}/*.txt</td>
+            <td>Extracted plain text, one file per URL. Named by domain+path slug.</td>
+            <td>2→3</td>
+            <td><span class="pill green">Production</span></td>
+          </tr>
+          <tr>
+            <td>.claude/commands/ddp.md</td>
+            <td>Project-level slash command. Orchestrates all three phases.</td>
+            <td>All</td>
+            <td><span class="pill green">Production</span></td>
+          </tr>
+          <tr>
+            <td>~/.claude/commands/ddp.md</td>
+            <td>User-level copy of slash command. Available in any Claude Code instance.</td>
+            <td>All</td>
+            <td><span class="pill green">Production</span></td>
+          </tr>
+          <tr>
+            <td>scripts/seed_fetch_log.py</td>
+            <td>One-time script. Pre-populates Excel log with historical fetch attempts.</td>
+            <td>2</td>
+            <td><span class="pill amber">Utility</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Fetch engine detail -->
+  <div class="section">
+    <h2>Fetch Engine — PDF Detection Logic</h2>
+    <p style="font-size:0.87rem;color:var(--ink-2);margin-bottom:1rem;">Three-signal cascade, evaluated in priority order. Any single signal is sufficient to classify a response as PDF.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Signal</th><th>Check</th><th>Reliability</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1. Magic bytes</td>
+            <td>First 4 bytes of response body = <code>%PDF</code></td>
+            <td><span class="pill green">Ground truth</span> — server cannot lie</td>
+          </tr>
+          <tr>
+            <td>2. Final URL</td>
+            <td>URL after redirects ends in <code>.pdf</code> or contains <code>/pdf/</code></td>
+            <td><span class="pill green">High</span> — catches CDN-hosted PDFs</td>
+          </tr>
+          <tr>
+            <td>3. Content-Type</td>
+            <td>Response header contains <code>pdf</code></td>
+            <td><span class="pill amber">Low</span> — last resort, often wrong</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Repo config -->
+  <div class="section">
+    <h2>Current Deployment Config</h2>
+    <div class="config-block">
+      <div class="config-row"><span class="config-key">REPO</span><span class="config-val">betodon96-svg/sai-workflow-app</span></div>
+      <div class="config-row"><span class="config-key">FETCH_WORKFLOW</span><span class="config-val">fetch-research-urls.yml</span></div>
+      <div class="config-row"><span class="config-key">OUTPUT_BRANCH</span><span class="config-val">claude/monthly-ai-work-report-xjbyL</span></div>
+      <div class="config-row"><span class="config-key">CONTENT_DIR</span><span class="config-val">fetched-content/{session_id}/</span></div>
+      <div class="config-row"><span class="config-key">FETCH_LOG</span><span class="config-val">research-logs/fetch-log.xlsx</span></div>
+      <div class="config-row"><span class="config-key">RUNNER</span><span class="config-val">ubuntu-latest (unrestricted egress)</span></div>
+      <div class="config-row"><span class="config-key">CONCURRENCY</span><span class="config-val">group: fetch-runner-{branch}, cancel-in-progress: false</span></div>
+      <div class="config-row"><span class="config-key">PERMISSIONS</span><span class="config-val">contents: write</span></div>
+    </div>
+  </div>
+
+  <!-- Known constraints -->
+  <div class="section">
+    <h2>Known Constraints</h2>
+    <div class="constraint-grid">
+      <div class="constraint-card">
+        <div class="c-title">JS-rendered pages</div>
+        <div class="c-cause">httpx fetches static HTML only. Pages requiring JavaScript return &lt;100 words.</div>
+        <div class="c-status"><span class="pill amber">Partial</span> — Playwright extension planned</div>
+      </div>
+      <div class="constraint-card">
+        <div class="c-title">Paywalled sites</div>
+        <div class="c-cause">McKinsey, Gartner, and similar require authentication. Always return 403 or redirect to login.</div>
+        <div class="c-status"><span class="pill red">Excluded</span> — accepted limitation</div>
+      </div>
+      <div class="constraint-card">
+        <div class="c-title">GitHub Actions cold start</div>
+        <div class="c-cause">Runner provisioning adds ~45s overhead before fetching begins.</div>
+        <div class="c-status"><span class="pill green">Accepted</span> — expected, not an error</div>
+      </div>
+      <div class="constraint-card">
+        <div class="c-title">Large PDF page cap</div>
+        <div class="c-cause">pdfplumber extraction capped at 15–60 pages based on file size to prevent multi-minute stalls.</div>
+        <div class="c-status"><span class="pill amber">Configurable</span> — adjust in fetch_urls.py</div>
+      </div>
+      <div class="constraint-card">
+        <div class="c-title">URL hallucination</div>
+        <div class="c-cause">AI-generated URLs from memory produce 404s. Only search-discovered URLs are reliable.</div>
+        <div class="c-status"><span class="pill green">Solved</span> — Phase 1 enforces search-first</div>
+      </div>
+      <div class="constraint-card">
+        <div class="c-title">Sequential fetch</div>
+        <div class="c-cause">URLs fetched one at a time. 24 URLs with large PDFs takes 2–5 minutes.</div>
+        <div class="c-status"><span class="pill amber">Accepted</span> — parallel fetch possible future improvement</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>Donoso Deep Research v1.0 — betodon96-svg/sai-workflow-app</span>
+    <span>ddp-architecture.html</span>
+  </footer>
+
+</div>
